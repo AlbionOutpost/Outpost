@@ -50,7 +50,7 @@ function Crest({ color, charge }: { color: CrestColor; charge: CrestCharge }) {
     <span className={styles.crest} aria-hidden="true">
       {shield.leaving && (
         <span
-          key={`out-${shield.version}`}
+          key={`shield-out-${shield.version}`}
           className={styles.shield}
           data-leaving=""
           style={
@@ -60,7 +60,7 @@ function Crest({ color, charge }: { color: CrestColor; charge: CrestCharge }) {
         />
       )}
       <span
-        key={`in-${shield.version}`}
+        key={`shield-in-${shield.version}`}
         className={styles.shield}
         style={
           { "--shield": `url("/albion/crests/crest-${shield.current}.webp")` } as CSSProperties
@@ -68,7 +68,7 @@ function Crest({ color, charge }: { color: CrestColor; charge: CrestCharge }) {
       />
       {symbol.leaving && (
         <span
-          key={`out-${symbol.version}`}
+          key={`symbol-out-${symbol.version}`}
           className={styles.charge}
           data-leaving=""
           style={{ "--charge": `url("/albion/charges/${symbol.leaving}.webp")` } as CSSProperties}
@@ -76,7 +76,7 @@ function Crest({ color, charge }: { color: CrestColor; charge: CrestCharge }) {
         />
       )}
       <span
-        key={`in-${symbol.version}`}
+        key={`symbol-in-${symbol.version}`}
         className={styles.charge}
         style={{ "--charge": `url("/albion/charges/${symbol.current}.webp")` } as CSSProperties}
       />
@@ -222,7 +222,8 @@ export function GroupCreate({ children }: { children?: ReactNode }) {
             {name.trim()}
           </h2>
           <p className={styles.revealLine}>
-            Your banner is up and you hold the Leader seat. Invite your members from Settings.
+            Your banner is up and you hold the Leader seat. Invite your members from the Members
+            tab.
           </p>
         </div>
         <Link className="button primary" href={`/groups/${founded}`}>

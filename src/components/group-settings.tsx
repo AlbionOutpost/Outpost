@@ -21,191 +21,27 @@ const utc = (iso: string) =>
     timeZone: "UTC",
   }).format(new Date(iso))} UTC`;
 
-/** Profile, roles, join requests and invitations, then leaving or deleting the team. */
-export function GroupSettings({
-  ctx,
-  inviteLink,
-  profile,
-}: {
-  ctx: TeamContext;
-  inviteLink: string;
-  profile?: ReactNode;
-}) {
-  const { data, access, busy, run } = ctx;
-  const owner = access.owner;
-  const [copied, setCopied] = useState(false);
+/**
+ * Team settings, behind the masthead's gear: the profile beside the roles, then deleting the
+ * team for its owner. Who joins (requests, invitations) and leaving live on the Members tab.
+ */
+export function GroupSettings({ ctx, profile }: { ctx: TeamContext; profile?: ReactNode }) {
+  const { access, busy, run } = ctx;
   return (
     <div className={styles.settings}>
       <h2 className="sr-only">Team settings</h2>
-      {/* Two columns at their own heights, so the tab fits a screen: the profile beside the
-          roles, then who wants in beside the invitations */}
+      {/* Two columns at their own heights, so the page fits a screen */}
       {profile && <div className={styles.overviewColumn}>{profile}</div>}
       <div className={profile ? styles.overviewColumn : styles.settingsWide}>
         <GroupRoles ctx={ctx} />
       </div>
-      <div className={styles.overviewColumn}>
-        {ctx.can("manageRequests") && (
-          <section className={`panel ${styles.panel}`} aria-labelledby="team-requests">
-            <PanelHead
-              id="team-requests"
-              title="Membership requests"
-              line="Players who asked to join this public team."
-            />
-            {data.requests.length ? (
-              <ul className={styles.list}>
-                {data.requests.map((r) => (
-                  <li key={r.userId} className={`well ${styles.wellRow}`}>
-                    <AvatarFrame frame={r.avatarFrame} size={44} image={r.image} name={r.name} />
-                    <span className={styles.rowCopy}>
-                      <strong>{r.name}</strong>
-                      {r.message && <small className={styles.wrap}>{r.message}</small>}
-                      <small>
-                        Asked <time dateTime={r.requestedAt}>{utc(r.requestedAt)}</time>
-                      </small>
-                    </span>
-                    <span className={styles.rowTools}>
-                      <button
-                        type="button"
-                        className="button primary"
-                        disabled={busy}
-                        aria-label={`Approve ${r.name}`}
-                        onClick={() => run({ action: "decide", userId: r.userId, approve: true })}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        type="button"
-                        className="button secondary"
-                        disabled={busy}
-                        aria-label={`Reject ${r.name}`}
-                        onClick={() => run({ action: "decide", userId: r.userId, approve: false })}
-                      >
-                        Reject
-                      </button>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <EmptyWell
-                emblem="team-roles"
-                title="No pending requests"
-                line="New requests from players outside the team show up here."
-                action={
-                  <Link className="button secondary" href="/groups">
-                    See the directory
-                  </Link>
-                }
-              />
-            )}
-          </section>
-        )}
-      </div>
-      <div className={styles.overviewColumn}>
-        {(ctx.can("inviteMembers") || ctx.can("manageRequests")) && (
-          <section className={`panel ${styles.panel}`} aria-labelledby="team-invites">
-            <PanelHead
-              id="team-invites"
-              title="Invite a member"
-              line="A single-use link that joins one player with the role new members get. Outpost sends nothing for you; share it yourself."
-            />
-            <form
-              hidden={!ctx.can("inviteMembers")}
-              className={styles.inlineForm}
-              onSubmit={(e) => {
-                e.preventDefault();
-                const f = new FormData(e.currentTarget);
-                setCopied(false);
-                run({ action: "invite", hours: Number(f.get("hours")) });
-              }}
-            >
-              <Field label="Invitation expires in">
-                <WellSelect name="hours" aria-label="Invitation expires in" defaultValue="24">
-                  <option value="1">1 hour</option>
-                  <option value="24">24 hours</option>
-                  <option value="168">7 days</option>
-                </WellSelect>
-              </Field>
-              <button className="button primary" disabled={busy}>
-                Create invitation
-              </button>
-            </form>
-            {ctx.can("inviteMembers") ? null : (
-              <StatusLine>
-                You can revoke links here; creating them needs Invite members.
-              </StatusLine>
-            )}
-            {inviteLink && (
-              <div className={styles.inviteLink}>
-                <Field label="New single-use invitation link" hint="Shown once. Copy it now.">
-                  <input aria-label="New invitation link" readOnly value={inviteLink} />
-                </Field>
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() =>
-                    navigator.clipboard?.writeText(inviteLink).then(
-                      () => setCopied(true),
-                      () => setCopied(false),
-                    )
-                  }
-                >
-                  {copied ? (
-                    <Check size={16} aria-hidden="true" />
-                  ) : (
-                    <Copy size={16} aria-hidden="true" />
-                  )}
-                  {copied ? "Copied" : "Copy link"}
-                </button>
-              </div>
-            )}
-            {data.invitations.length > 0 && (
-              <ul className={styles.list} aria-label="Invitations">
-                {data.invitations.map((i) => {
-                  const state = i.revokedAt ? "Revoked" : i.acceptedAt ? "Used" : "Open";
-                  return (
-                    <li key={i.id} className={`well ${styles.wellRow}`}>
-                      <span className={styles.rowCopy}>
-                        <strong>Invitation link</strong>
-                        <small>
-                          Expires <time dateTime={i.expiresAt}>{utc(i.expiresAt)}</time>
-                        </small>
-                      </span>
-                      <span className={state === "Open" ? "landing-chip" : "landing-chip is-muted"}>
-                        {state}
-                      </span>
-                      {state === "Open" && (
-                        <span className={styles.rowTools}>
-                          <button
-                            type="button"
-                            className={`button secondary ${styles.lossButton}`}
-                            disabled={busy}
-                            aria-label={`Revoke invitation ${i.id}`}
-                            onClick={() => run({ action: "revoke", invitationId: i.id })}
-                          >
-                            Revoke
-                          </button>
-                        </span>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-        )}
-      </div>
-      <section className={`panel ${styles.panel} ${styles.danger}`} aria-labelledby="team-leave">
-        <PanelHead
-          id="team-leave"
-          title={owner ? "Delete this team" : "Leave this team"}
-          line={
-            owner
-              ? "Removes its shared comps, events and announcements for everyone. Hand the team to another member first to keep it."
-              : "You lose access to its events, comps and loot splits until you are invited again."
-          }
-          actions={
-            owner ? (
+      {access.owner && (
+        <section className={`panel ${styles.panel} ${styles.danger}`} aria-labelledby="team-leave">
+          <PanelHead
+            id="team-leave"
+            title="Delete this team"
+            line="Removes its shared comps, events and announcements for everyone. Hand the team to another member first to keep it."
+            actions={
               <button
                 type="button"
                 className={`button secondary ${styles.lossButton}`}
@@ -221,19 +57,194 @@ export function GroupSettings({
               >
                 Delete team
               </button>
-            ) : (
+            }
+          />
+        </section>
+      )}
+    </div>
+  );
+}
+
+/** Who wants in: join requests (Review requests) and invitation links (Invite members). */
+export function GroupJoining({ ctx, inviteLink }: { ctx: TeamContext; inviteLink: string }) {
+  const { data, busy, run } = ctx;
+  const [copied, setCopied] = useState(false);
+  const requests = ctx.can("manageRequests");
+  const invites = ctx.can("inviteMembers") || requests;
+  if (!requests && !invites) return null;
+  return (
+    <div className={styles.joining}>
+      {invites && (
+        <section className={`panel ${styles.panel}`} aria-labelledby="team-invites">
+          <PanelHead
+            id="team-invites"
+            title="Invite a member"
+            line="A single-use link that joins one player with the role new members get. Outpost sends nothing for you; share it yourself."
+          />
+          <form
+            hidden={!ctx.can("inviteMembers")}
+            className={styles.inlineForm}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const f = new FormData(e.currentTarget);
+              setCopied(false);
+              run({ action: "invite", hours: Number(f.get("hours")) });
+            }}
+          >
+            <Field label="Invitation expires in">
+              <WellSelect name="hours" aria-label="Invitation expires in" defaultValue="24">
+                <option value="1">1 hour</option>
+                <option value="24">24 hours</option>
+                <option value="168">7 days</option>
+              </WellSelect>
+            </Field>
+            <button className="button primary" disabled={busy}>
+              Create invitation
+            </button>
+          </form>
+          {ctx.can("inviteMembers") ? null : (
+            <StatusLine>You can revoke links here; creating them needs Invite members.</StatusLine>
+          )}
+          {inviteLink && (
+            <div className={styles.inviteLink}>
+              <Field label="New single-use invitation link" hint="Shown once. Copy it now.">
+                <input aria-label="New invitation link" readOnly value={inviteLink} />
+              </Field>
               <button
                 type="button"
-                className={`button secondary ${styles.lossButton}`}
-                disabled={busy}
-                onClick={() => run({ action: "leave" })}
+                className="button secondary"
+                onClick={() =>
+                  navigator.clipboard?.writeText(inviteLink).then(
+                    () => setCopied(true),
+                    () => setCopied(false),
+                  )
+                }
               >
-                Leave team
+                {copied ? (
+                  <Check size={16} aria-hidden="true" />
+                ) : (
+                  <Copy size={16} aria-hidden="true" />
+                )}
+                {copied ? "Copied" : "Copy link"}
               </button>
-            )
-          }
-        />
-      </section>
+            </div>
+          )}
+          {data.invitations.length > 0 && (
+            <ul className={styles.list} aria-label="Invitations">
+              {data.invitations.map((i) => {
+                const state = i.revokedAt ? "Revoked" : i.acceptedAt ? "Used" : "Open";
+                return (
+                  <li key={i.id} className={`well ${styles.wellRow}`}>
+                    <span className={styles.rowCopy}>
+                      <strong>Invitation link</strong>
+                      <small>
+                        Expires <time dateTime={i.expiresAt}>{utc(i.expiresAt)}</time>
+                      </small>
+                    </span>
+                    <span className={state === "Open" ? "landing-chip" : "landing-chip is-muted"}>
+                      {state}
+                    </span>
+                    {state === "Open" && (
+                      <span className={styles.rowTools}>
+                        <button
+                          type="button"
+                          className={`button secondary ${styles.lossButton}`}
+                          disabled={busy}
+                          aria-label={`Revoke invitation ${i.id}`}
+                          onClick={() => run({ action: "revoke", invitationId: i.id })}
+                        >
+                          Revoke
+                        </button>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      )}
+      {ctx.can("manageRequests") && (
+        <section className={`panel ${styles.panel}`} aria-labelledby="team-requests">
+          <PanelHead
+            id="team-requests"
+            title="Membership requests"
+            line="Players who asked to join this public team."
+          />
+          {data.requests.length ? (
+            <ul className={styles.list}>
+              {data.requests.map((r) => (
+                <li key={r.userId} className={`well ${styles.wellRow}`}>
+                  <AvatarFrame frame={r.avatarFrame} size={44} image={r.image} name={r.name} />
+                  <span className={styles.rowCopy}>
+                    <strong>{r.name}</strong>
+                    {r.message && <small className={styles.wrap}>{r.message}</small>}
+                    <small>
+                      Asked <time dateTime={r.requestedAt}>{utc(r.requestedAt)}</time>
+                    </small>
+                  </span>
+                  <span className={styles.rowTools}>
+                    <button
+                      type="button"
+                      className="button primary"
+                      disabled={busy}
+                      aria-label={`Approve ${r.name}`}
+                      onClick={() => run({ action: "decide", userId: r.userId, approve: true })}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      type="button"
+                      className="button secondary"
+                      disabled={busy}
+                      aria-label={`Reject ${r.name}`}
+                      onClick={() => run({ action: "decide", userId: r.userId, approve: false })}
+                    >
+                      Reject
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyWell
+              emblem="team-roles"
+              title="No pending requests"
+              line="New requests from players outside the team show up here."
+              action={
+                <Link className="button secondary" href="/groups">
+                  See the directory
+                </Link>
+              }
+            />
+          )}
+        </section>
+      )}
     </div>
+  );
+}
+
+/** Leaving, for every member but the owner (who hands the team over or deletes it). */
+export function GroupLeave({ ctx }: { ctx: TeamContext }) {
+  const { access, busy, run } = ctx;
+  if (access.owner) return null;
+  return (
+    <section className={`panel ${styles.panel} ${styles.danger}`} aria-labelledby="team-leave">
+      <PanelHead
+        id="team-leave"
+        title="Leave this team"
+        line="You lose access to its events, comps and loot splits until you are invited again."
+        actions={
+          <button
+            type="button"
+            className={`button secondary ${styles.lossButton}`}
+            disabled={busy}
+            onClick={() => run({ action: "leave" })}
+          >
+            Leave team
+          </button>
+        }
+      />
+    </section>
   );
 }

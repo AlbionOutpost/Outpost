@@ -208,6 +208,26 @@ test("renamed guides answer their old URLs with a permanent redirect, and every 
   await page.goto("/guides/first-silver");
   await expect(page).toHaveURL(/\/guides\/making-silver$/);
   await expect(page.locator("h1")).toHaveText("Making silver");
+  // The guide's details read as chips in the hero; the two pills there match; the contents,
+  // the reading page and the one rail start on the same line
+  await expect(page.getByRole("list", { name: "About this guide" })).toContainText("9 sections");
+  const pills = [
+    page.getByRole("link", { name: "All guides", exact: true }).first(),
+    page.getByRole("button", { name: "Print guide" }),
+  ];
+  const [back, print] = await Promise.all(pills.map(async (p) => (await p.boundingBox())!));
+  expect(Math.abs(back.height - print.height)).toBeLessThanOrEqual(1);
+  expect(Math.abs(back.y - print.y)).toBeLessThanOrEqual(1);
+  const tops = await page.evaluate(() =>
+    ["aside[aria-labelledby='guide-contents']", "[data-guide-article]", "#guide-uses"].map(
+      (selector) => {
+        const node = document.querySelector(selector)!;
+        const box = (node.closest("aside, .raised") ?? node).getBoundingClientRect();
+        return Math.round(box.top);
+      },
+    ),
+  );
+  expect(Math.max(...tops) - Math.min(...tops)).toBeLessThanOrEqual(2);
   const contents = page.getByRole("navigation", { name: "Guide contents" });
   await expect(contents.locator('[aria-current="location"]')).toHaveText("Use the Journal first");
   // offsetTop is relative to the reading page, not the document, so scroll the section itself

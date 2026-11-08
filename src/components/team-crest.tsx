@@ -165,7 +165,7 @@ export function SwapCrest({ color, charge }: { color: string; charge: string }) 
     <span className={styles.swapCrest} aria-hidden="true" data-team-crest={symbol.current}>
       {shield.leaving !== null && (
         <span
-          key={`out-${shield.version}`}
+          key={`shield-out-${shield.version}`}
           className={styles.swapShield}
           data-leaving=""
           style={{ "--shield": url("crests", shield.leaving) } as React.CSSProperties}
@@ -173,14 +173,14 @@ export function SwapCrest({ color, charge }: { color: string; charge: string }) 
         />
       )}
       <span
-        key={`in-${shield.version}`}
+        key={`shield-in-${shield.version}`}
         className={styles.swapShield}
         data-entering={shield.version ? "" : undefined}
         style={{ "--shield": url("crests", shield.current) } as React.CSSProperties}
       />
       {symbol.leaving !== null && (
         <span
-          key={`out-${symbol.version}`}
+          key={`symbol-out-${symbol.version}`}
           className={styles.swapCharge}
           data-leaving=""
           style={{ "--charge": url("charges", symbol.leaving) } as React.CSSProperties}
@@ -188,7 +188,7 @@ export function SwapCrest({ color, charge }: { color: string; charge: string }) 
         />
       )}
       <span
-        key={`in-${symbol.version}`}
+        key={`symbol-in-${symbol.version}`}
         className={styles.swapCharge}
         data-entering={symbol.version ? "" : undefined}
         style={{ "--charge": url("charges", symbol.current) } as React.CSSProperties}

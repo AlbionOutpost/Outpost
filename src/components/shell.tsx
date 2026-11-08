@@ -33,6 +33,7 @@ import { AccountIdContext } from "./account-saves";
 import { RegionPicker } from "./region-picker";
 import { AvatarFrame } from "./avatar-frame";
 import { regionSchema } from "@/lib/albion/region-config";
+import { legalPublished } from "@/lib/legal";
 
 // The header's tools menu groups by the tool directory's sections, so the two never drift apart:
 // three columns, the third holding gathering and the two look-up tools.
@@ -681,7 +682,7 @@ export function Shell({
                   </nav>
                   <div className="site-footer-legal">
                     <span>© {new Date().getFullYear()} Outpost</span>
-                    <Link href="/legal">Privacy &amp; terms</Link>
+                    {legalPublished && <Link href="/legal">Privacy &amp; terms</Link>}
                     <button
                       type="button"
                       className="site-footer-top"

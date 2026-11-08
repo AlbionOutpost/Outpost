@@ -10,6 +10,18 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Signed in, library favorites and Specialization & focus levels are kept on the account and follow you to every device; the browser's own copy moves over once after sign-in without duplicates. Guests keep them in the browser as before. Private-store schema 14 (`0015_account_saves`).
 - Fishing hides its detail rows until every input is in, so the page stays on one screen with the fee filled.
 
+## Legal page unpublished — 8 November 2026
+
+- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.
+
+## Teams, guide reader and comp weapons — 8 November 2026
+
+- Team workspace: six tabs (Overview, Events, Members, Loadouts, Treasury, Announcements). "All teams" is a back link beside the chips; Settings sits behind a gear for the owner and Manage team / Manage roles holders and keeps `#team-settings`. Comps and Builds merge into Loadouts; `#team-comps` and `#team-builds` still land on their view. Phones get one sideways strip.
+- Overview: next event with quick actions, one Loadouts panel, members and news in a rail; empty parts are one line. Members is a role-coloured table with role filters, then invitations, requests and Leave team (moved from Settings). Rolls & flips: coin stage beside the form and flip history; loot rolls open on one row.
+- Team directory cards carry a banner in the team's shield colour; no "No description yet." filler.
+- Guide reader: details as hero chips, equal All guides / Print guide pills, contents and one "Use with this guide" rail aligned with the reading page.
+- Comps by activity cards overlay the three weapons their Group Builds comps carry most (player comps fill in), from a small build-time `grind-comp-weapons.json` on Cloudflare.
+
 ## Editors without the duplicates — 8 November 2026
 
 - Build editor: one loadout view, Cost · board · Abilities side by side (board, abilities, cost on phones). The "Your build" slot list and the Equipment, Abilities and Cost tabs are gone; the board is the only place to pick a slot. Alternatives and Notes stay as tabs.
@@ -53,7 +65,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Team economy — 8 November 2026
 
-- Teams get one **Treasury** tab (8 tabs in all) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
+- Teams get one **Treasury** tab (8 tabs then; six since the Loadouts merge) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
 - **Rolls & flips**: coin flips between two members or a call, to settle ties and decisions (no stakes: the owner decided flips never move silver); loot rolls (1–100, one roll each, highest wins, ties settled by a coin flip) with optional silver shared among the rollers and the pot. A 3D silver coin with a milled rim (crown heads, skull tails) tumbles end over end with a little precession, catches the light, casts a shadow that shrinks while it is high and lands with a bounce, a ring and dust; d100 number drums replay rolls. Both only replay the server's result; reduced motion shows it at once.
 - Manage wallet went to every role that had Manage loot splits (Postgres `20261108090000_team_economy`, private-store step 12).
 - Not done: roll penalties into the pot, giveaways, regear requests and stats from the Discord bot; live updates (the view re-reads every 20 s while a roll is open).
