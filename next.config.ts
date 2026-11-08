@@ -43,7 +43,11 @@ const config: NextConfig = {
       } satisfies Partial<NextConfig>)
     : {}),
   async redirects() {
-    return guideRedirects();
+    return [
+      // Comps open on their activities now (Nov 2026); the query (region) carries over.
+      { source: "/compositions/activities", destination: "/compositions", permanent: true },
+      ...guideRedirects(),
+    ];
   },
   async headers() {
     return [

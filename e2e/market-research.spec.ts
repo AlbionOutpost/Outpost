@@ -35,6 +35,10 @@ test("research batches item qualities, distinguishes missing quotes and retains 
     });
   });
   await page.goto("/tools/market?region=asia&item=T4_BAG&quality=2");
+  // The side column shows Price history first; the masthead tab switches it to research.
+  await expect(page.locator("#market-saved-research")).toBeHidden();
+  await page.getByRole("tab", { name: "Research & watchlist", exact: true }).click();
+  await expect(page.locator("#market-history-research")).toBeHidden();
   const tray = page.locator(".market-research-list");
   await tray.getByRole("button", { name: "Add selected to research", exact: true }).click();
   await tray.getByRole("button", { name: "Refresh research quotes", exact: true }).click();

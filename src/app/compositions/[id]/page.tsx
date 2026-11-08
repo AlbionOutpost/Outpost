@@ -76,7 +76,7 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
             <time dateTime={row.updatedAt.toISOString()}>{`Updated ${updated}`}</time>
           </span>
         </div>
-        <Link className="pill-link is-small masthead-back" href="/compositions">
+        <Link className="pill-link is-small masthead-back" href="/compositions?view=all">
           <ArrowLeft size={14} aria-hidden="true" /> All comps
         </Link>
       </WorkspaceHeading>

@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Comps open on their activities — 8 November 2026
+
+- `/compositions` opens on Comps by activity, as Builds does: painted activity cards with comp counts, each opening the list filtered to that activity. All comps is one click away at `/compositions?view=all`; links with a search, filter, source or page still open the list, and `/compositions/activities` 308s to `/compositions`. Footer, sitemap, canonicals and back pills follow.
+
 ## Forms, guild tax and a lively crest — 9 November 2026
 
 - Fields no longer start with sample text or zeros: the loot split name and pool, expense names, event head count and timezone (now the device's own) start empty with "e.g." hints; placeholders are quieter so they never read as typed. Empty required numbers show as missing, never as 0.

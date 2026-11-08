@@ -4,9 +4,11 @@
    tokens below read the same in light mode. */
 
 /* Layout: one screen. A sticky search rail, the desk (item hero over City orders) and, from
-   1280px, a side column with Price history over Keep researching, so the search, the answer,
-   every city and the history share the first screen at 1440×900. Below 1280 the sections
-   stack in reading order; phones fold the rail into one bar. */
+   1280px, a side column with one panel at a time (Price history or Keep researching, picked by
+   the masthead tabs), so the search, the answer, every city and the history share the first
+   screen at 1440×900 and 1920×1080. Desk and side panel are capped at the viewport below the
+   masthead; what does not fit scrolls inside them. Below 1280 the sections stack in reading
+   order; phones fold the rail into one bar. */
 .app.outpost .mx {
   display: grid;
   grid-template-columns: 256px minmax(0, 1fr);
@@ -39,19 +41,93 @@
   .app.outpost .mx-main {
     grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 420px);
   }
-  .app.outpost .mx-main > :first-child {
-    grid-row: span 2;
-  }
-  .app.outpost .mx-main > .mx-saved {
+  .app.outpost .mx-main > :is(.mx-history, .mx-saved) {
     grid-column: 2;
+    grid-row: 1;
+    padding: var(--space-4);
+  }
+  .app.outpost .mx .mx-hero {
+    gap: var(--space-2);
+    padding-block: var(--space-3);
+  }
+  .app.outpost .mx .mx-board {
+    padding-block: var(--space-3);
+  }
+  .app.outpost .mx .mx-board > :first-child {
+    margin-bottom: var(--space-3);
   }
   /* The chart grows with the screen instead of pushing the page down */
   .app.outpost .mx-history .history-panel {
-    --chart-h: clamp(140px, calc(100vh - 740px), 300px);
+    --chart-h: clamp(140px, calc(100vh - 660px), 250px);
+    gap: var(--space-3);
+  }
+  /* Side-column history controls: city and range on one row, refresh and hide on the next */
+  .app.outpost .mx-history .history-panel .history-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2) var(--space-3);
+  }
+  .app.outpost .mx-history .history-panel .history-city {
+    max-width: none;
+  }
+  .app.outpost .mx-history .history-panel .history-controls > button {
+    justify-self: start;
+  }
+  /* Side-column heads put their tabs or actions under the title */
+  .app.outpost .mx-main > :is(.mx-history, .mx-saved) > :first-child {
+    flex-wrap: wrap;
+    row-gap: var(--space-3);
+  }
+  .app.outpost .mx-main > :is(.mx-history, .mx-saved) > :first-child > :first-child {
+    flex-basis: 100%;
+  }
+  .app.outpost .mx-main > :is(.mx-history, .mx-saved) > :first-child > :last-child {
+    margin-left: 0;
   }
   /* A side-column chart labels its first, middle and last day */
   .app.outpost .mx-history .chart-range > span:is(:nth-child(2), :nth-child(4)) {
     display: none;
+  }
+}
+/* Tall enough for one screen: desk and side panel stop at the viewport under the header and
+   masthead, and what does not fit (an opened quality check, many rows) scrolls inside them,
+   the City orders table in its own well first. Shorter windows scroll the page instead. */
+@media (min-width: 1280px) and (min-height: 820px) {
+  .app.outpost .mx {
+    --mx-fit-h: calc(100dvh - 200px);
+  }
+  .app.outpost .mx-main > :is(.mx-history, .mx-saved) {
+    max-height: var(--mx-fit-h);
+    overflow-y: auto;
+  }
+  .app.outpost .mx-main > :first-child {
+    display: flex;
+    flex-direction: column;
+    max-height: var(--mx-fit-h);
+  }
+  .app.outpost .mx-main > :first-child > .mx-hero {
+    flex: none;
+  }
+  .app.outpost .mx-main > :first-child > .mx-board {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .app.outpost .mx-board > * {
+    flex: none;
+  }
+  .app.outpost .mx-board > .mx-table-well {
+    flex: 0 1 auto;
+    min-height: 160px;
+    overflow-y: auto;
+  }
+  .app.outpost .mx-board > .mx-table-well thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--well);
   }
 }
 .app.outpost .mx .market-hydration-guard {
@@ -359,7 +435,7 @@
   align-content: start;
   gap: 4px;
   min-width: 0;
-  padding: 10px var(--space-4);
+  padding: 10px var(--space-3);
 }
 .app.outpost .mx-figures > div + div {
   border-left: 1px solid var(--well-border);
@@ -420,16 +496,14 @@
   display: none;
 }
 
-/* The Stale chip on a headline figure (text, never colour alone) */
-.app.outpost .mx .mx-stale {
-  display: inline-flex;
-  align-items: center;
-  min-height: 20px;
-  padding: 0 7px;
-  border: 1px solid color-mix(in srgb, var(--warning) 50%, transparent);
-  border-radius: 999px;
+/* A stale headline figure: the amber age and the City orders ring (market-table.css) */
+.app.outpost .mx-figures time.is-stale {
   color: var(--warning);
-  font: 700 12px/1 var(--font-ui);
+}
+/* The newest observation keeps its city dot on the line with its text */
+.app.outpost .mx-figures small.mx-newest {
+  flex-wrap: nowrap;
+  align-items: baseline;
 }
 
 /* Selected city */
@@ -555,8 +629,8 @@
 
 /* Quality coverage, inside the orders panel */
 .app.outpost .mx .market-quality-availability {
-  margin-top: var(--space-4);
-  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
 }
 .app.outpost .mx .mx-quality-row {
   display: flex;
@@ -568,8 +642,8 @@
 .app.outpost .mx .mx-quality-row p {
   flex: 1 1 260px;
   margin: 0;
-  color: var(--secondary);
-  font-size: 13px;
+  color: var(--muted);
+  font-size: 12px;
   line-height: 1.5;
 }
 .app.outpost .mx .market-quality-availability > p {

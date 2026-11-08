@@ -1457,7 +1457,13 @@
 .app.outpost :is(.production-mode-nav, .discovery-tabs) {
   margin: 0 0 20px;
 }
-.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
+/* Market Explorer's side-panel tabs share the pill */
+.app.outpost .masthead-tabs > [role="tablist"] {
+  display: flex;
+  gap: 8px;
+}
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a,
+.app.outpost .masthead-tabs [role="tab"] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1471,38 +1477,45 @@
   white-space: nowrap;
   text-decoration: none;
   box-shadow: inset 0 1px 0 #ffffff10;
+  cursor: pointer;
   transition:
     border-color 160ms var(--ease-out),
     background 160ms var(--ease-out),
     color 160ms var(--ease-out);
 }
-.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a svg {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a svg,
+.app.outpost .masthead-tabs [role="tab"] svg {
   width: 16px;
   height: 16px;
   color: var(--accent-ink);
 }
-.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover,
+.app.outpost .masthead-tabs [role="tab"]:hover {
   border-color: #ffffff40;
   background: #1a1d25d9;
   color: #fff;
 }
-.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a[aria-current="page"] {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a[aria-current="page"],
+.app.outpost .masthead-tabs [role="tab"][aria-selected="true"] {
   border-color: color-mix(in srgb, var(--accent) 70%, #ffffff1f);
   background: color-mix(in srgb, var(--accent) 22%, #0f1116c0);
   color: #fff;
 }
-.app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
+.app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a,
+.app.outpost.light .masthead-tabs [role="tab"] {
   border-color: #5a3e2633;
   background: color-mix(in srgb, var(--panel) 85%, transparent);
   color: var(--text);
 }
-.app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover {
+.app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover,
+.app.outpost.light .masthead-tabs [role="tab"]:hover {
   background: var(--panel);
   border-color: #5a3e2655;
 }
 .app.outpost.light
   :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)
-  > a[aria-current="page"] {
+  > a[aria-current="page"],
+.app.outpost.light .masthead-tabs [role="tab"][aria-selected="true"] {
   background: color-mix(in srgb, var(--accent) 14%, var(--panel));
   color: var(--accent-ink);
 }
@@ -1523,7 +1536,8 @@
     padding-inline-end: 40px;
     mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 40px), transparent);
   }
-  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
+  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a,
+  .app.outpost .masthead-tabs [role="tab"] {
     min-height: 40px;
   }
 }

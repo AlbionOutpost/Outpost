@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { cities } from "../src/lib/albion/region-config";
 
+const innerHeightFor = (width: number) => (width === 1440 ? 900 : 1080);
 test("market source fixtures retain table, chart and filtering at review widths", async ({
   page,
 }) => {
@@ -75,6 +76,21 @@ test("market source fixtures retain table, chart and filtering at review widths"
     expect(measured.overflow).toBe(false);
     const observations = page.locator(".market-board .table-scroll");
     expect(await observations.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+    if (width >= 1440) {
+      // One screen: search, item, all eight cities and the history fit the first viewport, and
+      // the eight rows fit without scrolling their own well.
+      const fit = await page.evaluate(() => ({
+        workspace: document.querySelector(".mx")!.getBoundingClientRect().bottom,
+        history: document.querySelector(".mx-history")!.getBoundingClientRect().bottom,
+        tableOverflow: (() => {
+          const well = document.querySelector(".market-board .table-scroll")!;
+          return well.scrollHeight - well.clientHeight;
+        })(),
+      }));
+      expect(fit.workspace).toBeLessThanOrEqual(innerHeightFor(width));
+      expect(fit.history).toBeLessThanOrEqual(innerHeightFor(width));
+      expect(fit.tableOverflow).toBeLessThanOrEqual(1);
+    }
     await expect(page.locator(".market-inline-time").first()).toBeVisible();
   }
   await writeFile(`${folder}/measurements.json`, JSON.stringify(measures, null, 2));
@@ -83,4 +99,18 @@ test("market source fixtures retain table, chart and filtering at review widths"
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
   await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
   await expect(page.locator(".market-board tbody tr")).toContainText("Caerleon");
+  // The masthead tabs pick the side panel: one at a time, keyboard reachable.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const historyTab = page.getByRole("tab", { name: "Price history", exact: true });
+  const savedTab = page.getByRole("tab", { name: "Research & watchlist", exact: true });
+  await expect(historyTab).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("#market-saved-research")).toBeHidden();
+  await savedTab.click();
+  await expect(savedTab).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("#market-history-research")).toBeHidden();
+  await expect(page.locator(".market-research-list")).toBeVisible();
+  await savedTab.press("ArrowLeft");
+  await expect(historyTab).toBeFocused();
+  await expect(historyTab).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator(".price-chart")).toBeVisible();
 });

@@ -4,6 +4,7 @@ import { StatusLine } from "./status-line";
 import { Silver } from "./silver";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceAge } from "@/lib/albion/source-age";
+import { sourceTimestamp } from "@/lib/albion/freshness";
 import { observedAt } from "./market-city-table";
 
 export const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
@@ -89,11 +90,16 @@ export function MarketQuoteHero({
             <dt>Newest observation</dt>
             <dd>
               <b>{newest ? sourceAge(newest.date, now).label : "—"}</b>
-              <small>
+              <small className="mx-newest">
                 {newest ? (
                   <>
                     <span className="city-dot" data-city={newest.city} aria-hidden="true" />
-                    {newest.city} · {observedAt(newest.date)} UTC
+                    <span>
+                      {newest.city} · {/* Today's time alone; an older one keeps its date */}
+                      <time dateTime={newest.date} title={`${observedAt(newest.date)} UTC`}>
+                        {newestStamp(newest.date, now)}
+                      </time>
+                    </span>
                   </>
                 ) : (
                   "Unavailable"
@@ -115,6 +121,19 @@ export function MarketQuoteHero({
       )}
     </section>
   );
+}
+
+/** Today's observation shows its UTC time, an older one its UTC day; the exact time is on hover. */
+function newestStamp(date: string, now: number) {
+  const stamp = observedAt(date);
+  if (stamp === "Unknown") return "time unknown";
+  if (now && stamp.startsWith(new Date(now).toISOString().slice(0, 10)))
+    return `${stamp.slice(11)} UTC`;
+  return new Date(sourceTimestamp(date)).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
 }
 
 function Figure({
@@ -143,10 +162,19 @@ function Figure({
             <>
               <span className="city-dot" data-city={row.city} aria-hidden="true" />
               {row.city} ·{" "}
-              <time dateTime={date} title={`${observedAt(date)} UTC`}>
+              <time
+                dateTime={date}
+                title={`${observedAt(date)} UTC`}
+                className={age.stale ? "is-stale" : undefined}
+              >
                 {age.label}
               </time>
-              {age.stale && <span className="mx-stale">Stale</span>}
+              {/* Past an hour the age turns amber beside a hollow ring, as in City orders */}
+              {age.stale && (
+                <span className="mx-stale-mark" title="Stale: seen more than an hour ago">
+                  <span className="sr-only">Stale</span>
+                </span>
+              )}
             </>
           ) : (
             missing

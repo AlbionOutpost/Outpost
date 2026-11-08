@@ -150,6 +150,7 @@
 .app.outpost .history-panel .history-last small {
   color: var(--muted);
   font-size: 12px;
+  white-space: nowrap;
 }
 .app.outpost .history-panel .reference-price-figure {
   display: grid;

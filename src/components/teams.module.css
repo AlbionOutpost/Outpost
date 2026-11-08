@@ -1681,6 +1681,20 @@
   margin-bottom: var(--space-3);
   padding: var(--space-3) var(--space-4);
 }
+/* Guild tax set from a loot split when the team has no rate yet */
+:global(.app.outpost) .taxSetup.taxSetup {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+:global(.app.outpost) .taxSetupRow.taxSetupRow {
+  display: flex;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .taxSetupRow.taxSetupRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
 /* Guild tax: its own row under the summary, so leaders find it without opening the profile form */
 :global(.app.outpost) .taxRow.taxRow {
   display: flex;

@@ -35,6 +35,10 @@ export function seoText(value: string, limit = 190) {
 const scalar = (query: SeoQuery, name: string) =>
   typeof query[name] === "string" ? (query[name] as string) : "";
 
+/** `/compositions` opens on comps by activity; any of these parameters opens the comps list. */
+const compListKeys = ["view", "source", "mine", "q", "category", "page"];
+export const isCompList = (query: SeoQuery) => compListKeys.some((key) => key in query);
+
 /** Only explicit, bounded public identity enters metadata. Search/account inputs stay out. */
 export function canonicalUrl(path: string, query: SeoQuery = {}) {
   if (!path.startsWith("/") || path.startsWith("//") || /[?#\\\u0000-\u0020\u007f]/.test(path))
@@ -65,6 +69,8 @@ export function canonicalUrl(path: string, query: SeoQuery = {}) {
     const page = scalar(query, "page");
     if (/^[1-9]\d{0,3}$/.test(page) && Number(page) > 1) url.searchParams.set("page", page);
   }
+  if (path === "/compositions" && scalar(query, "view") === "all")
+    url.searchParams.set("view", "all");
   if (path === "/tools/kill-feed" && scalar(query, "view") === "deaths")
     url.searchParams.set("view", "deaths");
   return url.href;
@@ -232,13 +238,9 @@ export const publicPages: Record<string, [string, string]> = {
     "Albion Online builds by activity",
     "Find Albion Online builds for Solo Mists, Hellgates, Avalonian Dungeons, small scale and other activities.",
   ],
-  "/compositions/activities": [
+  "/compositions": [
     "Albion Online comps by activity",
     "Find Albion Online party comps for ZvZ, Hellgates, Avalonian Dungeons, small scale and other activities: player comps and recorded group builds.",
-  ],
-  "/compositions": [
-    "Albion Online team compositions",
-    "Browse Albion Online party compositions: comps players shared on Outpost and archived group builds, with member loadouts, roles and equipment.",
   ],
   "/guides": [
     "Albion Online player guides",
@@ -258,14 +260,24 @@ export const publicPages: Record<string, [string, string]> = {
   ],
 };
 
+/** The comps list (`/compositions?view=all` and every filtered list). */
+const compList = [
+  "Albion Online team compositions",
+  "Browse Albion Online party compositions: comps players shared on Outpost and archived group builds, with member loadouts, roles and equipment.",
+] as const;
+
 export function metadataForPage(path: string, query: SeoQuery = {}) {
-  const page = publicPages[path];
+  const page = path === "/compositions" && isCompList(query) ? compList : publicPages[path];
   if (!page) throw new Error(`No reviewed public metadata for ${path}`);
   const category = activityBackgrounds.find(
     (activity) => activity.id === scalar(query, "category"),
   );
   const title =
-    category && path === "/builds" ? `${category.name} builds — Albion Online` : page[0];
+    category && path === "/builds"
+      ? `${category.name} builds — Albion Online`
+      : category && path === "/compositions"
+        ? `${category.name} comps — Albion Online`
+        : page[0];
   const metadata = publicMetadata(title, page[1], path, query);
   if (path === "/")
     metadata.title = { absolute: "Outpost | Albion Online tools, builds & calculators" };

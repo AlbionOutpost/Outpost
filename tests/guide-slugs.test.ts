@@ -31,7 +31,7 @@ describe("guide URLs", () => {
     const previous = guides.flatMap((g) => (g.previousSlugs ?? []).map((old) => [old, g.slug]));
     expect(previous.length).toBeGreaterThanOrEqual(10);
     const redirects = await config.redirects!();
-    expect(redirects).toEqual(guideRedirects());
+    expect(redirects).toEqual(expect.arrayContaining(guideRedirects()));
     for (const [old, current] of previous) {
       expect(slugs.has(old), `${old} is still a live slug`).toBe(false);
       expect(redirects).toContainEqual({

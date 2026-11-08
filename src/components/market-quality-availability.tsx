@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { z } from "zod";
 import { qualityAvailabilityResponse } from "@/lib/albion/market-availability";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
@@ -11,12 +11,15 @@ export function MarketQualityAvailability({
   item,
   city,
   quality,
+  note,
   onChoose,
 }: {
   region: string;
   item: string;
   city: string;
   quality: string;
+  /** The orders' source note, which shares the row with the check button. */
+  note: ReactNode;
   onChoose: (quality: string) => void;
 }) {
   const key = `${region}:${item.trim().toUpperCase()}:${city}`;
@@ -80,7 +83,7 @@ export function MarketQualityAvailability({
       aria-busy={busy}
     >
       <div className="mx-quality-row">
-        <p>Another quality may have orders. Check all five without changing your selection.</p>
+        <p className="market-source-note">{note}</p>
         <button type="button" className="pill-link is-small" disabled={busy} onClick={check}>
           {busy ? "Checking quality coverage…" : "Check other qualities"}
         </button>

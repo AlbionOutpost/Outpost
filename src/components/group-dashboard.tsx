@@ -310,6 +310,7 @@ export function GroupDashboard({
             canLoot={can("manageLoot")}
             canPay={can("manageWallet")}
             guildTaxPercent={data.guildTaxPercent}
+            canSetTax={can("manageTeam")}
             locked={!!gate}
             active={tab === "Treasury"}
           />

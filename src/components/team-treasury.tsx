@@ -40,6 +40,7 @@ export function TeamTreasury({
   canLoot,
   canPay,
   guildTaxPercent = 0,
+  canSetTax = false,
   locked,
   active,
 }: {
@@ -52,6 +53,8 @@ export function TeamTreasury({
   canPay: boolean;
   /** The team's guild tax rate, offered as a toggle on the split. */
   guildTaxPercent?: number;
+  /** Manage team: may set the guild tax rate from a loot split. */
+  canSetTax?: boolean;
   locked: boolean;
   active: boolean;
 }) {
@@ -80,6 +83,7 @@ export function TeamTreasury({
           editable={canLoot}
           canPay={canPay}
           guildTaxPercent={guildTaxPercent}
+          canSetTax={canSetTax}
           active={active && view === "loot"}
         />
       </div>

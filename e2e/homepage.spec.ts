@@ -726,6 +726,13 @@ test("membership callout precedes activity discovery and the footer keeps its na
   await expect(
     footer.getByRole("link", { name: "Builds by activity", exact: true }),
   ).toHaveAttribute("href", "/builds/activities?region=asia");
+  await expect(
+    footer.getByRole("link", { name: "Comps by activity", exact: true }),
+  ).toHaveAttribute("href", "/compositions?region=asia");
+  await expect(footer.getByRole("link", { name: "All comps", exact: true })).toHaveAttribute(
+    "href",
+    "/compositions?view=all&region=asia",
+  );
   await footer.getByRole("link", { name: "Builds by activity", exact: true }).click();
   await expect(page).toHaveURL(/builds\/activities\?region=asia/);
   await page.emulateMedia({ reducedMotion: "reduce" });
