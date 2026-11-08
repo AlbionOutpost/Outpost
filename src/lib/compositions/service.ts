@@ -3,6 +3,7 @@ import type { ContentVisibility } from "@prisma/client";
 import { db, databaseService } from "../db";
 import { retrySerialization } from "../serialization-retry";
 import { HttpError } from "../http-error";
+import { lastDroppedRevision, storageLimits, tooManyCompositions } from "../storage-limits";
 import { can, type TeamAccess } from "../groups/permissions";
 import { loadTeamAccess } from "../groups/roles";
 import { compositionInput, type CompositionInput } from "./validation";
@@ -93,8 +94,18 @@ async function localSaveComposition(userId: string, input: unknown, id?: string,
               snapshot: data as Prisma.InputJsonValue,
             },
           });
+          // Only the newest revisions are kept; the trim is part of the same save.
+          await tx.compositionVersion.deleteMany({
+            where: { compositionId: id, version: { lte: lastDroppedRevision(version! + 1) } },
+          });
           return { id, version: version! + 1 };
         }
+        // Team comps count against the member who created them, like their own.
+        if (
+          (await tx.composition.count({ where: { authorId: userId } })) >=
+          storageLimits.compositions
+        )
+          throw tooManyCompositions();
         const created = await tx.composition.create({
           data: {
             ...record,

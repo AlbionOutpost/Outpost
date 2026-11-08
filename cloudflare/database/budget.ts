@@ -2,14 +2,18 @@ import { DurableObject } from "cloudflare:workers";
 
 /** One small, persistent coordination object per rate identity (including regional upstream budgets). */
 export class AbuseBudget extends DurableObject {
-  async allow(limit: number, seconds: number) {
+  /** `cost` weighs one call (KiB saved, for example); a call that does not fit spends nothing. */
+  async allow(limit: number, seconds: number, cost = 1) {
     if (
       !Number.isInteger(limit) ||
       limit < 1 ||
-      limit > 10_000 ||
+      limit > 1_000_000 ||
       !Number.isInteger(seconds) ||
       seconds < 1 ||
-      seconds > 86_400
+      seconds > 86_400 ||
+      !Number.isInteger(cost) ||
+      cost < 1 ||
+      cost > limit
     )
       return false;
     return this.ctx.storage.transaction(async () => {
@@ -20,11 +24,11 @@ export class AbuseBudget extends DurableObject {
         blockedUntil?: number;
       }>("budget");
       if (state?.blockedUntil && state.blockedUntil > now) return false;
-      if (state && state.until > now && state.count >= limit) return false;
+      if (state && state.until > now && state.count + cost > limit) return false;
       const next =
         state && state.until > now
-          ? { ...state, count: state.count + 1 }
-          : { count: 1, until: now + seconds * 1000 };
+          ? { ...state, count: state.count + cost }
+          : { count: cost, until: now + seconds * 1000 };
       await this.ctx.storage.put("budget", next);
       if (!state || state.until <= now) await this.ctx.storage.setAlarm(next.until);
       return next.count <= limit;

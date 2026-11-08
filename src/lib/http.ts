@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
 import { rateLimit } from "./redis";
 import { readBoundedText } from "./request-body";
+import { dailySaveLimitMessage, storageLimits } from "./storage-limits";
 export async function mutationUser(req: NextRequest) {
   const expected = new URL(process.env.NEXTAUTH_URL || req.url).origin;
   if (req.headers.get("origin") !== expected)
@@ -27,4 +28,14 @@ export async function boundedJson(req: NextRequest, maxBytes = 65536) {
     throw new HttpError(415, "JSON content type required");
   if (!req.body) throw new HttpError(400, "Body required");
   return JSON.parse(await readBoundedText(req, maxBytes));
+}
+/**
+ * Spends `bytes` of the account's daily save budget (50 MiB, counted in KiB), or refuses with 429
+ * before anything is written. Revision copies double what reaches the store, so one account adds
+ * at most about 100 MiB a day.
+ */
+export async function spendSaveBudget(userId: string, bytes: number) {
+  const kib = Math.max(1, Math.ceil(bytes / 1024));
+  if (!(await rateLimit(`content-bytes:${userId}`, storageLimits.dailySaveKiB, 86400, kib)))
+    throw new HttpError(429, dailySaveLimitMessage);
 }
