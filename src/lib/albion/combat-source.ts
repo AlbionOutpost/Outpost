@@ -155,6 +155,39 @@ export async function readCombatJson(url: string): Promise<unknown> {
   return JSON.parse(new TextDecoder().decode(buffer));
 }
 
+/* ---- Feed freshness -----------------------------------------------------------------------
+   Game Info sometimes answers the live feed with an old copy (seen on 8 Nov 2026: the Asia feed
+   returned kills from 31 Oct minutes after returning kills from that afternoon). Outpost keeps
+   the newest kill time it has seen per server and says, on the page, when an answer is behind it
+   or simply old, instead of presenting old fights as the latest. */
+
+/** The game normally publishes fights minutes late; past an hour the page says so. */
+export const SOURCE_DELAY_MS = 60 * 60_000;
+export type FeedFreshness = "live" | "delayed" | "snapshot";
+
+/** Newest kill time in a page of events (epoch ms), or null for an empty or undated page. */
+export function newestKillAt(events: { occurredAt: string }[]): number | null {
+  const times = events.map((e) => Date.parse(e.occurredAt)).filter(Number.isFinite);
+  return times.length ? Math.max(...times) : null;
+}
+
+/**
+ * "snapshot" when the answer is over an hour behind a kill Outpost already saw from the same
+ * server; "delayed" when the first page's newest kill is over an hour old; otherwise "live".
+ * Deeper pages are older by nature, so only the snapshot check applies to them.
+ */
+export function feedFreshness(
+  newestAt: number | null,
+  latestSeenAt: number | null,
+  now: number,
+  firstPage: boolean,
+): FeedFreshness {
+  if (newestAt === null) return "live";
+  if (latestSeenAt !== null && latestSeenAt - newestAt > SOURCE_DELAY_MS) return "snapshot";
+  if (firstPage && now - newestAt > SOURCE_DELAY_MS) return "delayed";
+  return "live";
+}
+
 /* ---- The week's top kills ----------------------------------------------------------------
    Albion's own kill-fame ranking lags by days, so Outpost keeps its own: a collector reads the
    live event feed every minute (and the official weekly ranking as a backstop), keeps a

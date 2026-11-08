@@ -21,6 +21,7 @@ export interface OutpostDatabaseBinding {
     kills: { id: number; occurredAt: number; fame: number; raw: unknown }[];
     collectedAt: string | null;
   }>;
+  killWatermark(region: string): Promise<number | null>;
 }
 export function databaseBinding(): OutpostDatabaseBinding {
   const env = getCloudflareContext().env;

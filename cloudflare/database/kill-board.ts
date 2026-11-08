@@ -8,7 +8,8 @@ import {
 /**
  * One server's shortlist of the last seven days' highest-fame kills (public game data). The
  * data worker's cron trigger records every collection pass; the web app reads the shortlist and
- * prices it. Rows outside the window or below the top 40 by fame are deleted on every write.
+ * prices it. Rows outside the window or below the top 40 by fame are deleted on every write. It
+ * also keeps the newest kill time seen, which the live feed compares each answer against.
  */
 export class KillBoard extends DurableObject {
   constructor(ctx: DurableObjectState, env: unknown) {
@@ -26,6 +27,7 @@ export class KillBoard extends DurableObject {
   async record(candidates: { id: number; occurredAt: number; fame: number; raw: string }[]) {
     if (!Array.isArray(candidates) || candidates.length > 200) throw new Error("Invalid kills");
     const now = Date.now();
+    let newest = this.#newest() ?? 0;
     this.ctx.storage.transactionSync(() => {
       for (const kill of candidates) {
         if (
@@ -38,6 +40,7 @@ export class KillBoard extends DurableObject {
           kill.occurredAt > now + 300_000
         )
           continue;
+        newest = Math.max(newest, kill.occurredAt);
         this.ctx.storage.sql.exec(
           `INSERT INTO kills (id, occurred_at, fame, raw) VALUES (?, ?, ?, ?)
            ON CONFLICT(id) DO UPDATE SET fame = excluded.fame, raw = excluded.raw`,
@@ -58,7 +61,23 @@ export class KillBoard extends DurableObject {
         "INSERT INTO meta (key, value) VALUES ('collected_at', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
         new Date(now).toISOString(),
       );
+      if (newest)
+        this.ctx.storage.sql.exec(
+          "INSERT INTO meta (key, value) VALUES ('newest_at', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+          String(newest),
+        );
     });
+  }
+  #newest(): number | null {
+    const row = this.ctx.storage.sql
+      .exec<{ value: string }>("SELECT value FROM meta WHERE key = 'newest_at'")
+      .toArray()[0];
+    const value = Number(row?.value);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+  /** The newest kill time any collection pass has seen (epoch ms): the feed's freshness mark. */
+  async newest(): Promise<number | null> {
+    return this.#newest();
   }
   async shortlist(): Promise<{ kills: KillCandidate[]; collectedAt: string | null }> {
     const since = Date.now() - KILL_WINDOW_MS;

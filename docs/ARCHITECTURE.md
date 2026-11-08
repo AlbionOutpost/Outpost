@@ -27,7 +27,7 @@ flowchart LR
 
 ### `albionoutpost-data` (`cloudflare/database/wrangler.jsonc`, `cloudflare/database/worker.ts`)
 
-No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC methods: `query`, `service`, `health`, `rateLimit`, `upstreamBlocked`, `upstreamBlock`, `archiveList`, `archiveFind`.
+No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC methods: `query`, `service`, `health`, `rateLimit`, `upstreamBlocked`, `upstreamBlock`, `archiveList`, `archiveFind`, `archiveTotals`, `topKills`, `killWatermark`. A cron trigger (`* * * * *`) reads each server's Game Info kill feed into its `KillBoard` Durable Object: the seven-day top-kill shortlist plus the newest kill time seen, which `/api/combat-events` compares each answer against to flag an old copy of the feed.
 
 | Store                                            | What it holds                                                                                                                          | Notes                                                                                                                                                                                                                                                                 |
 | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
