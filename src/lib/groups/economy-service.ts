@@ -43,6 +43,22 @@ async function balanceOf(tx: Tx, groupId: string, userId: string | null) {
   });
   return sum._sum.amount ?? 0;
 }
+/** True when booking these rows would take a wallet past the largest balance Outpost records. */
+async function passesLargest(
+  tx: Tx,
+  groupId: string,
+  rows: { userId: string | null; amount: number }[],
+) {
+  const sums = await tx.groupWalletEntry.groupBy({
+    by: ["userId"],
+    where: { groupId },
+    _sum: { amount: true },
+  });
+  const after = balancesFrom(sums.map((s) => ({ userId: s.userId, amount: s._sum.amount ?? 0 })));
+  for (const row of rows) after.set(row.userId, (after.get(row.userId) ?? 0) + row.amount);
+  return rows.some((row) => after.get(row.userId)! > maxSilver);
+}
+const tooLarge = () => new HttpError(409, "That would pass the largest balance Outpost records.");
 async function currentMembers(tx: Tx, groupId: string, ids: string[]) {
   return (
     (await tx.groupMember.count({ where: { groupId, userId: { in: [...new Set(ids)] } } })) ===
@@ -190,13 +206,13 @@ async function localTeamWallet(groupId: string, userId: string, input?: unknown)
       if (!payouts.length && !result.guildTax)
         throw new HttpError(409, "This split pays out no silver.");
       // The guild tax the split took goes into the team pot, in the same booking.
-      if (result.guildTax && (await balanceOf(tx, groupId, null)) + result.guildTax > maxSilver)
-        throw new HttpError(409, "That would pass the largest balance Outpost records.");
+      const rows = [
+        ...payouts.map((p) => ({ userId: p.userId as string | null, amount: p.silver })),
+        ...(result.guildTax ? [{ userId: null, amount: result.guildTax }] : []),
+      ];
+      if (await passesLargest(tx, groupId, rows)) throw tooLarge();
       await tx.groupWalletEntry.createMany({
-        data: [
-          ...payouts.map((p) => ({ userId: p.userId as string | null, amount: p.silver })),
-          ...(result.guildTax ? [{ userId: null, amount: result.guildTax }] : []),
-        ].map((row) => ({
+        data: rows.map((row) => ({
           groupId,
           ...row,
           kind: "split",
@@ -485,6 +501,15 @@ async function localTeamGames(groupId: string, userId: string, input?: unknown) 
         entries.map((e) => e.userId),
         roll.potShare,
       );
+      if (
+        shares.length &&
+        (await passesLargest(
+          tx,
+          groupId,
+          shares.map((s) => ({ userId: s.userId, amount: s.silver })),
+        ))
+      )
+        throw tooLarge();
       if (shares.length)
         await tx.groupWalletEntry.createMany({
           data: shares.map((s) => ({
