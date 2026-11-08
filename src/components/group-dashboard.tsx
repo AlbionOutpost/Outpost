@@ -356,7 +356,9 @@ export function GroupDashboard({
           <GroupLoadouts ctx={ctx} view={loadouts} onView={(next) => setTab("Loadouts", next)} />
         )}
         {tab === "Announcements" && <GroupAnnouncements ctx={ctx} />}
-        {tab === "Announcements" && <TeamGiveaways groupId={groupId} region={group.region} />}
+        {tab === "Announcements" && (
+          <TeamGiveaways groupId={groupId} region={group.region} locked={!!gate} />
+        )}
         {tab === "Settings" && <GroupSettings ctx={ctx} profile={profile} />}
       </div>
       {can("manageEvents") && (

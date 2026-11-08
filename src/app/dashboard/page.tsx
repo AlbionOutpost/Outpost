@@ -17,6 +17,7 @@ import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import { productionPlanSchema } from "@/lib/albion/production-plan";
 import styles from "./dashboard.module.css";
 import { signInPath } from "@/lib/sign-in-return";
+import { displayName } from "@/lib/display-name";
 export const metadata = privateMetadata("Dashboard");
 
 const renderedAt = () => Date.now();
@@ -155,7 +156,7 @@ export default async function Dashboard() {
         icon="account"
         emblem={<AvatarFrame frame={u.avatarFrame} size={96} image={u.image} name={u.name} />}
         scene="guides"
-        title={`Welcome, ${u.name || "Adventurer"}.`}
+        title={`Welcome, ${displayName(u.name)}.`}
         accent="Welcome"
         description={
           fresh

@@ -11,7 +11,7 @@ export interface OutpostDatabaseBinding {
   query(queries: DatabaseQuery[]): Promise<DatabaseReply<unknown[]>>;
   service(name: string, args: unknown[]): Promise<DatabaseReply>;
   health(): Promise<boolean>;
-  rateLimit(key: string, limit: number, seconds: number): Promise<boolean>;
+  rateLimit(key: string, limit: number, seconds: number, cost?: number): Promise<boolean>;
   upstreamBlocked(region: string): Promise<boolean>;
   upstreamBlock(region: string, milliseconds: number): Promise<void>;
   archiveList(kind: string, input: LibraryQuery): Promise<unknown>;

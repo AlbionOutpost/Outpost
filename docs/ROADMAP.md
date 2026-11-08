@@ -11,6 +11,12 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Double clicks no longer send a second flip, roll or wallet change. Ledger columns align by content (wallet and reason left).
 - three.js and the WebGL scenes are gone (about 160 KB gzip of client chunks).
 
+## Storage limits, display names and the launch grant — 8 November 2026
+
+- Each account keeps up to 500 builds and 500 comps (Team comps count for their creator), the last 50 revisions of each, and saves up to 50 MiB a day; the editors say so in plain words (409/429). Older revisions go on the next save.
+- Display names lose hidden and direction-control characters and extra spaces; names that read as Outpost or its staff are refused. Existing names stay as stored and are cleaned where they show.
+- Launch grant: every account, including new sign-ups, is a lifetime Supporter, free; settings, admin and `/supporter` say "Launch Supporter". The Team gates are on and consistent (giveaway management included) but lock nobody while the launch is open. No prices or checkout anywhere.
+
 ## Surfaces with depth and a softer backdrop — 8 November 2026
 
 - Every page but the landing sits on the castle painting pre-blurred (13 KB, one file for every width) under a deeper veil and a vignette, so panels and text read cleanly over it.
