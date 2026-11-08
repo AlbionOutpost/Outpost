@@ -301,6 +301,7 @@ export default async function Groups({
           </ul>
         ) : (
           <EmptyWell
+            surface
             emblem="team-roles"
             title={
               mine && !userId

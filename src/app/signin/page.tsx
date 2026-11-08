@@ -66,7 +66,7 @@ export default async function Signin({
       </div>
       <ul className={styles.benefits}>
         {benefits.map(([emblem, title, line]) => (
-          <li key={emblem} className="well">
+          <li key={emblem} className="raised">
             {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
             <img src={`/albion/icons/${emblem}.webp`} alt="" width={44} height={44} />
             <span>

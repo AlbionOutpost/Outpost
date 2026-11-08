@@ -239,8 +239,8 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         </div>
       )}
       {failed && (
-        // Said once, in a well, with the way back beside it (as Market says a failed quote)
-        <div className={`well ${styles.error}`}>
+        // Said once, on its own surface, with the way back beside it
+        <div className={`raised ${styles.error}`}>
           <StatusLine tone="error">
             {error.message}
             {feed ? " The last page that loaded stays below." : ""}

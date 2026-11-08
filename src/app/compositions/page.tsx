@@ -321,6 +321,7 @@ export default async function Compositions({
         {!shown &&
           (q || activity ? (
             <EmptyWell
+              surface
               emblem="team-comps"
               title={q ? `No comp matches “${q}”` : "No comp matches those filters"}
               line="Check the spelling, try another activity, or clear the filters."
@@ -332,6 +333,7 @@ export default async function Compositions({
             />
           ) : mine ? (
             <EmptyWell
+              surface
               emblem="team-comps"
               title={userId ? "No comps of your own yet" : "Sign in to see your comps"}
               line={
@@ -352,6 +354,7 @@ export default async function Compositions({
             />
           ) : (
             <EmptyWell
+              surface
               emblem="team-comps"
               title="No player has shared a comp yet"
               line="Start from a recorded Group Build, or plan your own and share it."

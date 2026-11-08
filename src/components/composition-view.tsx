@@ -305,6 +305,7 @@ export function CompositionView({
           </>
         ) : (
           <EmptyWell
+            surface
             emblem="team-comps"
             title="No member of this comp could be read"
             line="The comp is still here; its roster needs to be planned again."

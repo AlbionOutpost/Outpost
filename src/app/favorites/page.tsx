@@ -81,6 +81,7 @@ export default async function Favorites({
                 line="Kept on your Discord account, on every device."
               />
               <EmptyWell
+                surface
                 emblem="strip-comps"
                 title="Sign in to see your saved player builds and comps"
                 line="Player builds and comps you favorite are kept on your Discord account, on every device."
@@ -181,6 +182,7 @@ export default async function Favorites({
                 )}
                 {!builds.length && (
                   <EmptyWell
+                    surface
                     emblem="team-roles"
                     title={
                       q ? "No favorite builds match this search" : "No player builds saved yet"
@@ -235,6 +237,7 @@ export default async function Favorites({
                   </div>
                 ) : (
                   <EmptyWell
+                    surface
                     emblem="strip-comps"
                     title="No comps saved yet"
                     line="Add a comp to your favorites to keep it for your next group session."

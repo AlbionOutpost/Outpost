@@ -200,6 +200,7 @@ function GroupComps({ ctx }: { ctx: TeamContext }) {
         </CompGrid>
       ) : (
         <EmptyWell
+          surface
           emblem="team-comps"
           title="No shared comps yet"
           line="Create a comp and set its visibility to this team; it shows up here for every member."
@@ -317,6 +318,7 @@ function GroupBuilds({ ctx }: { ctx: TeamContext }) {
         </ul>
       ) : (
         <EmptyWell
+          surface
           emblem="strip-builds"
           title="No shared builds yet"
           line={

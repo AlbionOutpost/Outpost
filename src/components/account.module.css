@@ -146,13 +146,19 @@
   gap: var(--space-5);
   min-width: 0;
 }
-/* The hero's shade: a soft dark ellipse so the headline reads on the bright sky */
+/* The hero's shade: a soft ellipse of the page colour so the headline reads on the bright sky
+   (charcoal under light type at night, parchment under dark type in light mode) */
 :global(.app.outpost) .signinCopy.signinCopy::before {
   content: "";
   position: absolute;
   inset: -64px -48px -48px -120px;
   z-index: -1;
-  background: radial-gradient(ellipse at 35% 45%, #0c0d10d9, #0c0d1099 45%, transparent 72%);
+  background: radial-gradient(
+    ellipse at 35% 45%,
+    color-mix(in srgb, var(--bg) 85%, transparent),
+    color-mix(in srgb, var(--bg) 60%, transparent) 45%,
+    transparent 72%
+  );
   pointer-events: none;
 }
 :global(.app.outpost) .signinTitle.signinTitle {
@@ -165,6 +171,10 @@
   text-shadow:
     0 2px 3px #000e,
     0 4px 18px #000c;
+}
+/* On parchment the night-time glow behind the type only muddies it */
+:global(.app.outpost.light) :is(.signinTitle.signinTitle, .signinLede.signinLede) {
+  text-shadow: none;
 }
 :global(.app.outpost) .signinTitle.signinTitle em {
   font-style: normal;
@@ -182,7 +192,7 @@
   grid-area: benefits;
   align-self: start;
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
   max-width: 520px;
   margin: 0;
   padding: 0;
@@ -192,7 +202,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 10px 14px;
+  padding: 12px 16px;
 }
 :global(.app.outpost) .benefits.benefits img {
   flex: none;
