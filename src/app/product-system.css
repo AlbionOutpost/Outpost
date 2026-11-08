@@ -38,6 +38,7 @@
   --accent-wash: #ee945a14;
   --action: #ee945a;
   --action-hover: #ffb482;
+  --primary-ink: #21150e;
   --success: #38c88c;
   --positive: #38c88c;
   --error: #ef6969;
@@ -74,6 +75,7 @@
   --accent-hover: #6e2c0c;
   --accent-active: #c85a2f;
   --action-hover: #6e2c0c;
+  --primary-ink: #fff8f1;
   --accent-wash: #8f3d1417;
   --focus: #25507f;
   --success: #2c5f26;
@@ -248,8 +250,14 @@
     [aria-current="true"],
     :has(> input:checked)
   ) {
+  /* The chosen option rises out of the track: a small lit plate with an ember edge */
   border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  background: var(--accent-wash);
+  background:
+    linear-gradient(var(--accent-wash), var(--accent-wash)),
+    linear-gradient(180deg, var(--control-top), var(--control-bottom));
+  box-shadow:
+    inset 0 1px 0 var(--surface-highlight),
+    0 1px 2px #00000066;
   color: var(--accent-ink);
 }
 .app.outpost .segmented > label > input {
@@ -291,22 +299,79 @@
   }
 }
 
-/* Dark metal controls have a quieter edge than the equipment and primary actions. */
-.app.outpost:not(.light) .button.primary {
-  color: #21150e;
-  background: linear-gradient(#f5a36d, var(--action));
-  border: 1px solid #f7b68675;
-  box-shadow:
-    inset 0 1px 0 #ffe9ce38,
-    0 2px 3px #00000030;
-}
-.app.outpost:not(.light) .button.secondary {
-  background: #20252b;
-  border-color: #41474e;
+/* Buttons: small raised surfaces with the panel's recipe in miniature: a fill lit from the top,
+   a 1px edge brighter along the top, an inner highlight and a short drop. Hover warms the edge
+   toward ember, a press sinks the face. Primary is the ember plate with dark ink (white on the
+   light theme's rust). Layout (padding, width) stays with each page. */
+.app.outpost .button {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, var(--control-top), var(--control-bottom)) padding-box,
+    linear-gradient(180deg, var(--control-edge-top), var(--control-edge)) border-box;
+  box-shadow: var(--control-shadow);
   color: var(--text);
 }
-.app.outpost:not(.light) .button.primary:hover {
-  background: var(--action-hover);
+.app.outpost .button:hover:not(:disabled) {
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--text) 6%, var(--control-top)),
+        var(--control-top)
+      )
+      padding-box,
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent) 75%, var(--control-edge-top)),
+        color-mix(in srgb, var(--accent) 40%, var(--control-edge))
+      )
+      border-box;
+  color: var(--text);
+}
+.app.outpost .button:active:not(:disabled) {
+  background:
+    linear-gradient(180deg, var(--control-bottom), var(--control-top)) padding-box,
+    linear-gradient(180deg, var(--control-edge), var(--control-edge-top)) border-box;
+  box-shadow: var(--control-pressed);
+}
+.app.outpost .button.primary {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--action) 84%, #fff), var(--action)) padding-box,
+    linear-gradient(180deg, color-mix(in srgb, var(--action) 55%, #fff), var(--accent-active))
+      border-box;
+  box-shadow:
+    inset 0 1px 0 #ffffff4d,
+    0 1px 2px #00000059,
+    0 6px 14px -6px color-mix(in srgb, var(--action) 70%, transparent);
+  color: var(--primary-ink);
+}
+.app.outpost .button.primary:hover:not(:disabled) {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--action-hover) 84%, #fff), var(--action-hover))
+      padding-box,
+    linear-gradient(180deg, color-mix(in srgb, var(--action-hover) 55%, #fff), var(--action))
+      border-box;
+  color: var(--primary-ink);
+}
+.app.outpost .button.primary:active:not(:disabled) {
+  background:
+    linear-gradient(180deg, var(--accent-active), var(--action)) padding-box,
+    linear-gradient(180deg, var(--accent-active), var(--accent-active)) border-box;
+  box-shadow: inset 0 2px 4px #00000040;
+}
+.app.outpost .button.negative {
+  background: none;
+  border-color: color-mix(in srgb, var(--error) 70%, transparent);
+  box-shadow: none;
+  color: var(--error);
+}
+.app.outpost .button.negative:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+  border-color: var(--error);
+  color: var(--error);
+}
+.app.outpost .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -334,11 +399,35 @@
   --canvas-mid: #110f10;
   --illustration-bg: #0c0d10;
   --canvas-end: var(--illustration-bg);
-  --surface-raised: #1b1e26;
-  --surface-scrim: #171a21;
-  --well: #0f1116cc;
+  /* Surfaces (DESIGN.md "Elevation & Depth"): every box is a warm charcoal fill lit from the
+     top, a crisp 1px edge that is copper-lit along the top and darker below, an inner highlight
+     under that edge, a dark outer rim and a stacked soft drop. Wells are the opposite: cut in,
+     shaded at the top with a light lip under them. Controls are small raised surfaces. */
+  --surface-raised: #1d1e22;
+  --surface-scrim: #18191c;
+  --surface-top: #24252a;
+  --surface-bottom: #18191c;
+  --surface-glow: color-mix(in srgb, var(--accent) 7%, transparent);
+  --surface-edge-top: color-mix(in srgb, var(--accent) 40%, #4d4f55);
+  --surface-edge-bottom: #2c2e33;
+  --surface-highlight: #ffffff14;
+  --surface-inset-edge: #ffffff12;
+  --surface-rim: #000000a6;
+  --shadow-surface:
+    0 0 0 1px var(--surface-rim), 0 2px 3px -1px #0000008c, 0 12px 24px -10px #000000b3,
+    0 32px 64px -28px #000000cc;
+  --shadow-surface-hover:
+    0 0 0 1px var(--surface-rim), 0 4px 6px -2px #0000008c, 0 20px 36px -12px #000000c0,
+    0 44px 80px -30px #000000d9;
+  --control-top: #2c2e33;
+  --control-bottom: #212227;
+  --control-edge: #464950;
+  --control-edge-top: #5a5d64;
+  --control-shadow: inset 0 1px 0 #ffffff17, 0 1px 2px #00000080, 0 3px 8px -3px #00000066;
+  --control-pressed: inset 0 2px 4px #00000073;
+  --well: #0e0f12cc;
   --well-border: #ffffff12;
-  --well-inset: inset 0 1px 3px #0009;
+  --well-inset: inset 0 1px 3px #000000a6, 0 1px 0 #ffffff0a;
   --edge-light: #ffffff14;
   --role-tank: #e0a53c;
   --role-healer: #4fb8c9;
@@ -351,15 +440,12 @@
   --scene-build: url("/albion/illustrations/build-v1.webp");
   --scene-composition: url("/albion/illustrations/composition-v1.webp");
   --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
-  /* The card edge is a hairline that is lit at the top and fades toward the bottom (a real
-     border, so painted scenes inside never cover it), over a dark rim and a soft drop. */
-  --raised-edge: #ffffff12;
-  --raised-edge-top: #ffffff26;
-  --raised-edge-hover: color-mix(in srgb, var(--accent) 50%, #ffffff1a);
-  --shadow-raised: 0 0 0 1px #00000080, 0 2px 4px #00000059, 0 14px 32px -10px #000000c0;
-  --shadow-raised-hover:
-    0 0 0 1px #00000080, 0 4px 8px #00000059, 0 22px 44px -12px #000000cc,
-    0 0 36px -14px color-mix(in srgb, var(--accent) 55%, transparent);
+  /* Older names for the surface edge and shadow, kept for the sheets that draw their own box */
+  --raised-edge: var(--surface-edge-bottom);
+  --raised-edge-top: var(--surface-edge-top);
+  --raised-edge-hover: color-mix(in srgb, var(--accent) 60%, var(--surface-edge-top));
+  --shadow-raised: var(--shadow-surface);
+  --shadow-raised-hover: var(--shadow-surface-hover);
 }
 @media (max-width: 700px) {
   .app.outpost {
@@ -376,15 +462,33 @@
   --canvas-end: #a68d76;
   --surface-raised: #d6b18e;
   --surface-scrim: #cfa985;
+  --surface-top: #dcb894;
+  --surface-bottom: #cda783;
+  --surface-glow: #f6dcbd59;
+  --surface-edge-top: #9a7a5c;
+  --surface-edge-bottom: #7d5f45;
+  --surface-highlight: #f6dcbd80;
+  --surface-inset-edge: #5a3e2633;
+  --surface-rim: #3a25121f;
+  --shadow-surface:
+    0 0 0 1px var(--surface-rim), 0 2px 3px -1px #3a251233, 0 12px 24px -12px #3a251259;
+  --shadow-surface-hover:
+    0 0 0 1px var(--surface-rim), 0 4px 6px -2px #3a251233, 0 20px 36px -14px #3a251273;
+  --control-top: #dfbd9b;
+  --control-bottom: #cba783;
+  --control-edge: #8a6b50;
+  --control-edge-top: #9d7d60;
+  --control-shadow: inset 0 1px 0 #f6dcbd99, 0 1px 2px #3a251233, 0 3px 8px -4px #3a251240;
+  --control-pressed: inset 0 2px 4px #3a251240;
   --well: #c4a283;
   --well-border: #5a3e2640;
-  --well-inset: inset 0 1px 2px #3a251233;
+  --well-inset: inset 0 1px 2px #3a251233, 0 1px 0 #f6dcbd66;
   --edge-light: #ecc9a5;
-  --raised-edge: #6b4a2a55;
-  --raised-edge-top: #6b4a2a40;
-  --raised-edge-hover: color-mix(in srgb, var(--accent) 55%, #6b4a2a40);
-  --shadow-raised: 0 1px 2px #3a25121f, 0 10px 24px -8px #3a251240;
-  --shadow-raised-hover: 0 2px 4px #3a251226, 0 16px 32px -10px #3a25124d;
+  --raised-edge: var(--surface-edge-bottom);
+  --raised-edge-top: var(--surface-edge-top);
+  --raised-edge-hover: color-mix(in srgb, var(--accent) 60%, var(--surface-edge-top));
+  --shadow-raised: var(--shadow-surface);
+  --shadow-raised-hover: var(--shadow-surface-hover);
 }
 /* The backdrop: one painting fixed behind every page, so sections scroll over a single
    continuous scene and nothing ever meets at a seam. A scrim that scrolls with the page keeps
@@ -413,6 +517,17 @@
   --backdrop-veil: 28%;
   --backdrop-deep: 90%;
 }
+/* Every page but the landing works over a softened painting: the same scene pre-blurred
+   (scripts/backdrop-soft.mjs, 13 KB at every width), a deeper veil and a vignette that settles
+   the edges, so the scene stays atmosphere and the panels and text read cleanly over it. The
+   browser never blurs a full-screen layer itself, so scrolling costs nothing. */
+.app.outpost:not(.home-route) {
+  --backdrop: url("/albion/illustrations/backdrop-v1-soft.webp");
+  --backdrop-veil: 40%;
+}
+.app.outpost.light:not(.home-route) {
+  --backdrop-veil: 34%;
+}
 .app.outpost .main {
   position: relative;
   isolation: isolate;
@@ -435,6 +550,21 @@
     var(--backdrop) 62% 40% / cover no-repeat,
     var(--canvas-end);
   pointer-events: none;
+}
+.app.outpost:not(.home-route) .site-backdrop {
+  background:
+    radial-gradient(
+      120% 90% at 58% 30%,
+      transparent 40%,
+      color-mix(in oklab, var(--canvas-end) 55%, transparent) 100%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--canvas-end) var(--backdrop-veil), transparent) 0%,
+      color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-veil) + 18%), transparent) 100%
+    ),
+    var(--backdrop) 62% 40% / cover no-repeat,
+    var(--canvas-end);
 }
 /* The scrolling scrim: clear for the first screen, eased into the canvas below it */
 .app.outpost .main::before {
@@ -544,6 +674,12 @@
   --elevated: #24292f;
   --border: #353b43;
   --bg: #101215;
+  --control-top: #2c2e33;
+  --control-bottom: #212227;
+  --control-edge: #464950;
+  --control-edge-top: #5a5d64;
+  --control-shadow: inset 0 1px 0 #ffffff17, 0 1px 2px #00000080, 0 3px 8px -3px #00000066;
+  --surface-highlight: #ffffff14;
   color: #f4f2ee;
 }
 .app.outpost .workspace-emblem {
@@ -823,17 +959,11 @@
   }
 }
 
-/* Raised surface: the card that sits on the page, and the wells cut into it */
+/* Raised surface: the card that sits on the page, and the wells cut into it. The surface itself
+   (fill, edge, highlight, shadow) is the working-panel recipe further down. */
 .app.outpost .raised {
   min-width: 0;
-  border: 1px solid var(--raised-edge);
-  border-top-color: var(--raised-edge-top);
-  border-radius: 12px;
-  background: var(--surface-raised);
-  box-shadow: var(--shadow-raised);
-  transition:
-    border-color 300ms var(--ease-out-expo),
-    box-shadow 300ms var(--ease-out-expo);
+  border-radius: var(--radius-lg);
 }
 .app.outpost .raised.has-scene {
   position: relative;
@@ -939,6 +1069,7 @@
   --accent-wash: #ee945a14;
   --action: #ee945a;
   --action-hover: #ffb482;
+  --primary-ink: #21150e;
   --metal: #d0ad79;
   --success: #5fc98a;
   --positive: #5fc98a;
@@ -955,8 +1086,27 @@
   --line-soft: color-mix(in srgb, #5c4632 72%, transparent);
   --surface-raised: #2e2218;
   --surface-scrim: #2a1f16;
+  --surface-top: #3a2b1f;
+  --surface-bottom: #2a1f16;
+  --surface-glow: color-mix(in srgb, var(--accent) 8%, transparent);
+  --surface-edge-top: color-mix(in srgb, var(--accent) 38%, #6b513b);
+  --surface-edge-bottom: #4a3828;
+  --surface-highlight: #f3e7d31a;
+  --surface-inset-edge: #f3e7d314;
+  --surface-rim: #2a1b1059;
+  --shadow-surface:
+    0 0 0 1px var(--surface-rim), 0 2px 3px -1px #3a251240, 0 14px 28px -14px #3a251280;
+  --shadow-surface-hover:
+    0 0 0 1px var(--surface-rim), 0 4px 6px -2px #3a251240, 0 22px 40px -16px #3a251299;
+  --control-top: #4a382a;
+  --control-bottom: #3b2c20;
+  --control-edge: #6b513b;
+  --control-edge-top: #7e6249;
+  --control-shadow: inset 0 1px 0 #f3e7d31f, 0 1px 2px #0000006b, 0 3px 8px -3px #00000052;
+  --control-pressed: inset 0 2px 4px #00000066;
   --well: #1e1610cc;
   --well-border: #f3e7d314;
+  --well-inset: inset 0 1px 3px #0000008c, 0 1px 0 #f3e7d30d;
   --edge-light: #f3e7d314;
   color-scheme: dark;
   color: var(--text);
@@ -1022,14 +1172,13 @@
     box-shadow 420ms var(--ease-out-expo),
     --glow 420ms var(--ease-out-expo);
 }
-.app.outpost :is(a.raised, .raised.is-link):not(.has-scene) {
-  background:
-    radial-gradient(
-      480px circle at var(--mx, 50%) var(--my, -10%),
-      color-mix(in srgb, var(--accent) calc(var(--glow, 0) * 1%), transparent),
-      transparent 62%
-    ),
-    var(--surface-raised);
+/* Plain surfaces that lead somewhere: the edge turns ember and the drop deepens (the surface
+   recipe below reads these tokens, so hover only changes them) */
+.app.outpost :is(a.raised, .raised.is-link):not(.has-scene):is(:hover, :focus-within) {
+  --surface-edge-top: color-mix(in srgb, var(--accent) 75%, var(--control-edge-top));
+  --surface-edge-bottom: color-mix(in srgb, var(--accent) 35%, var(--control-edge));
+  --shadow-surface: var(--shadow-surface-hover);
+  --glow: 9;
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .app.outpost
@@ -1052,15 +1201,7 @@
   }
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
-  .app.outpost
-    :is(
-      a.raised,
-      .raised.is-link,
-      .landing-window,
-      .landing-card,
-      .kill-card,
-      .activity-card
-    ):hover {
+  .app.outpost :is(.landing-window, .landing-card, .kill-card, .activity-card):hover {
     border-color: var(--raised-edge-hover);
     box-shadow: var(--shadow-raised-hover);
   }
@@ -1073,25 +1214,18 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
-.app.outpost.light .well {
-  box-shadow: inset 0 1px 2px #16203214;
-}
-/* Every working panel is raised; art stays on cards that are links to something */
-/* The panel face and edge, shared by every older page's own boxes too */
+/* The panel face and edge, for the older boxes that draw their own (editor workspaces) */
 .app.outpost {
   --panel-face:
-    radial-gradient(
-      120% 60% at 50% 0%,
-      color-mix(in srgb, var(--edge-light) 55%, transparent),
-      transparent 60%
-    ),
-    var(--panel);
-  --panel-edge: color-mix(in srgb, var(--accent) 18%, var(--border));
-  --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
+    radial-gradient(130% 80% at 50% 0%, var(--surface-glow), transparent 62%),
+    linear-gradient(180deg, var(--surface-top), var(--surface-bottom));
+  --panel-edge: var(--surface-edge-bottom);
+  --panel-edge-top: var(--surface-edge-top);
 }
-/* Re-resolved where the palette changes (framed cards, mastheads), so boxes inside follow it */
+/* Re-resolved where the palette changes (framed cards, mastheads, panels), so boxes inside
+   follow it */
 .app.outpost
   :is(
     .raised.has-scene,
@@ -1134,18 +1268,13 @@
     )
   ) {
   --panel-face:
-    radial-gradient(
-      120% 60% at 50% 0%,
-      color-mix(in srgb, var(--edge-light) 55%, transparent),
-      transparent 60%
-    ),
-    var(--panel);
-  --panel-edge: color-mix(in srgb, var(--accent) 18%, var(--border));
-  --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
+    radial-gradient(130% 80% at 50% 0%, var(--surface-glow), transparent 62%),
+    linear-gradient(180deg, var(--surface-top), var(--surface-bottom));
+  --panel-edge: var(--surface-edge-bottom);
+  --panel-edge-top: var(--surface-edge-top);
 }
-/* Working panels are windows in the game's style: a soft top light over the surface, a hairline
-   ember edge brighter along the top, an inner highlight and a deep drop, so they sit on the
-   painting like the landing's cards without their art. */
+/* A panel inside a panel stays plain: a hairline edge, a faint lift of the fill and the inner
+   highlight, never a second drop shadow. */
 .app.outpost
   :is(
     .panel,
@@ -1182,25 +1311,18 @@
       )
       *
   ) {
-  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--raised-edge));
-  border-top-color: color-mix(in srgb, var(--accent) 48%, var(--raised-edge-top));
-  border-radius: 12px;
-  background:
-    radial-gradient(
-      120% 60% at 50% 0%,
-      color-mix(in srgb, var(--edge-light) 60%, transparent),
-      transparent 60%
-    ),
-    var(--surface-raised);
-  box-shadow:
-    inset 0 1px 0 var(--edge-light),
-    var(--shadow-raised);
+  border: 1px solid var(--surface-inset-edge);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  box-shadow: inset 0 1px 0 var(--surface-highlight);
 }
-/* Every top-level working panel is framed like the landing's cards. Its background is rounded
-   (20px) so it stays inside the frame's cut corners instead of poking out past them. The frame is drawn on the
-   panel itself (a 9-slice border image pushed 10px outside), its painting and scrim are its own
-   background, so it needs no extra layers or positioning: sticky panels keep sticking and
-   nothing can sit over a neighbouring control. A heavier scrim keeps forms easy to read. */
+/* The surface: every top-level working panel, toolbar and plain card on every page, in both
+   themes (light mode turns them to dark leather above). Layered from the outside in: a dark rim
+   and a stacked soft drop (--shadow-surface), a crisp 1px edge painted as a gradient on the
+   border box (copper-lit along the top, darker below), the inner highlight under that edge, the
+   fill lit from the top, and the pointer light on cards that lead somewhere. Hover and focus
+   change only the tokens. Declared !important so the older sheets' own boxes cannot bring back
+   a second look; layout (padding, grid, sticky) stays with each page. */
 .app.outpost
   :is(
     .panel,
@@ -1237,58 +1359,27 @@
       )
       *
   ) {
-  border: 0 solid transparent !important;
-  border-image: var(--frame) 25 / 25px / 10px stretch !important;
-  border-radius: 20px !important;
+  border: 1px solid transparent !important;
+  border-image: none !important;
+  border-radius: var(--radius-lg) !important;
   background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--surface-scrim) 86%, transparent) 0%,
-      color-mix(in srgb, var(--surface-scrim) 92%, transparent) 60%,
-      color-mix(in srgb, var(--surface-scrim) 95%, transparent) 100%
-    ),
-    var(--scene, var(--scene-city)) center / cover no-repeat,
-    var(--surface-scrim) !important;
-  box-shadow: 0 18px 36px -18px #000c !important;
-  color: var(--text);
-}
-.app.outpost.light
-  :is(
-    .panel,
-    .raised:not(.has-scene),
-    .build-command-bar,
-    .editor-inventory-panel,
-    .editor-slot-panel,
-    .party-command-bar,
-    .party-readiness,
-    .reference-available-builds,
-    .timer-composer,
-    .loadout-price-check,
-    .build-discovery-empty,
-    .calculator-inputs,
-    .fishing-main,
-    .calculation-readiness
-  ):not(
-    :is(
-        .panel,
-        .raised,
-        dialog,
-        .build-command-bar,
-        .editor-inventory-panel,
-        .editor-slot-panel,
-        .party-command-bar,
-        .party-readiness,
-        .reference-available-builds,
-        .timer-composer,
-        .loadout-price-check,
-        .build-discovery-empty,
-        .calculator-inputs,
-        .fishing-main,
-        .calculation-readiness
+    radial-gradient(
+        520px circle at var(--mx, 50%) var(--my, -20%),
+        color-mix(in srgb, var(--accent) calc(var(--glow, 0) * 1%), transparent),
+        transparent 62%
       )
-      *
-  ) {
-  box-shadow: 0 12px 24px -16px #3a251266 !important;
+      padding-box,
+    radial-gradient(130% 80% at 50% 0%, var(--surface-glow), transparent 62%) padding-box,
+    linear-gradient(180deg, var(--surface-top), var(--surface-bottom)) padding-box,
+    linear-gradient(180deg, var(--surface-edge-top), var(--surface-edge-bottom) 48%) border-box !important;
+  box-shadow:
+    inset 0 1px 0 var(--surface-highlight),
+    var(--shadow-surface) !important;
+  color: var(--text);
+  transition:
+    transform 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo),
+    --glow 420ms var(--ease-out-expo);
 }
 
 /* Section headings: display title with an ember word, one line, a pill link on the right */
@@ -1345,14 +1436,16 @@
   gap: 10px;
   min-height: 40px;
   padding: 10px 14px;
-  border: 1px solid color-mix(in srgb, var(--frame-rule) 58%, var(--border));
+  border: 1px solid transparent;
   border-radius: 8px;
-  background: var(--surface-raised);
+  background:
+    linear-gradient(180deg, var(--control-top), var(--control-bottom)) padding-box,
+    linear-gradient(180deg, var(--control-edge-top), var(--control-edge)) border-box;
   color: var(--text);
   font: 600 14px/1.25 var(--font-ui);
   white-space: nowrap;
   text-decoration: none;
-  box-shadow: 0 3px 8px #0002;
+  box-shadow: var(--control-shadow);
   transition:
     border-color 180ms var(--ease-out),
     background 180ms var(--ease-out);
@@ -1368,8 +1461,19 @@
   color: var(--accent-ink);
 }
 .app.outpost .pill-link:hover {
-  border-color: var(--accent);
-  background: var(--elevated);
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--text) 6%, var(--control-top)),
+        var(--control-top)
+      )
+      padding-box,
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent) 75%, var(--control-edge-top)),
+        color-mix(in srgb, var(--accent) 40%, var(--control-edge))
+      )
+      border-box;
   text-decoration: none;
 }
 /* Every button lifts toward the pointer with a spring and settles when pressed */
@@ -1400,18 +1504,6 @@
     scale: 0.97;
     translate: 0 0;
   }
-}
-.app.outpost.light .pill-link {
-  background: var(--panel);
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 40%, #00000014);
-  box-shadow: 0 6px 16px -8px #3a251240;
-}
-.app.outpost.light .pill-link:hover {
-  background: var(--elevated);
-}
-.app.outpost.light .pill-link svg {
-  color: var(--accent-ink);
 }
 .app.outpost .pill-link.is-small {
   height: 32px;
@@ -1786,6 +1878,7 @@
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: inset 0 1px 0 var(--surface-highlight);
 }
 .app.outpost .landing-chip.is-muted {
   color: var(--muted);

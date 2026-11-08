@@ -1277,42 +1277,43 @@
   min-width: 0;
   padding: var(--space-5);
 }
-/* The card's own face over the shared framed-panel painting: a woven grain on the raised surface,
-   and at the top a banner in the shield's own paint (blurred into cloth) that fades into the card
-   under the name, with a copper hem where it ends */
+/* The card is the shared raised surface (its edge, fill and drop come from product-system.css);
+   at the top a banner in the shield's own paint, blurred into cloth, fades out under the name
+   above a copper hem. Hover lights the edge like any card that leads somewhere. */
 :global(.app.outpost) .cardBanner.cardBanner {
   position: absolute;
   z-index: -1;
   inset: 0;
   overflow: hidden;
   border-radius: inherit;
-  background:
-    linear-gradient(
-      color-mix(in srgb, var(--surface-raised) 94%, transparent),
-      color-mix(in srgb, var(--surface-raised) 94%, transparent)
-    ),
-    var(--canvas-grain), var(--surface-raised);
 }
 :global(.app.outpost) .cardBanner.cardBanner::before {
   content: "";
   position: absolute;
   inset: -60px -40px auto;
-  height: 220px;
+  height: 200px;
   background: var(--shield) 18% 45% / 55% no-repeat;
-  filter: blur(30px) saturate(1.25);
-  opacity: 0.75;
+  filter: blur(32px) saturate(1.1);
+  opacity: 0.5;
+  mask-image: linear-gradient(180deg, #000 45%, transparent 100%);
 }
 :global(.app.outpost) .cardBanner.cardBanner::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      transparent 103px,
-      color-mix(in srgb, var(--frame-rule) 60%, transparent) 103px 104px,
-      transparent 104px
-    ),
-    linear-gradient(180deg, transparent 30px, var(--surface-raised) 104px);
+  inset: 103px 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--frame-rule) 70%, transparent) 20%,
+    color-mix(in srgb, var(--frame-rule) 70%, transparent) 80%,
+    transparent
+  );
+}
+:global(.app.outpost) .card.card:is(:hover, :focus-within) {
+  --surface-edge-top: color-mix(in srgb, var(--accent) 75%, var(--control-edge-top));
+  --surface-edge-bottom: color-mix(in srgb, var(--accent) 35%, var(--control-edge));
+  --shadow-surface: var(--shadow-surface-hover);
 }
 :global(.app.outpost) .card.card > .cardHead {
   min-height: 64px;

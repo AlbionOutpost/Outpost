@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Surfaces with depth and a softer backdrop — 8 November 2026
+
+- Every page but the landing sits on the castle painting pre-blurred (13 KB, one file for every width) under a deeper veil and a vignette, so panels and text read cleanly over it.
+- One surface recipe for every panel, toolbar and plain card: a crisp 1px edge lit copper along the top, an inner highlight, a fill lit from the top and a stacked soft drop; buttons, pill links and the chosen segmented option are the same surface in miniature; wells get a light lip under them. Tokens in `product-system.css`, recipe in DESIGN.md.
+- Team cards on `/groups` keep their 1px edge (the banner no longer covers it) and light up on hover; their shield-colour banner is quieter.
+- Superseded button and panel rules in older global sheets removed. Next: page-by-page passes on the new surfaces.
+
 ## Market Explorer switches faster and holds still — 8 November 2026
 
 - Picking another item or version used to ask for the price history only after the prices arrived, each behind its own 150 ms wait, and dropped every panel to a short status line meanwhile. Now prices and history go out together at once, and an item seen in the last minute comes back from the browser without a request. With source answers stubbed at 400/800 ms, the full switch (prices and chart) went from about 1.16/1.97 s to 0.45/0.86 s, a return to a seen version to about 0.05 s.

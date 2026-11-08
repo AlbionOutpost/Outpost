@@ -85,16 +85,6 @@
   text-overflow: ellipsis;
   max-width: 90px;
 }
-.app.outpost .button.primary {
-  color: #19100a;
-  background: var(--action);
-}
-.app.outpost .button.primary:hover {
-  background: var(--action-hover);
-}
-.app.outpost .button.secondary {
-  background: var(--panel);
-}
 .app.outpost .product-frame > main {
   padding-top: 24px;
 }
@@ -278,9 +268,6 @@
   font-size: 12px;
 }
 
-.app.outpost.light .button.primary {
-  color: #fff;
-}
 .app.outpost .build-card-owner-actions {
   z-index: 3;
 }
