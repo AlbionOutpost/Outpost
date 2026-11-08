@@ -1,4 +1,4 @@
-import { reviseBuild, duplicateBuild } from "../../src/lib/builds/service";
+import { createBuild, reviseBuild, duplicateBuild } from "../../src/lib/builds/service";
 import {
   saveComposition,
   duplicateComposition,
@@ -43,6 +43,7 @@ const services = {
   adminAuditLog,
   setLibraryLike,
   accountSaves,
+  createBuild,
   reviseBuild,
   duplicateBuild,
   saveComposition,

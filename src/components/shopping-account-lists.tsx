@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LogIn, RotateCcw, Trash2 } from "lucide-react";
 import { useAccountId } from "./account-saves";
 import Link from "@/components/link";
+import { signInPath } from "@/lib/sign-in-return";
 import { PanelHead } from "./panel-head";
 import { Field } from "./field";
 import styles from "./shopping-workspace.module.css";
@@ -71,7 +72,7 @@ export function ShoppingAccountLists({
       {!signedIn ? (
         <div className={styles.accountGuest}>
           <p>Sign in with Discord to keep lists on your account. This list stays on this device.</p>
-          <Link href="/signin" className="button secondary">
+          <Link href={signInPath("/shopping-list")} className="button secondary">
             <LogIn size={15} aria-hidden="true" /> Sign in to save lists
           </Link>
         </div>

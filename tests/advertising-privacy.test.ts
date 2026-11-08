@@ -11,6 +11,7 @@ import { AdsenseLoader, adsenseClient } from "@/components/adsense-loader";
 import { AdSlot } from "@/components/ad-slot";
 import { GET as sellerDeclaration } from "@/app/ads.txt/route";
 import { proxy } from "@/proxy";
+import { launchGrant } from "@/lib/billing/plan";
 
 const publisher = "ca-pub-1234567890123456";
 const noAdMarkup = (html: string) => {
@@ -24,7 +25,10 @@ beforeEach(() => {
   state.session.mockReset().mockResolvedValue(null);
   state.user.mockReset().mockResolvedValue(null);
 });
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => {
+  vi.unstubAllEnvs();
+  launchGrant.closedAt = null;
+});
 
 describe("advertising stays closed until the imprint is complete", () => {
   it("configured ownership renders passive metadata, never an advertising loader", () => {
@@ -71,11 +75,24 @@ describe("advertising stays closed until the imprint is complete", () => {
       expect(await AdSlot({ placement, offer: true })).toBeNull();
     expect(state.user).toHaveBeenCalledWith({
       where: { id: "server-supporter" },
-      select: { plan: true, supporterGiftUntil: true, supporterGiftPermanent: true },
+      select: {
+        plan: true,
+        supporterGiftUntil: true,
+        supporterGiftPermanent: true,
+        createdAt: true,
+      },
     });
   });
 
+  it("the open launch grant makes every signed-in account a Supporter", async () => {
+    state.session.mockResolvedValue({ user: { id: "free-account" } });
+    state.user.mockResolvedValue({ plan: "FREE", createdAt: new Date() });
+    expect(await AdSlot({ placement: "hub", offer: true })).toBeNull();
+  });
+
   it("a claimed client/session plan cannot override the current server record", async () => {
+    // After the launch closes, an account created later is not covered by the grant.
+    launchGrant.closedAt = new Date(Date.now() - 60000);
     state.session.mockResolvedValue({ user: { id: "free-account", plan: "SUPPORTER" } });
     state.user.mockResolvedValue({ plan: "FREE" });
     const html = renderToStaticMarkup(await AdSlot({ placement: "article", offer: true }));
@@ -83,11 +100,17 @@ describe("advertising stays closed until the imprint is complete", () => {
     noAdMarkup(html);
     expect(state.user).toHaveBeenCalledWith({
       where: { id: "free-account" },
-      select: { plan: true, supporterGiftUntil: true, supporterGiftPermanent: true },
+      select: {
+        plan: true,
+        supporterGiftUntil: true,
+        supporterGiftPermanent: true,
+        createdAt: true,
+      },
     });
   });
 
   it("server-side gifts suppress offers and expired gifts do not", async () => {
+    launchGrant.closedAt = new Date(Date.now() - 60000);
     state.session.mockResolvedValue({ user: { id: "gift-account" } });
     state.user.mockResolvedValue({
       plan: "FREE",

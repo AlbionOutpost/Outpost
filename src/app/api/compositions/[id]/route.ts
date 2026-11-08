@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { apiHandler } from "@/lib/api-errors";
-import { mutationUser, boundedJson } from "@/lib/http";
+import { mutationUser, boundedJson, spendSaveBudget } from "@/lib/http";
+import { saveSizeLimit, storedBytes } from "@/lib/storage-limits";
 import { requireRead, saveComposition, deleteComposition } from "@/lib/compositions/service";
 import { compositionInput } from "@/lib/compositions/validation";
 type Context = { params: Promise<{ id: string }> };
@@ -16,7 +17,8 @@ export const PUT = apiHandler("composition.update", async (req: NextRequest, ctx
   if (auth.error) return auth.error;
   const body = z
     .object({ version: z.number().int().positive(), composition: compositionInput })
-    .parse(await boundedJson(req, 1048576));
+    .parse(await boundedJson(req, saveSizeLimit.composition));
+  await spendSaveBudget(auth.userId!, storedBytes(body.composition));
   return NextResponse.json(
     await saveComposition(auth.userId!, body.composition, (await ctx.params).id, body.version),
   );

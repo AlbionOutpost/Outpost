@@ -28,6 +28,7 @@ import "./outpost-workspaces.css";
 import "./site-refinement.css";
 import "./product-system.css";
 import "./product-support.css";
+import { displayName } from "@/lib/display-name";
 export const metadata: Metadata = rootMetadata();
 export const viewport: Viewport = { themeColor: "#101014", colorScheme: "dark light" };
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -46,6 +47,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           plan: true,
           supporterGiftUntil: true,
           supporterGiftPermanent: true,
+          createdAt: true,
         },
       })
     : null;
@@ -77,7 +79,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           account={
             user
               ? {
-                  name: user.name,
+                  name: displayName(user.name),
                   image: user.image,
                   avatarFrame: user.avatarFrame,
                   role: user.role,

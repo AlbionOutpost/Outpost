@@ -61,9 +61,12 @@ const client = {
 export function redis() {
   return client;
 }
-export async function rateLimit(key: string, limit: number, seconds: number) {
+export async function rateLimit(key: string, limit: number, seconds: number, cost = 1) {
   try {
-    return await databaseBinding().rateLimit(key, limit, seconds);
+    // An unweighted call keeps the three-argument RPC the edge budget uses.
+    return await (cost === 1
+      ? databaseBinding().rateLimit(key, limit, seconds)
+      : databaseBinding().rateLimit(key, limit, seconds, cost));
   } catch {
     return false;
   }
