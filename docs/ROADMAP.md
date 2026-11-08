@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Tax defaults and saves on the account — 9 November 2026
+
+- Every sales-tax field starts at 4% (Premium) with "Premium 4%" and "No premium 8%" beside it: flipping and its route scan, the Black Market board and Profitable crafts (one shared field now), the crafting family, transport, laborers (was 8%), farming and fishing (was empty). Saved runs and links keep their own rate (owner decision, 8 Nov 2026).
+- Signed in, library favorites and Specialization & focus levels are kept on the account and follow you to every device; the browser's own copy moves over once after sign-in without duplicates. Guests keep them in the browser as before. Private-store schema 14 (`0015_account_saves`).
+- Fishing hides its detail rows until every input is in, so the page stays on one screen with the fee filled.
+
 ## Editors without the duplicates — 8 November 2026
 
 - Build editor: one loadout view, Cost · board · Abilities side by side (board, abilities, cost on phones). The "Your build" slot list and the Equipment, Abilities and Cost tabs are gone; the board is the only place to pick a slot. Alternatives and Notes stay as tabs.

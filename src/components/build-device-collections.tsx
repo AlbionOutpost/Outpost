@@ -29,6 +29,7 @@ import {
 } from "@/lib/build-device-collections";
 import { WellSelect } from "./well-select";
 import { SearchInput } from "./field";
+import { setAccountFavorite, useAccountSaves } from "./account-saves";
 const event = "outpost:build-device-change";
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -49,11 +50,67 @@ function write(key: string, value: unknown) {
   localStorage.setItem(key, JSON.stringify(value));
   window.dispatchEvent(new Event(event));
 }
-/** The device bookmark store, for controls elsewhere that save a build on this device. */
-export function useDeviceBookmarks() {
-  const { bookmarks, key, error } = useCollection("bookmarks");
-  return { bookmarks, key, error, write };
+/**
+ * Library build favorites: on the account when signed in (the server keeps them per account),
+ * in this browser for guests. `toggle` resolves to a short confirmation or throws with a reason.
+ */
+export function useLibraryFavorites() {
+  const device = useCollection("bookmarks"),
+    account = useAccountSaves();
+  if (account.userId) {
+    const builds = account.data?.favorites ?? [],
+      limit = account.data?.limit ?? 100;
+    return {
+      where: "account" as const,
+      builds,
+      limit,
+      unavailable: account.data?.unavailable ?? 0,
+      loading: account.status === "loading",
+      error: account.status === "error" ? account.error : "",
+      retry: account.retry,
+      async toggle(build: SavedLibraryBuild) {
+        const saved = builds.some((b) => b.slug === build.slug);
+        if (!saved && builds.length >= limit)
+          throw Error(`You can save up to ${limit} library builds. Remove one first.`);
+        const now = await setAccountFavorite(build, !saved);
+        return now ? "Saved to your account." : "Removed from your favorites.";
+      },
+    };
+  }
+  const { bookmarks, key, error } = device;
+  return {
+    where: "device" as const,
+    builds: bookmarks.builds,
+    limit: 100,
+    unavailable: 0,
+    loading: false,
+    error,
+    retry: () => undefined,
+    async toggle(build: SavedLibraryBuild) {
+      const saved = bookmarks.builds.some((b) => b.id === build.id);
+      if (!saved && bookmarks.builds.length >= 100)
+        throw Error("You can save up to 100 library builds on this device.");
+      write(
+        key,
+        bookmarksSchema.parse({
+          ...bookmarks,
+          builds: saved
+            ? bookmarks.builds.filter((b) => b.id !== build.id)
+            : [build, ...bookmarks.builds],
+        }),
+      );
+      return saved ? "Removed from device favorites." : "Saved on this device.";
+    },
+  };
 }
+/** Whether `build` is among the favorites (accounts key by slug, devices by id). */
+export const isFavorite = (
+  favorites: ReturnType<typeof useLibraryFavorites>,
+  build: SavedLibraryBuild,
+) =>
+  favorites.builds.some((b) =>
+    favorites.where === "account" ? b.slug === build.slug : b.id === build.id,
+  );
 function useCollection(kind: "bookmarks" | "filters") {
   const region = useOutpostRegion(),
     key = buildDeviceKey(kind, region),
@@ -86,10 +143,19 @@ export function LibrarySaveButton({
   build: SavedLibraryBuild;
   showLabel?: boolean;
 }) {
-  const { bookmarks, error, key } = useCollection("bookmarks"),
-    [message, setMessage] = useState("");
+  const favorites = useLibraryFavorites(),
+    [message, setMessage] = useState(""),
+    [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState(0);
-  const saved = bookmarks.builds.some((b) => b.id === build.id);
+  const saved = isFavorite(favorites, build),
+    account = favorites.where === "account";
+  const name = account
+    ? saved
+      ? "Saved"
+      : "Save to favorites"
+    : saved
+      ? "Saved on device"
+      : "Save on device";
   return (
     <span className="library-save-control">
       <button
@@ -97,40 +163,40 @@ export function LibrarySaveButton({
         className="build-card-save library-device-save"
         aria-label={
           showLabel
-            ? `${saved ? "Saved on device" : "Save on device"}: ${build.title}. ${saved ? "Remove" : "Save"} this favorite`
-            : `${saved ? "Unsave" : "Save"} ${build.title} on this device`
+            ? `${name}: ${build.title}. ${saved ? "Remove" : "Save"} this favorite`
+            : `${saved ? "Unsave" : "Save"} ${build.title} ${account ? "to your favorites" : "on this device"}`
         }
         aria-pressed={saved}
-        disabled={!!error}
-        title={saved ? "Remove device favorite" : "Save on this device"}
-        onClick={() => {
+        disabled={!!favorites.error || favorites.loading || busy}
+        title={
+          saved
+            ? account
+              ? "Remove from favorites"
+              : "Remove device favorite"
+            : account
+              ? "Save to your favorites"
+              : "Save on this device"
+        }
+        onClick={async () => {
+          setBusy(true);
           try {
-            if (!saved && bookmarks.builds.length >= 100)
-              throw Error("You can save up to 100 library builds on this device.");
-            write(
-              key,
-              bookmarksSchema.parse({
-                ...bookmarks,
-                builds: saved
-                  ? bookmarks.builds.filter((b) => b.id !== build.id)
-                  : [build, ...bookmarks.builds],
-              }),
-            );
+            setMessage(await favorites.toggle(build));
             setFeedback((n) => n + 1);
-            setMessage(saved ? "Removed from device favorites." : "Saved on this device.");
           } catch (e) {
-            setMessage(e instanceof Error ? e.message : "Could not save on this device.");
+            setMessage(e instanceof Error ? e.message : "Could not save this favorite.");
+          } finally {
+            setBusy(false);
           }
         }}
       >
         <ReactionFeedback sequence={feedback} active={saved}>
           {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </ReactionFeedback>
-        {showLabel && <span>{saved ? "Saved on device" : "Save on device"}</span>}
+        {showLabel && <span>{name}</span>}
       </button>
-      {(message || error) && (
+      {(message || favorites.error) && (
         <span className="device-save-feedback" role="status">
-          {message || error}
+          {message || favorites.error}
         </span>
       )}
     </span>
@@ -165,7 +231,10 @@ function DeviceFavoriteCard({ build }: { build: SavedLibraryBuild }) {
 }
 /** Library builds saved in this browser. `heading` is the section's heading, from the page. */
 export function DeviceLibraryFavorites() {
-  const { bookmarks, error } = useCollection("bookmarks");
+  const favorites = useLibraryFavorites(),
+    { error, loading } = favorites,
+    bookmarks = { builds: favorites.builds },
+    account = favorites.where === "account";
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("saved");
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -183,14 +252,23 @@ export function DeviceLibraryFavorites() {
   const page = Math.min(requestedPage, pages);
   const visible = matching.slice((page - 1) * 24, page * 24);
   return (
-    <section className="device-library-favorites" aria-label="Library favorites on this device">
+    <section
+      className="device-library-favorites"
+      aria-label={
+        account ? "Library favorites on your account" : "Library favorites on this device"
+      }
+    >
       <SectionHeading
         title={
           <>
             Library <em>builds</em>
           </>
         }
-        line={`${bookmarks.builds.length} of 100 saved in this browser${query.trim() ? ` · ${matching.length} match` : ""}`}
+        line={
+          loading
+            ? "Loading your account’s library builds…"
+            : `${bookmarks.builds.length} of ${favorites.limit} saved ${account ? "to your account" : "in this browser"}${favorites.unavailable ? ` · ${favorites.unavailable} no longer in the library` : ""}${query.trim() ? ` · ${matching.length} match` : ""}`
+        }
         link={{ href: "/builds?source=library", label: "Build library" }}
       />
       {!error && bookmarks.builds.length > 0 && (
@@ -250,7 +328,18 @@ export function DeviceLibraryFavorites() {
         </div>
       )}
       {error ? (
-        <p role="alert">{error}</p>
+        <p role="alert">
+          {error}{" "}
+          {account && (
+            <button type="button" className="button secondary" onClick={() => favorites.retry()}>
+              Try again
+            </button>
+          )}
+        </p>
+      ) : loading ? (
+        <p className="device-favorites-count" role="status">
+          Loading your saved library builds…
+        </p>
       ) : bookmarks.builds.length ? (
         <>
           {matching.length > 24 && (
@@ -312,7 +401,11 @@ export function DeviceLibraryFavorites() {
         <EmptyWell
           emblem="strip-builds"
           title="No library builds saved yet"
-          line="Use the heart on a library build to keep it here. It stays in this browser, up to 100 builds."
+          line={
+            account
+              ? "Use the heart on a library build to keep it here, on every device you sign in on. Up to 100 builds."
+              : "Use the heart on a library build to keep it here. It stays in this browser, up to 100 builds."
+          }
           action={
             <Link className="button secondary" href="/builds?source=library">
               Open the library

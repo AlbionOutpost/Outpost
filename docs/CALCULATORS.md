@@ -58,7 +58,7 @@ incrementalFocus = (returnCredit − baseReturnCredit) / focusUsed
 - Shared and saved restores first load their exact declared game recipe IDs (up to 30 in a plan, three concurrent reads), then validate the complete configuration before replacing inputs. Failed recipe loads leave the current draft intact. This does not relax server recipe validation.
 - Recipe links for a different production kind or cooking/alchemy category show a recoverable selection notice. The default-recipe action clears the incompatible selection and retains the chosen server.
 - `estimatedFocusCost(base, efficiency, batches) = base·2^(−efficiency/10000)·batches` (no per-operation rounding yet).
-- **Focus from specs** (`focus.ts`): `efficiency = Σ level × perLevel` over every spec whose item patterns and tier range match the item (mastery 30/level, specialist 30 + 250 on its own item); `focusPerCraft = base / 2^(efficiency/10000)`. Levels are saved on the device (`/tools/mastery`).
+- **Focus from specs** (`focus.ts`): `efficiency = Σ level × perLevel` over every spec whose item patterns and tier range match the item (mastery 30/level, specialist 30 + 250 on its own item); `focusPerCraft = base / 2^(efficiency/10000)`. Levels are kept on the account when signed in and in the browser for guests (`/tools/mastery`, [API](API.md#account-saves)).
 - `returnRateFromBonus(b) = 1 − 1/(1 + b/100)`.
 
 **Return profile** (`production-profile.ts` → `sourcedReturnRates`):

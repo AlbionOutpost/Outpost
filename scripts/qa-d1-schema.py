@@ -342,6 +342,45 @@ def team_guild_tax_upgrade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-tax-owner",))
 check("team guild tax upgrade keeps teams at 0% and enforces 0-100 with one decimal", team_guild_tax_upgrade)
 
+def account_saves_upgrade():
+    db.execute('INSERT INTO "User"(id,name,updatedAt) VALUES(?,?,CURRENT_TIMESTAMP)', ("qa-save-a", "Saver A"))
+    db.execute('INSERT INTO "User"(id,name,updatedAt) VALUES(?,?,CURRENT_TIMESTAMP)', ("qa-save-b", "Saver B"))
+    db.execute('INSERT INTO "LibraryLike"(id,userId,kind,slug) VALUES(?,?,?,?)', ("qa-save-like", "qa-save-a", "build", "battleaxe-mist-build"))
+    likes = db.execute('SELECT * FROM "LibraryLike" ORDER BY id').fetchall()
+    sql = (root / "cloudflare/d1/migrations/0015_account_saves.sql").read_text()
+    db.executescript(sql)
+    db.executescript(sql)  # applying it again changes nothing
+    # Existing rows are untouched and the new tables start empty.
+    assert db.execute('SELECT * FROM "LibraryLike" ORDER BY id').fetchall() == likes
+    for table in ("LibraryFavorite", "MasteryLevel"):
+        assert db.execute(f'SELECT count(*) FROM "{table}"').fetchone()[0] == 0, table
+    fav = 'INSERT INTO "LibraryFavorite"(userId,slug) VALUES(?,?)'
+    db.execute(fav, ("qa-save-a", "battleaxe-mist-build"))
+    db.execute(fav, ("qa-save-b", "battleaxe-mist-build"))  # each account has its own row
+    db.execute(fav, ("qa-save-a", "a" * 200))
+    denied(fav, ("qa-save-a", "battleaxe-mist-build"))  # no duplicates per account
+    for bad in ("", "a" * 201, "-leading-dash", "Upper-Case", "has space", "semi;colon"):
+        denied(fav, ("qa-save-a", bad))
+    denied(fav, ("qa-missing-user", "battleaxe-mist-build"))
+    level = 'INSERT INTO "MasteryLevel"(userId,specId,level,updatedAt) VALUES(?,?,?,CURRENT_TIMESTAMP)'
+    db.execute(level, ("qa-save-a", "axe_crafter", 1))
+    db.execute(level, ("qa-save-a", "alchemy_mastery", 100))
+    db.execute(level, ("qa-save-b", "axe_crafter", 40))
+    denied(level, ("qa-save-a", "axe_crafter", 50))
+    for spec, bad in (("bad_level", 0), ("bad_level", 101), ("bad_level", 1.5), ("bad_level", "seven"), ("Bad-Id", 5), ("", 5), ("x" * 81, 5)):
+        denied(level, ("qa-save-a", spec, bad))
+    db.execute('UPDATE "MasteryLevel" SET level=? WHERE userId=? AND specId=?', (60, "qa-save-a", "axe_crafter"))
+    denied('UPDATE "MasteryLevel" SET level=? WHERE userId=? AND specId=?', (0, "qa-save-a", "axe_crafter"))
+    # Deleting an account removes only its own saves.
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-save-a",))
+    assert db.execute('SELECT userId, slug FROM "LibraryFavorite"').fetchall() == [("qa-save-b", "battleaxe-mist-build")]
+    assert db.execute('SELECT userId, specId, level FROM "MasteryLevel"').fetchall() == [("qa-save-b", "axe_crafter", 40)]
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-save-b",))
+    for table in ("LibraryFavorite", "MasteryLevel"):
+        assert db.execute(f'SELECT count(*) FROM "{table}"').fetchone()[0] == 0, table
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
+check("account saves upgrade adds favorites and spec levels without touching existing rows, one per account and key, cascading on account deletion", account_saves_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

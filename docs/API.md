@@ -94,6 +94,7 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 | `GET, POST /api/scenarios` · `DELETE /api/scenarios/[id]`  | sess (owner)          | Saved calculator scenarios                                                  |
 | `GET, POST /api/timers` · `PATCH, DELETE /api/timers/[id]` | sess (owner)          | Personal timers                                                             |
 | `GET /api/account/export`                                  | sess                  | Account data export (5/h)                                                   |
+| `GET, POST /api/account/saves`                             | sess (own rows)       | Library favorites and spec levels on the account ([below](#account-saves))  |
 | `GET, POST /api/auth/[...nextauth]`                        | —                     | NextAuth (Discord), 240/min                                                 |
 | `GET /api/health`                                          | pub                   | Health check                                                                |
 | `GET /ads.txt`                                             | pub                   | Authorised-seller line for the configured AdSense publisher, else a comment |
@@ -105,6 +106,20 @@ Settings changes and account deletion are Server Actions in `src/app/settings/ac
 Timer and saved-scenario GET responses retain their array bodies. Timers return up to 100 rows and scenarios up to 50 (optionally filtered by kind). When another page exists, the response supplies `X-Next-Cursor`; pass that value as the `cursor` query parameter using `URLSearchParams`. Ordering is descending update time with ID as a stable tie-breaker. The cursor contains ordering information only: every page still requires the current session and applies the same owner/kind filters. Malformed or oversized cursors return 400. Deleting the boundary record does not invalidate a cursor. Reload to see records updated above the current boundary.
 
 The timers page, calculator saved scenarios, transport plans and shopping account lists expose explicit controls to load older entries. Existing records remain stored; there is no silent creation cap or replacement of older saves.
+
+## Account saves
+
+Library build favorites and specialization levels live on the account when signed in and in the browser for guests (`src/app/api/account/saves/route.ts`, service `accountSaves`).
+
+`GET /api/account/saves` (session, else 401; `private, no-store`) answers `{ favorites, unavailable, limit, levels }`: the account's library favorites newest first, each resolved on the server to its library summary (`id`, `slug`, `title`, `author`, `weaponName`, `category`, `itemId`, `updatedAt`), `unavailable` saved builds no longer in the library, `limit` 100, and `levels` as `{ specId: 1–100 }`. Only the session's own rows are read.
+
+`POST /api/account/saves` goes through `mutationUser` (exact Origin, session, content budget) with a strict JSON body (128 KiB) of one of:
+
+- `{ "action": "favorite", "slug", "active" }` → `{ favorite, total }`. Saving resolves the slug against the library first (unknown → 404); 100 per account (409 beyond). Removing never needs the build to still exist.
+- `{ "action": "levels", "levels": { specId: 0–100 } }` → `{ levels }`. Replaces the account's levels; 0 drops a spec; at most 400 specs; ids `[a-z0-9_]{1,80}`.
+- `{ "action": "merge", "favorites": [slug…≤300], "levels" }` → the GET answer plus `skipped`. Merges a browser's copy: adds library builds the account lacks (unknown ones are dropped, up to 100 in all) and keeps the higher level per spec. Merging the same copy again changes nothing.
+
+Any `userId` or other extra field is 400; cross-origin 403; signed out 401. The browser merges its copy once after sign-in and remembers what it sent (`outpost:account-merged:v1:<userId>`), so a favorite removed on the account is not added back, while one saved later as a guest still moves over. Rows (`LibraryFavorite`, `MasteryLevel`) are in the account export and go with the account on deletion.
 
 ## Account likes for public library entries
 

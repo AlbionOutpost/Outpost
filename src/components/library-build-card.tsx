@@ -3,6 +3,7 @@ import { HeartChip } from "./heart-chip";
 import { BuildWindow } from "./build-window";
 import { activityName, type LibraryBuild } from "@/lib/grind-library-types";
 import { librarySpellNames } from "@/lib/grind-library";
+import { savedLibraryBuild } from "@/lib/build-device-collections";
 
 /**
  * One library build as the landing's build window: title, activity and the archive's
@@ -41,16 +42,7 @@ async function LibraryBuildCardContent({
         <HeartChip
           count={build.upvotes}
           className="library-device-save"
-          build={{
-            id: build.id,
-            slug,
-            title: build.title.slice(0, 200),
-            author: build.author.slice(0, 100),
-            weaponName: build.weaponName.slice(0, 100),
-            category: build.category,
-            itemId: main?.itemId || "",
-            updatedAt: build.updatedAt,
-          }}
+          build={savedLibraryBuild(build)}
         />
       }
     />

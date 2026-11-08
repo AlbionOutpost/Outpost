@@ -29,6 +29,7 @@ import { tools, toolPaintings, toolSections } from "@/lib/tool-directory";
 import { BrandLockup } from "./brand-lockup";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
+import { AccountIdContext } from "./account-saves";
 import { RegionPicker } from "./region-picker";
 import { AvatarFrame } from "./avatar-frame";
 import { regionSchema } from "@/lib/albion/region-config";
@@ -156,12 +157,15 @@ export function Shell({
   initialLight = false,
   initialRegion = "europe",
   authenticated = false,
+  accountId = null,
   account = null,
 }: {
   children: React.ReactNode;
   initialLight?: boolean;
   initialRegion?: string;
   authenticated?: boolean;
+  /** The session's account id, so saves (favorites, specs) go to the account. */
+  accountId?: string | null;
   account?: {
     name: string | null;
     image: string | null;
@@ -389,313 +393,315 @@ export function Shell({
   return (
     <RegionContext.Provider value={region}>
       <RegionNavigationContext.Provider value={regionPending}>
-        <div
-          data-motion-enabled="true"
-          className={`app outpost${light ? " light" : ""}${path === "/" ? " home-route" : ""}${workspace ? " workspace-route" : ""}${productShell ? " product-route" : ""}`}
-        >
-          <a className="skip-link" href="#main-content">
-            Skip to content
-          </a>
-          <PointerGlow />
-          <Suspense fallback={null}>
-            <UrlRegion onChange={setUrlRegion} />
-          </Suspense>
-          {open && (
-            <button
-              className="drawer-backdrop"
-              aria-label="Dismiss navigation"
-              onClick={() => setOpen(false)}
-            />
-          )}
-          {open && (
-            <aside
-              ref={drawer}
-              id="outpost-mobile-navigation"
-              className="mobile-navigation"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Navigation"
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  e.preventDefault();
-                  setOpen(false);
-                }
-                if (e.key === "Tab") {
-                  const nodes = Array.from(
-                      drawer.current?.querySelectorAll<HTMLElement>(
-                        "a[href],button:not([disabled])",
-                      ) || [],
-                    ),
-                    first = nodes[0],
-                    last = nodes[nodes.length - 1];
-                  if (e.shiftKey && document.activeElement === first) {
+        <AccountIdContext.Provider value={accountId}>
+          <div
+            data-motion-enabled="true"
+            className={`app outpost${light ? " light" : ""}${path === "/" ? " home-route" : ""}${workspace ? " workspace-route" : ""}${productShell ? " product-route" : ""}`}
+          >
+            <a className="skip-link" href="#main-content">
+              Skip to content
+            </a>
+            <PointerGlow />
+            <Suspense fallback={null}>
+              <UrlRegion onChange={setUrlRegion} />
+            </Suspense>
+            {open && (
+              <button
+                className="drawer-backdrop"
+                aria-label="Dismiss navigation"
+                onClick={() => setOpen(false)}
+              />
+            )}
+            {open && (
+              <aside
+                ref={drawer}
+                id="outpost-mobile-navigation"
+                className="mobile-navigation"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Navigation"
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
                     e.preventDefault();
-                    last?.focus();
-                  } else if (!e.shiftKey && document.activeElement === last) {
-                    e.preventDefault();
-                    first?.focus();
+                    setOpen(false);
                   }
-                }
-              }}
-            >
-              <div className="drawer-heading">
-                <BrandLockup size="sm" onClick={navigate} />
-                <button ref={close} aria-label="Close navigation" onClick={() => setOpen(false)}>
-                  <X size={20} />
-                </button>
-              </div>
-              <nav aria-label="Mobile navigation">
-                <p className="drawer-label">Explore</p>
-                <div className="drawer-main">
-                  {sections.map(([url, label]) => (
-                    <Link
-                      key={url}
-                      href={href(url)}
-                      onClick={navigate}
-                      aria-current={active(url) ? "page" : undefined}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-                      <img
-                        src={`/albion/icons/${sectionEmblems[url]}.webp`}
-                        alt=""
-                        width={32}
-                        height={32}
-                      />
-                      {label}
-                    </Link>
-                  ))}
+                  if (e.key === "Tab") {
+                    const nodes = Array.from(
+                        drawer.current?.querySelectorAll<HTMLElement>(
+                          "a[href],button:not([disabled])",
+                        ) || [],
+                      ),
+                      first = nodes[0],
+                      last = nodes[nodes.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                      e.preventDefault();
+                      last?.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                      e.preventDefault();
+                      first?.focus();
+                    }
+                  }
+                }}
+              >
+                <div className="drawer-heading">
+                  <BrandLockup size="sm" onClick={navigate} />
+                  <button ref={close} aria-label="Close navigation" onClick={() => setOpen(false)}>
+                    <X size={20} />
+                  </button>
                 </div>
-                {toolColumns.flat().map((group) => (
-                  <div key={group.title} role="group" aria-label={group.title}>
-                    <p className="drawer-label" aria-hidden="true">
-                      {group.title}
-                    </p>
-                    <div className="drawer-list well">
-                      {group.tools.map((tool) => (
-                        <Link
-                          key={tool.href}
-                          href={href(tool.href)}
-                          onClick={navigate}
-                          aria-current={path === tool.href ? "page" : undefined}
-                        >
-                          <ToolMenuMark tool={tool} />
-                          {tool.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                <Link className="pill-link drawer-all" href={href("/tools")} onClick={navigate}>
-                  All tools <ArrowUpRight size={15} aria-hidden="true" />
-                </Link>
-                <p className="drawer-label">Your account</p>
-                <div className="drawer-list well">
-                  {currentAccountLinks
-                    .filter(([url]) => !authenticated || url !== "/signin")
-                    .map(([url, label]) => (
+                <nav aria-label="Mobile navigation">
+                  <p className="drawer-label">Explore</p>
+                  <div className="drawer-main">
+                    {sections.map(([url, label]) => (
                       <Link
                         key={url}
                         href={href(url)}
                         onClick={navigate}
-                        aria-current={path === url ? "page" : undefined}
+                        aria-current={active(url) ? "page" : undefined}
                       >
+                        {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+                        <img
+                          src={`/albion/icons/${sectionEmblems[url]}.webp`}
+                          alt=""
+                          width={32}
+                          height={32}
+                        />
                         {label}
                       </Link>
                     ))}
-                </div>
-                {authenticated && <LogoutButton />}
-              </nav>
-              <button
-                className="drawer-theme button secondary"
-                aria-label="Toggle theme"
-                onClick={toggleTheme}
-              >
-                {light ? <Moon size={16} /> : <Sun size={16} />} Switch to{" "}
-                {light ? "dark" : "light"} theme
-              </button>
-            </aside>
-          )}
-          <div
-            className="main"
-            inert={open ? true : undefined}
-            aria-hidden={open ? true : undefined}
-          >
-            <div className="site-backdrop" aria-hidden="true" />
-            <header
-              className="site-header"
-              ref={header}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  const details = (e.target as HTMLElement).closest("details");
-                  if (details) {
-                    details.removeAttribute("open");
-                    details.querySelector("summary")?.focus();
-                  }
-                }
-              }}
-            >
-              <BrandLockup className="top-brand" />
-              {primaryNavigation}
-              <div className="header-actions">
-                <RegionPicker
-                  value={region}
-                  onChange={(next) => {
-                    const p = new URLSearchParams(window.location.search);
-                    p.set("region", next);
-                    // Invalidate region-scoped client work immediately, while the
-                    // server navigation is still pending.
-                    setUrlRegion(next);
-                    setSavedRegion(next);
-                    document.cookie = `atlas-region=${next}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-                    startRegionNavigation(() => router.push(`${path}?${p}`));
-                  }}
-                />
-                <button
-                  type="button"
-                  className="theme-toggle theme-switch"
-                  data-mode={light ? "light" : "dark"}
-                  aria-label="Toggle theme"
-                  aria-pressed={light}
-                  title={light ? "Switch to dark mode" : "Switch to light mode"}
-                  onClick={toggleTheme}
-                >
-                  <span className="theme-switch-thumb" aria-hidden="true" />
-                  <span
-                    className={`theme-switch-option is-sun${light ? " is-on" : ""}`}
-                    aria-hidden="true"
-                  >
-                    <Sun size={18} strokeWidth={2.1} />
-                  </span>
-                  <span
-                    className={`theme-switch-option is-moon${light ? "" : " is-on"}`}
-                    aria-hidden="true"
-                  >
-                    <MoonStar size={17} strokeWidth={2} />
-                  </span>
-                </button>
-                {!authenticated ? (
-                  <Link
-                    className="button secondary home-auth-action discord-login"
-                    aria-label="Sign in"
-                    href={href("/signin")}
-                  >
-                    <DiscordMark />
-                    <span className="discord-label">Sign in</span>
-                  </Link>
-                ) : (
-                  <details className="nav-dropdown account-dropdown">
-                    <summary>
-                      {account?.image || account?.avatarFrame ? (
-                        <AvatarFrame
-                          frame={account.avatarFrame}
-                          size={32}
-                          image={account.image}
-                          name={account.name}
-                        />
-                      ) : null}
-                      <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
-                    </summary>
-                    <div className="menu-panel">
-                      <div className="menu-group" role="group" aria-label="Your account">
-                        {menuGroup("Your account")}
-                      </div>
-                      <div className="menu-group">
-                        <LogoutButton className="menu-item">
-                          <span className="tool-menu-mark" aria-hidden="true">
-                            <LogOut size={17} />
-                          </span>
-                          Sign out
-                        </LogoutButton>
-                      </div>
-                    </div>
-                  </details>
-                )}
-                <button
-                  ref={trigger}
-                  className="navigation-trigger"
-                  aria-expanded={open}
-                  aria-label="Open navigation"
-                  aria-controls={open ? "outpost-mobile-navigation" : undefined}
-                  aria-haspopup="dialog"
-                  onClick={() => setOpen(true)}
-                >
-                  <Menu size={21} />
-                </button>
-              </div>
-            </header>
-            <div
-              className={`${productShell ? "product-frame " : ""}${workspace ? "workspace-frame" : "page-frame"}`}
-            >
-              <main
-                id="main-content"
-                tabIndex={-1}
-                data-page={path.split("/")[1] || "home"}
-                data-width={
-                  path.startsWith("/compositions/")
-                    ? "board"
-                    : path.startsWith("/guides/") || path === "/legal"
-                      ? "reading"
-                      : workspace
-                        ? "workspace"
-                        : "marketing"
-                }
-              >
-                {children}
-              </main>
-            </div>
-            <footer className="site-footer">
-              <div className="site-footer-inner">
-                <div className="site-footer-brand">
-                  <BrandLockup size="sm" className="site-footer-lockup" />
-                  <p className="site-footer-line">
-                    Markets, builds, comps and crafting for Albion Online, in one place.
-                  </p>
-                  <p className="site-footer-source">
-                    Prices from the{" "}
-                    <a href="https://www.albion-online-data.com/" rel="noopener noreferrer">
-                      Albion Online Data Project
-                    </a>
-                    . Not affiliated with or endorsed by Sandbox Interactive.
-                  </p>
-                </div>
-                <nav className="site-footer-navigation" aria-label="Footer">
-                  {footerColumns.map((column, c) => (
-                    <div key={column.label} className="site-footer-column">
-                      <p className="site-footer-label" id={`footer-column-${c}`}>
-                        {column.label}
+                  </div>
+                  {toolColumns.flat().map((group) => (
+                    <div key={group.title} role="group" aria-label={group.title}>
+                      <p className="drawer-label" aria-hidden="true">
+                        {group.title}
                       </p>
-                      <ul aria-labelledby={`footer-column-${c}`}>
-                        {column.links.map(([url, label]) => (
-                          <li key={url}>
-                            <Link href={href(url)}>{label}</Link>
-                          </li>
+                      <div className="drawer-list well">
+                        {group.tools.map((tool) => (
+                          <Link
+                            key={tool.href}
+                            href={href(tool.href)}
+                            onClick={navigate}
+                            aria-current={path === tool.href ? "page" : undefined}
+                          >
+                            <ToolMenuMark tool={tool} />
+                            {tool.title}
+                          </Link>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   ))}
+                  <Link className="pill-link drawer-all" href={href("/tools")} onClick={navigate}>
+                    All tools <ArrowUpRight size={15} aria-hidden="true" />
+                  </Link>
+                  <p className="drawer-label">Your account</p>
+                  <div className="drawer-list well">
+                    {currentAccountLinks
+                      .filter(([url]) => !authenticated || url !== "/signin")
+                      .map(([url, label]) => (
+                        <Link
+                          key={url}
+                          href={href(url)}
+                          onClick={navigate}
+                          aria-current={path === url ? "page" : undefined}
+                        >
+                          {label}
+                        </Link>
+                      ))}
+                  </div>
+                  {authenticated && <LogoutButton />}
                 </nav>
-                <div className="site-footer-legal">
-                  <span>© {new Date().getFullYear()} Outpost</span>
-                  <Link href="/legal">Privacy &amp; terms</Link>
+                <button
+                  className="drawer-theme button secondary"
+                  aria-label="Toggle theme"
+                  onClick={toggleTheme}
+                >
+                  {light ? <Moon size={16} /> : <Sun size={16} />} Switch to{" "}
+                  {light ? "dark" : "light"} theme
+                </button>
+              </aside>
+            )}
+            <div
+              className="main"
+              inert={open ? true : undefined}
+              aria-hidden={open ? true : undefined}
+            >
+              <div className="site-backdrop" aria-hidden="true" />
+              <header
+                className="site-header"
+                ref={header}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    const details = (e.target as HTMLElement).closest("details");
+                    if (details) {
+                      details.removeAttribute("open");
+                      details.querySelector("summary")?.focus();
+                    }
+                  }
+                }}
+              >
+                <BrandLockup className="top-brand" />
+                {primaryNavigation}
+                <div className="header-actions">
+                  <RegionPicker
+                    value={region}
+                    onChange={(next) => {
+                      const p = new URLSearchParams(window.location.search);
+                      p.set("region", next);
+                      // Invalidate region-scoped client work immediately, while the
+                      // server navigation is still pending.
+                      setUrlRegion(next);
+                      setSavedRegion(next);
+                      document.cookie = `atlas-region=${next}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+                      startRegionNavigation(() => router.push(`${path}?${p}`));
+                    }}
+                  />
                   <button
                     type="button"
-                    className="site-footer-top"
-                    onClick={() =>
-                      window.scrollTo({
-                        top: 0,
-                        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-                          ? "auto"
-                          : "smooth",
-                      })
-                    }
+                    className="theme-toggle theme-switch"
+                    data-mode={light ? "light" : "dark"}
+                    aria-label="Toggle theme"
+                    aria-pressed={light}
+                    title={light ? "Switch to dark mode" : "Switch to light mode"}
+                    onClick={toggleTheme}
                   >
-                    Back to top <ArrowUp size={14} aria-hidden="true" />
+                    <span className="theme-switch-thumb" aria-hidden="true" />
+                    <span
+                      className={`theme-switch-option is-sun${light ? " is-on" : ""}`}
+                      aria-hidden="true"
+                    >
+                      <Sun size={18} strokeWidth={2.1} />
+                    </span>
+                    <span
+                      className={`theme-switch-option is-moon${light ? "" : " is-on"}`}
+                      aria-hidden="true"
+                    >
+                      <MoonStar size={17} strokeWidth={2} />
+                    </span>
+                  </button>
+                  {!authenticated ? (
+                    <Link
+                      className="button secondary home-auth-action discord-login"
+                      aria-label="Sign in"
+                      href={href("/signin")}
+                    >
+                      <DiscordMark />
+                      <span className="discord-label">Sign in</span>
+                    </Link>
+                  ) : (
+                    <details className="nav-dropdown account-dropdown">
+                      <summary>
+                        {account?.image || account?.avatarFrame ? (
+                          <AvatarFrame
+                            frame={account.avatarFrame}
+                            size={32}
+                            image={account.image}
+                            name={account.name}
+                          />
+                        ) : null}
+                        <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
+                      </summary>
+                      <div className="menu-panel">
+                        <div className="menu-group" role="group" aria-label="Your account">
+                          {menuGroup("Your account")}
+                        </div>
+                        <div className="menu-group">
+                          <LogoutButton className="menu-item">
+                            <span className="tool-menu-mark" aria-hidden="true">
+                              <LogOut size={17} />
+                            </span>
+                            Sign out
+                          </LogoutButton>
+                        </div>
+                      </div>
+                    </details>
+                  )}
+                  <button
+                    ref={trigger}
+                    className="navigation-trigger"
+                    aria-expanded={open}
+                    aria-label="Open navigation"
+                    aria-controls={open ? "outpost-mobile-navigation" : undefined}
+                    aria-haspopup="dialog"
+                    onClick={() => setOpen(true)}
+                  >
+                    <Menu size={21} />
                   </button>
                 </div>
+              </header>
+              <div
+                className={`${productShell ? "product-frame " : ""}${workspace ? "workspace-frame" : "page-frame"}`}
+              >
+                <main
+                  id="main-content"
+                  tabIndex={-1}
+                  data-page={path.split("/")[1] || "home"}
+                  data-width={
+                    path.startsWith("/compositions/")
+                      ? "board"
+                      : path.startsWith("/guides/") || path === "/legal"
+                        ? "reading"
+                        : workspace
+                          ? "workspace"
+                          : "marketing"
+                  }
+                >
+                  {children}
+                </main>
               </div>
-            </footer>
+              <footer className="site-footer">
+                <div className="site-footer-inner">
+                  <div className="site-footer-brand">
+                    <BrandLockup size="sm" className="site-footer-lockup" />
+                    <p className="site-footer-line">
+                      Markets, builds, comps and crafting for Albion Online, in one place.
+                    </p>
+                    <p className="site-footer-source">
+                      Prices from the{" "}
+                      <a href="https://www.albion-online-data.com/" rel="noopener noreferrer">
+                        Albion Online Data Project
+                      </a>
+                      . Not affiliated with or endorsed by Sandbox Interactive.
+                    </p>
+                  </div>
+                  <nav className="site-footer-navigation" aria-label="Footer">
+                    {footerColumns.map((column, c) => (
+                      <div key={column.label} className="site-footer-column">
+                        <p className="site-footer-label" id={`footer-column-${c}`}>
+                          {column.label}
+                        </p>
+                        <ul aria-labelledby={`footer-column-${c}`}>
+                          {column.links.map(([url, label]) => (
+                            <li key={url}>
+                              <Link href={href(url)}>{label}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </nav>
+                  <div className="site-footer-legal">
+                    <span>© {new Date().getFullYear()} Outpost</span>
+                    <Link href="/legal">Privacy &amp; terms</Link>
+                    <button
+                      type="button"
+                      className="site-footer-top"
+                      onClick={() =>
+                        window.scrollTo({
+                          top: 0,
+                          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                            ? "auto"
+                            : "smooth",
+                        })
+                      }
+                    >
+                      Back to top <ArrowUp size={14} aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
+              </footer>
+            </div>
           </div>
-        </div>
+        </AccountIdContext.Provider>
       </RegionNavigationContext.Provider>
     </RegionContext.Provider>
   );

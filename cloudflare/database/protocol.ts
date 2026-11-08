@@ -13,6 +13,8 @@ export const models = new Set([
   "buildFavorite",
   "buildVote",
   "libraryLike",
+  "libraryFavorite",
+  "masteryLevel",
   "composition",
   "compositionVersion",
   "compositionFavorite",

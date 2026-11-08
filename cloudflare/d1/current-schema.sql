@@ -544,6 +544,27 @@ CREATE TABLE "LibraryLike" (
     CONSTRAINT "LibraryLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "LibraryFavorite" (
+    "userId" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("userId", "slug"),
+    CONSTRAINT "LibraryFavorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "MasteryLevel" (
+    "userId" TEXT NOT NULL,
+    "specId" TEXT NOT NULL,
+    "level" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL,
+
+    PRIMARY KEY ("userId", "specId"),
+    CONSTRAINT "MasteryLevel_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
