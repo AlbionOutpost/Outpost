@@ -9,16 +9,54 @@ const activeStatuses = new Set(["active", "trialing", "past_due"]);
 export const planForStatus = (status: string | null | undefined): Plan =>
   status && activeStatuses.has(status) ? "SUPPORTER" : "FREE";
 
-export const isSupporter = (
-  user:
-    | {
-        plan?: string | null;
-        supporterGiftUntil?: Date | string | null;
-        supporterGiftPermanent?: boolean;
-      }
-    | null
-    | undefined,
-) => user?.plan === "SUPPORTER" || giftedSupporter(user);
+/**
+ * The launch grant (owner, 8 Nov 2026): every account is a lifetime Supporter, including
+ * accounts that sign up later, without writing anything to them. While `closedAt` is null the
+ * launch is on. To end it, set `closedAt` to that date: accounts created before it keep
+ * Supporter for life; later ones need a gift (or the plan, if billing is ever switched on).
+ * Outpost is free: the grant involves no payment.
+ */
+export const launchGrant: { closedAt: Date | null } = { closedAt: null };
+/** True while every account, old or new, is covered by the launch grant. */
+export const launchOpen = () => launchGrant.closedAt === null;
+
+type Entitlement =
+  | {
+      plan?: string | null;
+      supporterGiftUntil?: Date | string | null;
+      supporterGiftPermanent?: boolean;
+      createdAt?: Date | string | null;
+    }
+  | null
+  | undefined;
+
+/** The account (`user` is its row) holds the launch grant. */
+export const launchSupporter = (user: Entitlement) =>
+  !!user &&
+  (launchOpen() ||
+    (!!user.createdAt && new Date(user.createdAt).getTime() < launchGrant.closedAt!.getTime()));
+
+/** Supporter from a stored plan or an admin gift, leaving the launch grant out. */
+export const storedSupporter = (user: Entitlement) =>
+  user?.plan === "SUPPORTER" || giftedSupporter(user);
+
+/** Supporter from a stored plan, an admin gift or the launch grant. */
+export const isSupporter = (user: Entitlement) => storedSupporter(user) || launchSupporter(user);
+
+/** Where an account's Supporter status comes from, for labels; null when it has none. */
+export const supporterSource = (user: Entitlement): "plan" | "gift" | "launch" | null =>
+  user?.plan === "SUPPORTER"
+    ? "plan"
+    : giftedSupporter(user)
+      ? "gift"
+      : launchSupporter(user)
+        ? "launch"
+        : null;
+/** How an account's status reads: "Launch Supporter" marks the launch grant. */
+export function supporterLabel(user: Entitlement) {
+  const source = supporterSource(user);
+  return source === "launch" ? "Launch Supporter" : source ? "Supporter" : "Free";
+}
 
 export type SubscriptionRecord = {
   customerId: string;
@@ -77,6 +115,7 @@ export const billingProfile = (userId: string) =>
       plan: true,
       supporterGiftUntil: true,
       supporterGiftPermanent: true,
+      createdAt: true,
       planStatus: true,
       planRenewsAt: true,
       stripeCustomerId: true,

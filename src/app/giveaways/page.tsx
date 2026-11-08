@@ -55,6 +55,7 @@ export default async function GiveawaysPage({
         initial={board}
         endpoint="/api/giveaways"
         scope="site"
+        host="Outpost staff"
         defaultRegion={region}
         now={renderedAt()}
         signIn={board.signedIn ? undefined : signInPath("/giveaways")}

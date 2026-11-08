@@ -26,6 +26,21 @@ test("a loadout becomes an inventory-aware list that survives reload without cro
   await expect(page.locator(".shopping-total")).toHaveText("5,000");
   await page.goto("/shopping-list?region=asia");
   await expect(page.getByText("Nothing on the list yet", { exact: true })).toBeVisible();
+  // A guest is offered sign-in for account lists, never a disabled save button
+  await expect(page.getByRole("link", { name: "Sign in to save lists" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Save account list" })).toHaveCount(0);
+  await expect(page.getByRole("list", { name: "Example plan" }).getByRole("listitem")).toHaveCount(
+    3,
+  );
+  await page.getByRole("button", { name: "Try the example plan", exact: true }).click();
+  await expect(page.getByText("3 purchase lines", { exact: true })).toBeVisible();
+  // Nothing is priced yet: the cost stays unavailable, and Lymhurst carries all 33 items
+  await expect(page.locator(".shopping-total")).toContainText("Unavailable");
+  const lymhurst = page.getByRole("list", { name: "Still to buy by city" }).getByRole("listitem");
+  await expect(lymhurst).toHaveCount(1);
+  await expect(lymhurst).toContainText(/Lymhurst\s*33 items/);
+  await expect(lymhurst).toContainText("Unavailable");
+  await page.evaluate(() => localStorage.removeItem("outpost-shopping-v1:asia"));
   await page.goto("/shopping-list?region=europe");
   await expect(page.locator(".shopping-total")).toHaveText("5,000");
 });

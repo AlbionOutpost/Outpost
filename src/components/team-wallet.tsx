@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import type { TeamWalletView } from "@/lib/groups/economy-service";
-import { bookkeepingLine } from "@/lib/groups/economy";
 import { AvatarFrame } from "./avatar-frame";
 import { EmptyWell } from "./empty-well";
 import { NumberField } from "./number-field";
@@ -10,7 +9,8 @@ import { Field } from "./group-parts";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
 import { WellSelect } from "./well-select";
-import { silverText, useCountUp } from "./economy-stage";
+import { operationKey, signedSilver as signed, silverText } from "./economy-motion";
+import { kindLabel, shortTime } from "./team-treasury-hero";
 import teams from "./teams.module.css";
 import styles from "./team-economy.module.css";
 
@@ -22,88 +22,43 @@ const modes: { key: Mode; label: string }[] = [
   { key: "payout", label: "Pay out" },
   { key: "reset", label: "Reset" },
 ];
-const kindLabel: Record<string, string> = {
-  credit: "Credit",
-  debit: "Debit",
-  payout: "Payout",
-  reset: "Reset",
-  split: "Loot split",
-  roll: "Loot roll",
-};
-export const operationKey = () => crypto.randomUUID().replaceAll("-", "");
-export const shortTime = (iso: string) =>
-  new Date(iso).toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-function Purse({ label, value, lead }: { label: string; value: number; lead?: boolean }) {
-  const shown = useCountUp(value);
-  return (
-    <div className={styles.purse} data-lead={lead ? "" : undefined}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- painted emblem */}
-      <img
-        src={lead ? "/albion/icons/silver-128w.webp" : "/albion/icons/team-loot-64w.webp"}
-        alt=""
-      />
-      <dt>{label}</dt>
-      <dd>
-        <span aria-hidden="true">{silverText(shown)}</span>
-        <span className="sr-only">{silverText(value)}</span>
-        <small>silver</small>
-      </dd>
-    </div>
-  );
-}
-const signed = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${silverText(Math.abs(n))}`;
 
 /**
- * A member's Team wallet: their balance and the team pot, and their own history. With Manage
- * wallet: every balance, the team ledger and one form to credit, debit, pay out or reset.
- * The server re-checks the permission and the balance on every change.
+ * A member's Team wallet below the Treasury hero (which shows the pot and their balance): their
+ * own history. With Manage wallet: every balance, the team ledger and one form to credit,
+ * debit, pay out or reset. The Treasury reads the wallet and passes it in; the server
+ * re-checks the permission and the balance on every change.
  */
 export function TeamWallet({
   groupId,
   members,
-  active,
   locked,
+  view,
+  error: loadError,
+  refreshing,
+  onView,
+  onRetry,
 }: {
   groupId: string;
   members: Member[];
-  active: boolean;
   /** The owner's plan has lapsed: shared edits are refused, so the form is hidden. */
   locked: boolean;
+  view: TeamWalletView | null;
+  error: string;
+  refreshing: boolean;
+  onView: (view: TeamWalletView) => void;
+  onRetry: () => void;
 }) {
-  const [view, setView] = useState<TeamWalletView | null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-  const [loadedFor, setLoadedFor] = useState(-1);
   const [target, setTarget] = useState("pot");
   const [mode, setMode] = useState<Mode>("credit");
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
   const [key, setKey] = useState(operationKey);
-  useEffect(() => {
-    if (!active || loadedFor === attempt) return;
-    const controller = new AbortController();
-    fetch(`/api/groups/${groupId}/wallet`, { signal: controller.signal })
-      .then(async (response) => {
-        const body = await response.json();
-        if (!response.ok) throw new Error(body.error);
-        setView(body.wallet);
-        setLoadedFor(attempt);
-        setError("");
-      })
-      .catch((e) => {
-        if (!controller.signal.aborted)
-          setError(e instanceof Error ? e.message : "The wallet could not be loaded.");
-      });
-    return () => controller.abort();
-  }, [active, attempt, loadedFor, groupId]);
+  // A second click before the first answer lands never sends a second request.
+  const sending = useRef(false);
   const manage = !!view?.canManage && !locked;
   const frameOf = (id: string | null) => members.find((m) => m.userId === id)?.avatarFrame;
   const holderName = (id: string) =>
@@ -120,10 +75,12 @@ export function TeamWallet({
   const reasonOk = !needsAmount || reason.trim().length > 0;
 
   async function book() {
+    if (sending.current) return;
     if (!amountOk || !reasonOk) {
       setError("Enter whole silver above zero and a reason.");
       return;
     }
+    sending.current = true;
     setBusy(true);
     setError("");
     setMessage("");
@@ -138,7 +95,7 @@ export function TeamWallet({
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
-      setView(result.wallet);
+      onView(result.wallet);
       setKey(operationKey());
       setAmount("");
       setReason("");
@@ -149,6 +106,7 @@ export function TeamWallet({
       // The same key is kept, so retrying this exact change can never book it twice.
       setError(e instanceof Error ? e.message : "Could not record this change.");
     } finally {
+      sending.current = false;
       setBusy(false);
     }
   }
@@ -156,15 +114,11 @@ export function TeamWallet({
   if (!view)
     return (
       <section className={`${styles.economy} ${teams.panel} panel`} aria-label="Team wallet">
-        {error ? (
+        {loadError ? (
           <>
-            <StatusLine tone="error">{error}</StatusLine>
+            <StatusLine tone="error">{loadError}</StatusLine>
             <div className={teams.rowActions}>
-              <button
-                type="button"
-                className="pill-link is-small"
-                onClick={() => setAttempt((n) => n + 1)}
-              >
+              <button type="button" className="pill-link is-small" onClick={onRetry}>
                 <RotateCcw size={14} aria-hidden="true" /> Try again
               </button>
             </div>
@@ -186,11 +140,7 @@ export function TeamWallet({
             : "Every change to your balance, latest first (the last 50)."
         }
         actions={
-          <button
-            type="button"
-            className="pill-link is-small"
-            onClick={() => setAttempt((n) => n + 1)}
-          >
+          <button type="button" className="pill-link is-small" onClick={onRetry}>
             <RotateCcw size={14} aria-hidden="true" /> Refresh
           </button>
         }
@@ -201,9 +151,15 @@ export function TeamWallet({
             <thead>
               <tr>
                 <th scope="col">When</th>
-                {view.canManage && <th scope="col">Wallet</th>}
+                {view.canManage && (
+                  <th scope="col" className={styles.textCol}>
+                    Wallet
+                  </th>
+                )}
                 <th scope="col">Change</th>
-                <th scope="col">Reason</th>
+                <th scope="col" className={styles.reasonCol}>
+                  Reason
+                </th>
                 <th scope="col">By</th>
               </tr>
             </thead>
@@ -213,11 +169,11 @@ export function TeamWallet({
                   <th scope="row" className={styles.when}>
                     <time dateTime={e.createdAt}>{shortTime(e.createdAt)}</time>
                   </th>
-                  {view.canManage && <td>{e.name}</td>}
+                  {view.canManage && <td className={styles.textCol}>{e.name}</td>}
                   <td className={styles.amount} data-sign={e.amount > 0 ? "+" : "-"}>
                     {signed(e.amount)}
                   </td>
-                  <td>
+                  <td className={styles.reasonCol}>
                     <span className={styles.kind}>{kindLabel[e.kind] ?? e.kind}</span> {e.reason}
                   </td>
                   <td>{e.by ?? "Former member"}</td>
@@ -250,11 +206,6 @@ export function TeamWallet({
       <p role="status" className={message ? teams.saved : "sr-only"}>
         {message}
       </p>
-      <dl className={styles.treasury}>
-        <Purse label="Your balance" value={view.balance} lead />
-        <Purse label="Team pot" value={view.pot} />
-      </dl>
-      <p className={styles.note}>{bookkeepingLine}</p>
       {view.canManage && (
         <div className={styles.columns}>
           <section className={`panel ${teams.panel}`} aria-labelledby="wallet-balances">
@@ -420,7 +371,7 @@ export function TeamWallet({
           Officers with Manage wallet book silver here. Ask them to pay out your balance in game.
         </p>
       )}
-      {loadedFor !== attempt && <StatusLine>Refreshing…</StatusLine>}
+      {refreshing && <StatusLine>Refreshing…</StatusLine>}
     </section>
   );
 }

@@ -30,6 +30,7 @@ import {
   type Source,
 } from "@/lib/source-filter";
 import styles from "@/components/comps.module.css";
+import { displayName } from "@/lib/display-name";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions", await searchParams);
 }
@@ -170,7 +171,7 @@ export default async function Compositions({
               }
               total={count}
               noun="player"
-              byline={`By ${r.author.name || "Adventurer"}`}
+              byline={`By ${displayName(r.author.name)}`}
             >
               {count ? (
                 <RosterRows

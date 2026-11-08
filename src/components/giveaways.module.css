@@ -1,25 +1,36 @@
-/* Giveaways: the site-wide /giveaways board and a Team's giveaways. Framed `.panel`s with
-   `PanelHead`; each giveaway is one well row: its picture, what it is and where it stands, then
-   the viewer's part and, for whoever runs it, the controls. */
+/* Giveaways: the site-wide /giveaways board and a Team's giveaways. Open giveaways are raised
+   cards in a grid (prize, host, countdown, entrants, the viewer's state and one action); ended
+   ones are quiet well rows in one framed panel, with their winners. */
 :global(.app.outpost) .board.board {
+  display: grid;
+  gap: 26px;
+  min-width: 0;
+}
+:global(.app.outpost) .open.open {
   display: grid;
   gap: var(--space-4);
   min-width: 0;
+}
+/* The section's head on its own surface, so it reads on the backdrop in both themes */
+:global(.app.outpost) .bar.bar {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+}
+:global(.app.outpost) .bar.bar.bar > * {
+  margin: 0;
 }
 :global(.app.outpost) .panel.panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
   min-width: 0;
   margin: 0;
   padding: var(--space-6);
 }
-:global(.app.outpost) .panel.panel > * {
-  margin: 0;
-}
-:global(.app.outpost) .list.list {
+:global(.app.outpost) .grid.grid {
   display: grid;
-  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -27,83 +38,249 @@
 
 /* Mounted under another tab's panels inside a Team workspace */
 :global(.app.outpost) .team.team {
-  margin-top: var(--space-4);
+  margin-top: 26px;
 }
 
-/* ---------- One giveaway ---------- */
+/* ---------- An open giveaway ---------- */
 :global(.app.outpost) .card.card {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) auto;
-  align-items: start;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
+  min-width: 0;
+  padding: var(--space-5);
+}
+:global(.app.outpost) .card.card > * {
+  margin: 0;
+}
+:global(.app.outpost) .head.head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
 }
 :global(.app.outpost) .art.art {
   display: grid;
+  flex: none;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
   border-radius: 50%;
-  background: var(--accent-wash);
+  background: radial-gradient(circle at 50% 40%, var(--accent-wash), transparent 75%), var(--well);
+  box-shadow: var(--well-inset);
   color: var(--accent-ink);
 }
 :global(.app.outpost) .art.art img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
+  filter: drop-shadow(0 3px 6px color-mix(in srgb, var(--bg) 70%, transparent));
 }
-:global(.app.outpost) .body.body {
+:global(.app.outpost) .heading.heading {
   display: grid;
-  gap: var(--space-2);
+  gap: 2px;
   min-width: 0;
 }
-:global(.app.outpost) .body.body > * {
+:global(.app.outpost) .heading.heading > * {
   margin: 0;
 }
+:global(.app.outpost) .host.host {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
 :global(.app.outpost) .title.title {
-  margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
+/* The viewer's state: Open, Entered, Draw pending, Won, Ended, Cancelled */
+:global(.app.outpost) .state.state {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  align-self: start;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+:global(.app.outpost) .state.state[data-state="open"] {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .state.state:is([data-state="entered"], [data-state="won"]) {
+  border-color: color-mix(in srgb, var(--positive) 50%, var(--border));
+  background: color-mix(in srgb, var(--positive) 12%, transparent);
+  color: var(--positive);
+}
 :global(.app.outpost) .prize.prize {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
   color: var(--text);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
   overflow-wrap: anywhere;
 }
-:global(.app.outpost) .chips.chips {
-  flex-wrap: wrap;
-}
-:global(.app.outpost) .meta.meta {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.45;
-}
-:global(.app.outpost) .figure.figure {
-  font-family: var(--font-data);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--text);
-}
-:global(.app.outpost) .winners.winners {
-  display: grid;
-  gap: var(--space-2);
-}
 :global(.app.outpost) .label.label {
-  margin: 0;
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
 }
-:global(.app.outpost) .winners.winners ol {
+/* Countdown, entrants, winners: fixed columns and tabular digits, so a tick never moves a thing */
+:global(.app.outpost) .stats.stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .stat.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+}
+:global(.app.outpost) .stat.stat + .stat {
+  border-left: 1px solid var(--well-border);
+}
+:global(.app.outpost) .value.value {
+  color: var(--text);
+  font: 600 19px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+:global(.app.outpost) .card.card[data-state="closed"] .stat:first-child .value {
+  color: var(--muted);
+  font-family: var(--font-ui);
+}
+:global(.app.outpost) .meta.meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+:global(.app.outpost) .foot.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+:global(.app.outpost) .go.go {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+:global(.app.outpost) .entered.entered {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--positive);
+  font-size: 14px;
+  font-weight: 650;
+}
+/* The organiser's controls, under a hairline */
+:global(.app.outpost) .manage.manage {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--surface-inset-edge, var(--border));
+}
+:global(.app.outpost) .loss.loss.loss {
+  color: var(--negative);
+  border-color: color-mix(in srgb, var(--negative) 55%, var(--border));
+}
+@container (max-width: 360px) {
+  :global(.app.outpost) .stats.stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :global(.app.outpost) .stat.stat:first-child {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid var(--well-border);
+  }
+  :global(.app.outpost) .stat.stat:nth-child(2) {
+    border-left: 0;
+  }
+}
+
+/* ---------- Ended giveaways ---------- */
+:global(.app.outpost) .rows.rows {
+  display: grid;
+  gap: var(--space-3);
   margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .row.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .row.row .art {
+  width: 44px;
+  height: 44px;
+}
+:global(.app.outpost) .row.row .art img {
+  width: 32px;
+  height: 32px;
+}
+:global(.app.outpost) .rowBody.rowBody {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+:global(.app.outpost) .rowBody.rowBody > * {
+  margin: 0;
+}
+:global(.app.outpost) .rowTitle.rowTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .rowPrize.rowPrize {
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .rowSide.rowSide {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-1);
+}
+:global(.app.outpost) .winners.winners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -111,49 +288,18 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 32px;
+  min-height: 30px;
   padding: 0 var(--space-3);
   border: 1px solid var(--well-border);
-  border-radius: var(--radius-control);
+  border-radius: 999px;
   background: var(--elevated);
   font-size: 14px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
-:global(.app.outpost) .winners.winners li .figure {
+:global(.app.outpost) .place.place {
   color: var(--accent-ink);
-  font-size: 12px;
-}
-
-/* ---------- The viewer's part and the organiser's controls ---------- */
-:global(.app.outpost) .actions.actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-2);
-  min-width: 0;
-}
-:global(.app.outpost) .manage.manage {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: var(--space-2);
-}
-:global(.app.outpost) .status.status {
-  color: var(--accent-ink);
-}
-:global(.app.outpost) .won.won {
-  color: var(--positive);
-  background: color-mix(in srgb, var(--positive) 12%, transparent);
-  border-color: color-mix(in srgb, var(--positive) 45%, var(--border));
-}
-:global(.app.outpost) .loss.loss.loss {
-  color: var(--negative);
-  border-color: color-mix(in srgb, var(--negative) 55%, var(--border));
-}
-:global(.app.outpost) .note.note {
-  color: var(--muted);
-  font-size: 12px;
+  font: 600 12px var(--font-data);
 }
 
 /* ---------- Feedback ---------- */
@@ -170,6 +316,16 @@
 }
 :global(.app.outpost) .saved.saved {
   border-left-color: var(--success);
+}
+:global(.app.outpost) div.error.error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+:global(.app.outpost) div.error.error > p {
+  margin: 0;
 }
 
 /* ---------- The start / edit dialog ---------- */
@@ -275,27 +431,16 @@
     padding: var(--space-5) var(--space-4);
   }
   :global(.app.outpost) .card.card {
-    grid-template-columns: 48px minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+  :global(.app.outpost) .row.row {
+    grid-template-columns: auto minmax(0, 1fr);
     gap: var(--space-3);
     padding: var(--space-3);
   }
-  :global(.app.outpost) .art.art {
-    width: 48px;
-    height: 48px;
-  }
-  :global(.app.outpost) .art.art img {
-    width: 36px;
-    height: 36px;
-  }
-  :global(.app.outpost) .actions.actions {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  :global(.app.outpost) .manage.manage {
-    justify-content: flex-start;
+  :global(.app.outpost) .rowSide.rowSide {
+    grid-column: 2;
+    justify-items: start;
   }
   :global(.app.outpost) .formGrid.formGrid {
     grid-template-columns: minmax(0, 1fr);

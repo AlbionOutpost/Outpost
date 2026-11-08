@@ -13,6 +13,7 @@ import { deleteAccountRecord, verifyDeletionBilling } from "@/lib/account-deleti
 import { HttpError } from "@/lib/http-error";
 import { avatarFrameIds } from "@/lib/avatar-frames";
 import { signInPath } from "@/lib/sign-in-return";
+import { cleanDisplayName, reservedDisplayName } from "@/lib/display-name";
 const settings = z.object({
   name: z.string().trim().min(1).max(60),
   region: regionSchema,
@@ -51,7 +52,26 @@ export async function saveSettings(
       return {
         error: "Too many requests or the request limiter is unavailable. Please retry later.",
       };
-    await db.user.update({ where: { id: session.user.id }, data: parsed.data });
+    // A name is checked when it changes; one saved before these rules stays as it was.
+    const current = await db.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true },
+    });
+    const { name, ...data } = parsed.data;
+    // Unchanged: the stored name is left exactly as it is.
+    const unchanged = name === current?.name?.trim();
+    const clean = cleanDisplayName(name);
+    if (!unchanged && !clean)
+      return { error: "Enter a display name with visible letters. Your draft is retained." };
+    if (!unchanged && reservedDisplayName(clean))
+      return {
+        error:
+          "That name is reserved because it reads as Outpost or its staff. Pick another; your draft is retained.",
+      };
+    await db.user.update({
+      where: { id: session.user.id },
+      data: unchanged ? data : { ...data, name: clean },
+    });
     (await cookies()).set("atlas-region", parsed.data.region, {
       path: "/",
       maxAge: 31536000,

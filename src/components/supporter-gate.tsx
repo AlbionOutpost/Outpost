@@ -42,7 +42,7 @@ export function SupporterGate({
         <h2>Team management is paused</h2>
         <p>
           {owner
-            ? `${supporterMessage.manage} Members can still read everything, RSVP and leave; events, announcements, invites, shared builds and loot splits wait until you support Outpost again.`
+            ? `${supporterMessage.manage} Members can still read everything, RSVP and leave; events, announcements, invites, shared builds, loot splits and giveaways wait until you are a Supporter again.`
             : `${supporterMessage.manage} You can still read everything, RSVP and leave.`}
         </p>
       </div>

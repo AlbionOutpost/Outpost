@@ -17,6 +17,7 @@ import {
   walletAction,
 } from "./economy";
 import { z } from "zod";
+import { displayName } from "../display-name";
 
 type Tx = Prisma.TransactionClient;
 const formerMember = "Former team member";
@@ -128,7 +129,7 @@ async function walletView(tx: Tx, groupId: string, userId: string, access: TeamA
   );
   let rows: { userId: string; name: string; balance: number; member: boolean }[] | null = null;
   if (manage) {
-    const known = new Map(members.map((m) => [m.userId, m.user.name || "Adventurer"]));
+    const known = new Map(members.map((m) => [m.userId, displayName(m.user.name)]));
     const former = [...balances.entries()].filter(
       ([id, amount]) => id !== null && !known.has(id) && amount !== 0,
     );
@@ -161,11 +162,11 @@ async function walletView(tx: Tx, groupId: string, userId: string, access: TeamA
     entries: entries.map((e) => ({
       id: e.id,
       userId: e.userId,
-      name: e.userId ? e.user?.name || formerMember : "Team pot",
+      name: e.userId ? (e.user ? displayName(e.user.name) : formerMember) : "Team pot",
       amount: e.amount,
       kind: e.kind,
       reason: e.reason,
-      by: e.createdBy?.name || null,
+      by: e.createdBy ? displayName(e.createdBy.name) : null,
       createdAt: e.createdAt.toISOString(),
     })),
     paidSplits: paid.map((p) => p.sourceId.replace(/^split:/, "")),
@@ -355,7 +356,7 @@ async function gamesView(tx: Tx, groupId: string, userId: string, access: TeamAc
     canRun: can(access, "manageLoot"),
     canPay: can(access, "manageWallet"),
     balance,
-    names: Object.fromEntries(users.map((u) => [u.id, u.name || "Adventurer"])),
+    names: Object.fromEntries(users.map((u) => [u.id, displayName(u.name)])),
     flips: flips.map(flipOut),
     rolls: rolls.map(rollOut),
   };

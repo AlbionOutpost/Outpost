@@ -7,9 +7,9 @@ import { accountBanned } from "../admin/policy";
 import { can, type TeamAccess } from "../groups/permissions";
 import { loadTeamAccess } from "../groups/roles";
 import { deadlineError, drawWinners, giveawayAction, type GiveawayAction } from "./rules";
+import { displayName } from "../display-name";
 
 type Tx = Prisma.TransactionClient;
-const playerName = (name: string | null | undefined) => name || "Adventurer";
 const scopeId = z.string().min(1).max(100).nullable();
 
 /**
@@ -121,14 +121,14 @@ async function board(tx: Tx, groupId: string | null, viewer: Viewer) {
       createdAt: g.createdAt.toISOString(),
       drawnAt: g.drawnAt?.toISOString() ?? null,
       // Site-wide draws are made by Outpost staff; a Team sees which member drew.
-      drawnBy: g.drawnAt ? (groupId ? playerName(g.drawnBy?.name) : "Outpost staff") : null,
+      drawnBy: g.drawnAt ? (groupId ? displayName(g.drawnBy?.name) : "Outpost staff") : null,
       cancelledAt: g.cancelledAt?.toISOString() ?? null,
       entries: count.get(g.id) ?? 0,
       entered: own.has(g.id),
       place: own.get(g.id) ?? null,
       winners: winners
         .filter((w) => w.giveawayId === g.id)
-        .map((w) => ({ place: w.winnerPosition!, name: playerName(w.user.name) })),
+        .map((w) => ({ place: w.winnerPosition!, name: displayName(w.user.name) })),
     })),
   };
 }

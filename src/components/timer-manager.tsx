@@ -1,6 +1,19 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Pause, Pencil, Play, Plus, RotateCcw, Trash2 } from "lucide-react";
+import {
+  Bell,
+  Hammer,
+  PawPrint,
+  Pause,
+  Pencil,
+  Play,
+  Plus,
+  RotateCcw,
+  Sprout,
+  Timer as TimerIcon,
+  Trash2,
+  Zap,
+} from "lucide-react";
 import Link from "@/components/link";
 import { remainingTime } from "@/lib/timers/engine";
 import { AccountPageMore, appendAccountRows } from "./account-page-more";
@@ -64,6 +77,41 @@ const clock = (seconds: number) => {
 const span = (seconds: number) => countdown(seconds).replace(/ 00m$/, "");
 const secondsLeft = (t: Timer, now: number) =>
   Math.ceil(remainingTime({ ...t, dueAt: t.dueAt ? new Date(t.dueAt) : null }, now) / 1000);
+const icons: Record<string, typeof TimerIcon> = {
+  CROP: Sprout,
+  ANIMAL: PawPrint,
+  LABORER: Hammer,
+  FOCUS: Zap,
+  REMINDER: Bell,
+};
+const CategoryIcon = ({ category, size = 20 }: { category: string; size?: number }) => {
+  const Icon = icons[category] ?? TimerIcon;
+  return <Icon size={size} aria-hidden="true" />;
+};
+/** The list reads top to bottom in the order things need the player. */
+const groups = [
+  ["ready", "Ready", "Done counting. Collect, then start again or clear."],
+  ["soon", "Soon", "Under an hour"],
+  ["today", "Today", "Within 24 hours"],
+  ["later", "Later", "More than a day away"],
+  ["paused", "Paused", "Stopped until you resume"],
+  ["cleared", "Cleared", "Finished and put away"],
+] as const;
+type Group = (typeof groups)[number][0];
+function groupOf(t: Timer, now: number | null): Group {
+  if (t.status === "COMPLETED") return "cleared";
+  if (t.status === "PAUSED") return "paused";
+  const left = now === null ? null : secondsLeft(t, now);
+  if (left === null) return "later";
+  return left === 0 ? "ready" : left <= 3600 ? "soon" : left <= 86400 ? "today" : "later";
+}
+/** Quick lengths the player picks themselves; they add to what is typed. */
+const bumps = [
+  [15, "+15m"],
+  [60, "+1h"],
+  [240, "+4h"],
+  [720, "+12h"],
+] as const;
 
 /**
  * The player's own countdowns: a list of timers with a clock, a progress bar and their actions,
@@ -73,13 +121,16 @@ const secondsLeft = (t: Timer, now: number) =>
 export function TimerManager({
   initial,
   initialCursor = null,
+  serverNow = null,
 }: {
   initial: Timer[];
   initialCursor?: string | null;
+  /** The server's clock at render, so the first paint already shows each countdown. */
+  serverNow?: number | null;
 }) {
   const [nextCursor, setNextCursor] = useState<string | null>(initialCursor);
   const [timers, setTimers] = useState(initial),
-    [now, setNow] = useState<number | null>(null),
+    [now, setNow] = useState<number | null>(serverNow),
     [message, setMessage] = useState<{ text: string; error?: boolean } | null>(null),
     [busy, setBusy] = useState(false),
     [filter, setFilter] = useState("active");
@@ -240,11 +291,31 @@ export function TimerManager({
               <StatusLine tone={message.error ? "error" : "default"}>{message.text}</StatusLine>
             )}
             {visible.length ? (
-              <ul className={styles.rows} aria-label="Your timers">
-                {visible.map((t) => (
-                  <TimerRow key={t.id} timer={t} now={now} busy={busy} update={update} />
-                ))}
-              </ul>
+              <div className={styles.groups}>
+                {groups.map(([key, label, line]) => {
+                  const rows = visible.filter((t) => groupOf(t, now) === key);
+                  if (!rows.length) return null;
+                  return (
+                    <section
+                      key={key}
+                      className={styles.group}
+                      data-group={key}
+                      aria-labelledby={`timer-group-${key}`}
+                    >
+                      <h3 id={`timer-group-${key}`} className={styles.groupHead}>
+                        <span className={styles.groupLabel}>{label}</span>
+                        <span className={styles.groupCount}>{rows.length}</span>
+                        <span className={styles.groupLine}>{line}</span>
+                      </h3>
+                      <ul className={styles.rows} aria-label={`${label} timers`}>
+                        {rows.map((t) => (
+                          <TimerRow key={t.id} timer={t} now={now} busy={busy} update={update} />
+                        ))}
+                      </ul>
+                    </section>
+                  );
+                })}
+              </div>
             ) : (
               <EmptyWell
                 emblem="team-calendar"
@@ -288,6 +359,9 @@ export function TimerManager({
                 aria-pressed={preset?.title === p.title}
                 onClick={() => choose(p)}
               >
+                <span className={styles.presetIcon}>
+                  <CategoryIcon category={p.category} size={16} />
+                </span>
                 <strong>{p.title}</strong>
                 <span data-manual={p.minutes ? undefined : ""}>
                   {p.minutes ? span(p.minutes * 60) : "Set the time"}
@@ -320,7 +394,7 @@ export function TimerManager({
                 requestAnimationFrame(() =>
                   document
                     .getElementById(`timer-${b.id}`)
-                    ?.querySelector<HTMLElement>("h2")
+                    ?.querySelector<HTMLElement>("[data-timer-title]")
                     ?.focus(),
                 );
                 setMessage({ text: "Timer started. Refreshing the page will not reset it." });
@@ -377,6 +451,31 @@ export function TimerManager({
                   onValueChange={(v) => setDraft({ ...draft, minutes: v == null ? "" : String(v) })}
                 />
               </Field>
+              <div className={styles.bumps} role="group" aria-label="Add time">
+                {bumps.map(([minutes, label]) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={styles.bump}
+                    disabled={totalMinutes + minutes > 30000}
+                    onClick={() => {
+                      const next = totalMinutes + minutes;
+                      setDraft({
+                        ...draft,
+                        hours: String(Math.floor(next / 60)),
+                        minutes: String(next % 60),
+                      });
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {totalMinutes > 0 && totalMinutes <= 30000 && now !== null && (
+                <p className={styles.preview}>
+                  Due <GameTime at={new Date(Math.floor(now / 60000 + totalMinutes) * 60000)} />
+                </p>
+              )}
               <p className={styles.source}>
                 {fromGuide && preset?.source ? (
                   <>
@@ -409,6 +508,20 @@ export function TimerManager({
   );
 }
 
+/** "08:59:42" with the separators set apart, so the digits read first. */
+function Clock({ seconds }: { seconds: number }) {
+  const [h, m, s] = clock(seconds).split(":");
+  return (
+    <>
+      {h.padStart(2, "0")}
+      <span className={styles.sep}>:</span>
+      {m}
+      <span className={styles.sep}>:</span>
+      {s}
+    </>
+  );
+}
+
 function TimerRow({
   timer: t,
   now,
@@ -426,11 +539,23 @@ function TimerRow({
   const total = Math.max(1, Math.round(t.durationMs / 1000));
   const done = t.status === "COMPLETED" || (t.status === "RUNNING" && left === 0);
   const progress = done ? 1 : left === null ? 0 : Math.min(1, Math.max(0, 1 - left / total));
+  const group = groupOf(t, now);
   const state = t.status === "COMPLETED" ? "cleared" : done ? "ready" : t.status.toLowerCase();
+  const overdue =
+    group === "ready" && now !== null && t.dueAt
+      ? Math.max(0, Math.floor((now - Date.parse(t.dueAt)) / 1000))
+      : null;
   return (
-    <li id={`timer-${t.id}`} className={styles.row} data-state={state}>
+    <li
+      id={`timer-${t.id}`}
+      className={styles.row}
+      data-state={state}
+      data-soon={group === "soon" ? "" : undefined}
+    >
+      <span className={styles.badge} aria-hidden="true">
+        <CategoryIcon category={t.category} />
+      </span>
       <div className={styles.info}>
-        <span className={`landing-chip is-muted ${styles.tag}`}>{timerCategory(t.category)}</span>
         {editing ? (
           <form
             className={styles.rename}
@@ -463,33 +588,27 @@ function TimerRow({
             </button>
           </form>
         ) : (
-          <h2 tabIndex={-1} className={styles.title}>
+          <h4 tabIndex={-1} className={styles.title} data-timer-title="">
             {t.title}
-          </h2>
+          </h4>
         )}
         <small className={styles.meta}>
-          {t.status === "RUNNING" && t.dueAt ? (
-            <>
-              {/* The clock beside it is the countdown, so the line names the moment only. */}
-              {done ? "Was due" : "Due"} <GameTime at={t.dueAt} />
-            </>
-          ) : t.status === "PAUSED" ? (
-            "Paused, resume to keep counting"
-          ) : (
-            "Cleared"
-          )}{" "}
-          · {span(total)} in all
+          <span className={styles.tag}>{timerCategory(t.category)}</span>{" "}
+          <span>
+            {t.status === "RUNNING" && t.dueAt ? (
+              <>
+                {/* The clock beside it is the countdown, so the line names the moment only. */}
+                {done ? "Was due" : "Due"} <GameTime at={t.dueAt} />
+              </>
+            ) : t.status === "PAUSED" ? (
+              "Paused, resume to keep counting"
+            ) : (
+              "Cleared"
+            )}{" "}
+            · {span(total)} in all
+          </span>
         </small>
       </div>
-      <p className={styles.clock} aria-live="off">
-        {left === null ? (
-          <span className={styles.wait}>Updating…</span>
-        ) : done ? (
-          "Ready"
-        ) : (
-          clock(left)
-        )}
-      </p>
       <div
         className={styles.bar}
         role="progressbar"
@@ -498,8 +617,32 @@ function TimerRow({
         aria-valuemax={100}
         aria-valuenow={Math.round(progress * 100)}
       >
-        <b style={{ width: `${progress * 100}%` }} />
+        <b style={{ transform: `scaleX(${progress})` }} />
       </div>
+      <p className={styles.clock} aria-live="off">
+        <span className={styles.clockValue}>
+          {left === null ? (
+            <span className={styles.wait}>Updating…</span>
+          ) : done ? (
+            t.status === "COMPLETED" ? (
+              "Done"
+            ) : (
+              "Ready"
+            )
+          ) : (
+            <Clock seconds={left} />
+          )}
+        </span>
+        <span className={styles.clockLine}>
+          {t.status === "COMPLETED"
+            ? "cleared"
+            : t.status === "PAUSED"
+              ? "paused"
+              : overdue !== null
+                ? `${countdown(overdue)} ago`
+                : "left"}
+        </span>
+      </p>
       <div className={styles.actions}>
         {t.status === "RUNNING" && !done && (
           <button className="button secondary" disabled={busy} onClick={() => update(t, "pause")}>

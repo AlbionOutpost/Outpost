@@ -6,6 +6,7 @@ import { ArrowRight, Download } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { resolveAvatarFrame } from "@/lib/avatar-frames";
+import { isSupporter, supporterLabel, supporterSource } from "@/lib/billing/plan";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
@@ -14,6 +15,7 @@ import { AvatarFrame } from "@/components/avatar-frame";
 import account from "@/components/account.module.css";
 import styles from "./settings.module.css";
 import { signInPath } from "@/lib/sign-in-return";
+import { displayName } from "@/lib/display-name";
 export const metadata = privateMetadata("Settings");
 
 /** One settings group: its name and a line on the left, the controls in a panel on the right. */
@@ -64,7 +66,7 @@ export default async function Settings({
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (!user) redirect(signInPath("/settings"));
   const query = await searchParams;
-  const name = user.name || "Adventurer";
+  const name = displayName(user.name);
   const staff = ["ADMIN", "MODERATOR"].includes(user.role);
   return (
     <div className={styles.page}>
@@ -98,7 +100,8 @@ export default async function Settings({
           )}
           <PreferencesForm
             initial={{
-              name,
+              // The stored name, untouched, so saving other settings never renames anyone.
+              name: user.name || "Adventurer",
               region: user.region,
               characterName: user.characterName || "",
               avatarFrame: resolveAvatarFrame(user.avatarFrame) ?? "none",
@@ -116,6 +119,21 @@ export default async function Settings({
             line={`Signed in as ${name} through Discord.`}
             action={<LogoutButton />}
           />
+          {isSupporter(user) && (
+            <Line
+              title={supporterLabel(user)}
+              line={
+                supporterSource(user) === "launch"
+                  ? "A launch grant: every account is a lifetime Supporter, free. There is nothing to pay or renew."
+                  : "Your account holds every Supporter benefit."
+              }
+              action={
+                <Link className="button secondary" href="/supporter">
+                  About Supporter
+                </Link>
+              }
+            />
+          )}
           <Line
             title="Export your data"
             line="One JSON file with your profile, builds, comps, timers and saved plans."

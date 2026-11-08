@@ -5,7 +5,8 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { reviseBuild } from "@/lib/builds/service";
 import { buildInput, canReadBuild } from "@/lib/builds/validation";
-import { mutationUser, boundedJson } from "@/lib/http";
+import { mutationUser, boundedJson, spendSaveBudget } from "@/lib/http";
+import { storedBytes } from "@/lib/storage-limits";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 type Context = { params: Promise<{ id: string }> };
 export const GET = apiHandler("build.read", async (_req: NextRequest, ctx: Context) => {
@@ -30,6 +31,7 @@ export const PUT = apiHandler("build.update", async (req: NextRequest, ctx: Cont
   const body = z
     .object({ version: z.number().int().positive(), build: buildInput })
     .parse(await boundedJson(req));
+  await spendSaveBudget(auth.userId!, storedBytes(body.build));
   const result = await reviseBuild(id, auth.userId!, body.build, body.version);
   return NextResponse.json(result);
 });

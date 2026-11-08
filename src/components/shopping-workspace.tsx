@@ -9,7 +9,6 @@ import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 import { PanelHead } from "./panel-head";
 import { StatusLine, Unavailable } from "./status-line";
-import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
 import { Silver } from "./silver";
 import { cities } from "@/lib/albion/region-config";
@@ -26,7 +25,8 @@ import {
 } from "@/lib/albion/shopping";
 import { readShopping, writeShopping } from "./shopping-storage";
 import { fetchQuoteBatch, type MarketPrice } from "@/lib/albion/market-quotes";
-import { isStale } from "@/lib/albion/freshness";
+import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
+import { gameTime } from "@/lib/game-time";
 import styles from "./shopping-workspace.module.css";
 import { NumberField } from "./number-field";
 
@@ -250,6 +250,31 @@ export function ShoppingWorkspace() {
     (sum, row) => sum + Math.min(row.owned, row.quantity),
     0,
   );
+  const ownedShare = totalQuantity ? ownedQuantity / totalQuantity : 0;
+  /** What is left to buy in each city the player chose, with what is priced so far. */
+  const chosenCities = [...new Set(toBuy.map((row) => row.city))]
+    .map((city) => {
+      const rows = toBuy.filter((row) => row.city === city);
+      return {
+        city,
+        items: rows.reduce((sum, row) => sum + row.buy, 0),
+        cost: rows.reduce((sum, row) => sum + (row.cost ?? 0), 0),
+        missing: rows.filter((row) => row.cost === null).length,
+        lines: rows.length,
+      };
+    })
+    .toSorted((a, b) => b.items - a.items || a.city.localeCompare(b.city));
+  const example = examplePlan();
+  const lineCost = (row: (typeof result.rows)[number]) =>
+    row.buy === 0 ? (
+      <Silver value={0} animate={false} />
+    ) : row.cost === null ? (
+      <Unavailable />
+    ) : (
+      <Silver value={row.cost} digits={2} animate={false} />
+    );
+  const removeRow = (key: string) =>
+    commit({ ...list, entries: list.entries.filter((item) => shoppingKey(item) !== key) });
   return (
     <div className={styles.page}>
       <WorkspaceHeading
@@ -445,55 +470,25 @@ export function ShoppingWorkspace() {
                                       })
                                     }
                                   />
-                                  <small
-                                    data-tone={
-                                      row.stale || row.unavailableMarket ? "stale" : undefined
-                                    }
-                                  >
-                                    {row.unavailableMarket
-                                      ? "Choose a player market"
-                                      : row.stale
-                                        ? "Stale · refresh"
-                                        : row.unitPrice === null
-                                          ? "Not priced"
-                                          : row.priceKind === "manual"
-                                            ? "Your price"
-                                            : row.priceKind === "plan"
-                                              ? "Plan estimate"
-                                              : `Observed ${row.observedAt} UTC`}
-                                  </small>
+                                  <PriceNote row={row} />
                                 </td>
                                 <td className={styles.num} data-label="Total">
-                                  {row.cost === null ? (
-                                    <Unavailable />
-                                  ) : (
-                                    <Silver value={row.cost} digits={2} animate={false} />
-                                  )}
+                                  {lineCost(row)}
                                 </td>
                                 <td className={styles.rowActions}>
-                                  <button
-                                    type="button"
-                                    className={styles.iconButton}
-                                    aria-pressed={row.buy === 0}
-                                    aria-label={`Mark ${row.name} ${row.buy === 0 ? "needed" : "owned"}`}
-                                    onClick={() =>
+                                  <OwnedToggle
+                                    name={row.name}
+                                    done={row.buy === 0}
+                                    onToggle={() =>
                                       update(key, { owned: row.buy === 0 ? 0 : row.quantity })
                                     }
-                                  >
-                                    <Check size={16} aria-hidden="true" />
-                                  </button>
+                                  />
                                   <button
                                     type="button"
                                     className={styles.iconButton}
                                     aria-label={`Remove ${row.name}`}
-                                    onClick={() =>
-                                      commit({
-                                        ...list,
-                                        entries: list.entries.filter(
-                                          (item) => shoppingKey(item) !== key,
-                                        ),
-                                      })
-                                    }
+                                    title="Remove"
+                                    onClick={() => removeRow(key)}
                                   >
                                     <Trash2 size={16} aria-hidden="true" />
                                   </button>
@@ -509,18 +504,19 @@ export function ShoppingWorkspace() {
                       {result.rows.map((row) => {
                         const key = shoppingKey(row);
                         const owned = Math.min(row.owned, row.quantity);
-                        const pct = Math.round((owned / row.quantity) * 100);
                         return (
                           <li key={key} data-ready={row.buy === 0 ? "" : undefined}>
                             <ItemIcon id={row.itemId} quality={row.quality} size={44} />
                             <span className={styles.queueName}>
                               <strong>{row.name}</strong>
-                              <span className={styles.progress} aria-hidden="true">
-                                <b style={{ width: `${pct}%` }} />
-                              </span>
                               <small>
-                                {owned} / {row.quantity} owned · {pct}% · {row.city}
+                                <span className="city-dot" data-city={row.city} />
+                                {row.city} · {owned.toLocaleString()} /{" "}
+                                {row.quantity.toLocaleString()} owned
                               </small>
+                              <span className={styles.progress} aria-hidden="true">
+                                <b style={{ transform: `scaleX(${owned / row.quantity})` }} />
+                              </span>
                             </span>
                             <span className={styles.queueActions}>
                               <span
@@ -552,17 +548,19 @@ export function ShoppingWorkspace() {
                                   <Plus size={14} aria-hidden="true" />
                                 </button>
                               </span>
-                              <button
-                                type="button"
-                                className={styles.iconButton}
-                                aria-pressed={row.buy === 0}
-                                aria-label={`Mark ${row.name} ${row.buy === 0 ? "needed" : "owned"}`}
-                                onClick={() =>
+                              <OwnedToggle
+                                name={row.name}
+                                done={row.buy === 0}
+                                onToggle={() =>
                                   update(key, { owned: row.buy === 0 ? 0 : row.quantity })
                                 }
-                              >
-                                <Check size={16} aria-hidden="true" />
-                              </button>
+                              />
+                            </span>
+                            <span className={styles.lineCost}>
+                              <strong>{lineCost(row)}</strong>
+                              <small>
+                                {row.buy === 0 ? "All owned" : `${row.buy.toLocaleString()} to buy`}
+                              </small>
                             </span>
                           </li>
                         );
@@ -612,142 +610,263 @@ export function ShoppingWorkspace() {
                     Export list
                   </button>
                 </div>
-                <div className={styles.cities}>
-                  <div className={styles.citiesHead}>
-                    <span>Cheapest city to buy the rest</span>
-                    {toBuy.length > 0 && (
-                      <button
-                        type="button"
-                        className="pill-link is-small"
-                        disabled={compare.state === "loading"}
-                        onClick={compareCities}
-                      >
-                        {compare.state === "ready" ? "Check again" : "Compare cities"}
-                      </button>
-                    )}
-                  </div>
-                  {toBuy.length === 0 ? (
-                    <StatusLine>Nothing left to buy.</StatusLine>
-                  ) : compare.state === "loading" ? (
-                    <StatusLine>Checking the royal cities…</StatusLine>
-                  ) : compare.state === "error" ? (
-                    <StatusLine tone="error">
-                      City prices could not be loaded. Try again shortly.
-                    </StatusLine>
-                  ) : compare.state === "idle" ? (
-                    <StatusLine>Compare recent sell orders in the six royal cities.</StatusLine>
-                  ) : byCity.length ? (
-                    <ol>
-                      {byCity.map((c, i) => (
-                        <li key={c.city}>
-                          <span>
-                            <span className="city-dot" data-city={c.city} />
-                            {c.city}
-                            {i === 0 && !c.missing && <em>Cheapest</em>}
-                          </span>
-                          <i aria-hidden="true">
-                            <b style={{ width: `${(c.total / top) * 100}%` }} />
-                          </i>
-                          <span className={styles.cityValue}>
-                            <Silver value={c.total} animate={false} />
-                            {c.missing ? (
-                              <em className={styles.chip}>+{c.missing} unpriced</em>
-                            ) : null}
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                  ) : (
-                    <StatusLine>No royal city has a recent sell order for these items.</StatusLine>
-                  )}
-                </div>
               </>
             ) : (
-              <EmptyWell
-                emblem="tool-craft"
-                title="Nothing on the list yet"
-                line="Add your first item above. Build pages and the crafting calculator can also send their materials here."
-                action={
-                  <button
-                    type="button"
-                    className="button secondary"
-                    onClick={() => commit({ ...list, entries: examplePlan() }, false)}
-                  >
-                    Try the example plan
-                  </button>
-                }
-              />
+              <div className={styles.example}>
+                <div className={styles.exampleCopy}>
+                  <p className={styles.exampleTitle}>Nothing on the list yet</p>
+                  <p>
+                    Add your first item above. Build pages and the crafting calculator can also send
+                    their materials here. Or start from a small regear:
+                  </p>
+                </div>
+                <ul className={styles.exampleItems} aria-label="Example plan">
+                  {example.map((row) => (
+                    <li key={row.itemId}>
+                      <ItemIcon id={row.itemId} quality={1} size={56} />
+                      <span>
+                        <b>{row.quantity}×</b> {row.name}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  className="button primary"
+                  onClick={() => commit({ ...list, entries: example }, false)}
+                >
+                  Try the example plan
+                </button>
+              </div>
             )}
             {message && <StatusLine>{message}</StatusLine>}
           </section>
           <div className={styles.side}>
-            {list.entries.length > 0 && (
-              <section
-                className={`panel ${styles.summary}`}
-                aria-labelledby="shopping-summary-title"
-              >
-                <PanelHead id="shopping-summary-title" emblem="silver" title="Still to buy" />
-                <div
-                  className={styles.figure}
-                  data-complete={result.total !== null ? "" : undefined}
-                >
-                  <small>Purchase estimate</small>
-                  <strong className="shopping-total">
-                    {result.total !== null ? (
-                      money(result.total)
-                    ) : result.knownCost > 0 ? (
-                      `${money(result.knownCost)}+`
-                    ) : (
-                      <Unavailable />
+            <section className={`panel ${styles.summary}`} aria-labelledby="shopping-summary-title">
+              <PanelHead
+                id="shopping-summary-title"
+                emblem="silver"
+                title="Still to buy"
+                line={list.entries.length ? undefined : "Your totals build up here."}
+              />
+              {list.entries.length ? (
+                <>
+                  <div
+                    className={styles.figure}
+                    data-complete={result.total !== null ? "" : undefined}
+                  >
+                    <small>Upfront cost</small>
+                    <strong className="shopping-total">
+                      {result.total !== null ? (
+                        money(result.total)
+                      ) : result.knownCost > 0 ? (
+                        `${money(result.knownCost)}+`
+                      ) : (
+                        <Unavailable />
+                      )}
+                    </strong>
+                    {(result.total !== null || result.knownCost > 0) && (
+                      <small>
+                        {result.total !== null
+                          ? "silver for what you do not own yet"
+                          : "silver so far, for the lines with a price"}
+                      </small>
                     )}
-                  </strong>
-                  {(result.total !== null || result.knownCost > 0) && (
-                    <small>
-                      {result.total !== null
-                        ? "silver after what you own"
-                        : "silver so far, for the lines with a price"}
-                    </small>
+                    <div className={styles.owned}>
+                      <span>
+                        Owned {ownedQuantity.toLocaleString()} / {totalQuantity.toLocaleString()}
+                      </span>
+                      <span>{Math.round(ownedShare * 100)}%</span>
+                      <i aria-hidden="true">
+                        <b style={{ transform: `scaleX(${ownedShare})` }} />
+                      </i>
+                    </div>
+                  </div>
+                  <dl className={styles.stats}>
+                    <div>
+                      <dt>Items left</dt>
+                      <dd>{result.remainingItems.toLocaleString()}</dd>
+                    </div>
+                    <div>
+                      <dt>Lines ready</dt>
+                      <dd>
+                        {result.ready} / {list.entries.length}
+                      </dd>
+                    </div>
+                    <div data-tone={result.missing ? "stale" : undefined}>
+                      <dt>Unpriced</dt>
+                      <dd>{result.missing}</dd>
+                    </div>
+                  </dl>
+                  <div className={styles.where}>
+                    <h3>Where to buy</h3>
+                    {chosenCities.length ? (
+                      <ul aria-label="Still to buy by city">
+                        {chosenCities.map((c) => (
+                          <li key={c.city}>
+                            <span className={styles.whereCity}>
+                              <span className="city-dot" data-city={c.city} />
+                              {c.city}
+                            </span>
+                            <span className={styles.whereItems}>
+                              {c.items.toLocaleString()} {c.items === 1 ? "item" : "items"}
+                            </span>
+                            <span className={styles.whereCost}>
+                              {c.missing === c.lines ? (
+                                <Unavailable />
+                              ) : (
+                                <>
+                                  <Silver value={c.cost} animate={false} />
+                                  {c.missing ? "+" : ""}
+                                </>
+                              )}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <StatusLine>Nothing left to buy.</StatusLine>
+                    )}
+                  </div>
+                  {toBuy.length > 0 && (
+                    <div className={styles.cities}>
+                      <div className={styles.citiesHead}>
+                        <span>Cheapest royal city for the rest</span>
+                        <button
+                          type="button"
+                          className="pill-link is-small"
+                          disabled={compare.state === "loading"}
+                          onClick={compareCities}
+                        >
+                          {compare.state === "ready" ? "Check again" : "Compare cities"}
+                        </button>
+                      </div>
+                      {compare.state === "loading" ? (
+                        <StatusLine>Checking the royal cities…</StatusLine>
+                      ) : compare.state === "error" ? (
+                        <StatusLine tone="error">
+                          City prices could not be loaded. Try again shortly.
+                        </StatusLine>
+                      ) : compare.state === "idle" ? (
+                        <p className={styles.fine}>
+                          Recent sell orders for everything left, city by city.
+                        </p>
+                      ) : byCity.length ? (
+                        <ol>
+                          {byCity.map((c, i) => (
+                            <li key={c.city}>
+                              <span>
+                                <span className="city-dot" data-city={c.city} />
+                                {c.city}
+                                {i === 0 && !c.missing && <em>Cheapest</em>}
+                              </span>
+                              <i aria-hidden="true">
+                                <b style={{ transform: `scaleX(${c.total / top})` }} />
+                              </i>
+                              <span className={styles.cityValue}>
+                                <Silver value={c.total} animate={false} />
+                                {c.missing ? (
+                                  <em className={styles.chip}>+{c.missing} unpriced</em>
+                                ) : null}
+                              </span>
+                            </li>
+                          ))}
+                        </ol>
+                      ) : (
+                        <StatusLine>
+                          No royal city has a recent sell order for these items.
+                        </StatusLine>
+                      )}
+                    </div>
                   )}
-                </div>
-                <dl className={styles.stats}>
-                  <div>
-                    <dt>Owned</dt>
-                    <dd>
-                      {ownedQuantity.toLocaleString()} / {totalQuantity.toLocaleString()}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Items left</dt>
-                    <dd>{result.remainingItems.toLocaleString()}</dd>
-                  </div>
-                  <div>
-                    <dt>Lines ready</dt>
-                    <dd>
-                      {result.ready} / {list.entries.length}
-                    </dd>
-                  </div>
-                </dl>
-                {result.missing > 0 && (
-                  <StatusLine tone="stale">
-                    {result.missing} {result.missing === 1 ? "line needs" : "lines need"} a price:{" "}
-                    {result.rows
-                      .filter((row) => row.buy > 0 && row.cost === null)
-                      .slice(0, 5)
-                      .map((row) => `${row.name} in ${row.city}`)
-                      .join(", ")}
-                    {result.missing > 5 ? " and more" : ""}. Type your own price or refresh.
-                  </StatusLine>
-                )}
-                <p className={styles.fine}>
-                  Prices are recent sell orders or your own. Order fees and transport are separate;
-                  check listings before you buy.
-                </p>
-              </section>
-            )}
+                  {result.missing > 0 && (
+                    <StatusLine tone="stale">
+                      {result.missing} {result.missing === 1 ? "line needs" : "lines need"} a price:{" "}
+                      {result.rows
+                        .filter((row) => row.buy > 0 && row.cost === null)
+                        .slice(0, 5)
+                        .map((row) => `${row.name} in ${row.city}`)
+                        .join(", ")}
+                      {result.missing > 5 ? " and more" : ""}. Type your own price or refresh.
+                    </StatusLine>
+                  )}
+                  <p className={styles.fine}>
+                    Prices are recent sell orders or your own. Order fees and transport are
+                    separate; check listings before you buy.
+                  </p>
+                </>
+              ) : (
+                <ol className={styles.steps}>
+                  <li>
+                    <b>Add what you need</b>
+                    <span>Search an item, set how many and the city you will buy in.</span>
+                  </li>
+                  <li>
+                    <b>Tick off what you own</b>
+                    <span>Count what is already in your bank; the rest stays to buy.</span>
+                  </li>
+                  <li>
+                    <b>See the cost</b>
+                    <span>Recent city prices or your own, and where each item is bought.</span>
+                  </li>
+                </ol>
+              )}
+            </section>
             <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+/** Where a unit price came from, with the observation's own time in game time. */
+function PriceNote({ row }: { row: ReturnType<typeof shoppingSummary>["rows"][number] }) {
+  const stale = row.stale || row.unavailableMarket;
+  return (
+    <small className={styles.priceNote} data-tone={stale ? "stale" : undefined}>
+      {row.unavailableMarket ? (
+        "Choose a player market"
+      ) : row.stale ? (
+        "Stale · refresh"
+      ) : row.unitPrice === null ? (
+        "Not priced"
+      ) : row.priceKind === "manual" ? (
+        "Your price"
+      ) : row.priceKind === "plan" ? (
+        "Plan estimate"
+      ) : (
+        <>
+          Observed{" "}
+          <time dateTime={row.observedAt ?? undefined}>
+            {gameTime(new Date(sourceTimestamp(row.observedAt ?? "")))}
+          </time>
+        </>
+      )}
+    </small>
+  );
+}
+
+/** One tap marks a line as all owned, or back to needed. */
+function OwnedToggle({
+  name,
+  done,
+  onToggle,
+}: {
+  name: string;
+  done: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={styles.toggle}
+      aria-pressed={done}
+      aria-label={`Mark ${name} ${done ? "needed" : "owned"}`}
+      title={done ? "Owned · tap to mark needed" : "Mark all owned"}
+      onClick={onToggle}
+    >
+      <Check size={16} aria-hidden="true" />
+    </button>
   );
 }

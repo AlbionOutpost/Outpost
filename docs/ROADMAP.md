@@ -13,12 +13,38 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Sign-in's headline is readable in light mode (its shade follows the page colour); the build page's recordings no longer wrap one word per line.
 - Every hand-drawn well shadow in route sheets uses `--well-inset`, so wells get their light lip and work in light mode; dead build-card and editor box rules removed.
 
+## Treasury comes alive — 8 November 2026
+
+- The Treasury opens on a hero: the team pot as a big counting figure beside a silver medallion, your balance, what the team owes members, the last four ledger lines and the actions (New split, Book silver, Flip a coin). A new team sees the three steps that fill its books instead of an empty ledger. The wallet is read once for the hero and the Wallet view, and again after a split is paid in or a roll shares silver.
+- The coin flip is a CSS 3D coin with a reeded rim and struck faces: a 1.65 s throw that spins, catches a light sweep and rocks flat onto the server's side, then glints. The chest reveal is a 1.9 s CSS 3D open: drop, strain with light at the seam, lid swings back on its hinge, glow, rays and a handful of coins, then the shares count in. Both move only transforms and opacity, skip on click or Esc, show the result at once under reduced motion and never shift the layout.
+- Double clicks no longer send a second flip, roll or wallet change. Ledger columns align by content (wallet and reason left).
+- three.js and the WebGL scenes are gone (about 160 KB gzip of client chunks).
+
+## Personal timers and Crafting Planner redesign — 8 November 2026
+
+- `/timers`: countdowns grouped Ready · Soon · Today · Later · Paused · Cleared; each row has a category badge, a large tabular clock that never shifts as it ticks, and its progress under the name. The first clock comes from the server, so there is no "Updating" flash. The composer gains preset icons, quick lengths (+15m, +1h, +4h, +12h) and a preview of the due time.
+- Guests sent to sign-in from `/timers` see a timers headline and timer benefits instead of the builds pitch.
+- `/shopping-list`: queue rows show city and line cost with a round owned toggle; the table fits its panel at 1440 and shows observation times as game time; the totals rail is sticky with upfront cost, owned progress, "Where to buy" by chosen city and the royal-city comparison; the empty list shows the example plan as gear, and the rail shows three steps.
+- Saved lists: guests get a sign-in prompt instead of disabled buttons; saved lists are compact rows.
+
+## Storage limits, display names and the launch grant — 8 November 2026
+
+- Each account keeps up to 500 builds and 500 comps (Team comps count for their creator), the last 50 revisions of each, and saves up to 50 MiB a day; the editors say so in plain words (409/429). Older revisions go on the next save.
+- Display names lose hidden and direction-control characters and extra spaces; names that read as Outpost or its staff are refused. Existing names stay as stored and are cleaned where they show.
+- Launch grant: every account, including new sign-ups, is a lifetime Supporter, free; settings, admin and `/supporter` say "Launch Supporter". The Team gates are on and consistent (giveaway management included) but lock nobody while the launch is open. No prices or checkout anywhere.
+
 ## Surfaces with depth and a softer backdrop — 8 November 2026
 
 - Every page but the landing sits on the castle painting pre-blurred (13 KB, one file for every width) under a deeper veil and a vignette, so panels and text read cleanly over it.
 - One surface recipe for every panel, toolbar and plain card: a crisp 1px edge lit copper along the top, an inner highlight, a fill lit from the top and a stacked soft drop; buttons, pill links and the chosen segmented option are the same surface in miniature; wells get a light lip under them. Tokens in `product-system.css`, recipe in DESIGN.md.
 - Team cards on `/groups` keep their 1px edge (the banner no longer covers it) and light up on hover; their shield-colour banner is quieter.
 - Superseded button and panel rules in older global sheets removed. Next: page-by-page passes on the new surfaces.
+
+## Giveaways redesign — 8 November 2026
+
+- Open giveaways are raised cards in a grid: the picture, host (Outpost staff or the Team, "Members only" on a Team's), the prize in its own well, a live countdown to the close with entrants and winners in fixed columns (ticks never move the layout), and one state pill (Open, Entered, Draw pending, Won, Ended, Cancelled). Entries still open come first, then those waiting for their draw; drawn and cancelled ones sit in one quiet Ended panel with their winners.
+- One Start a giveaway button, at the head of the open section; the empty state no longer repeats it. Server refusals in the start/edit dialog show inside the dialog, with a link to the Supporter plan when the refusal names it.
+- No server change: the draw, deadlines, members-only rules and schemas are as before. `e2e/giveaways.spec.ts` now checks the single start action.
 
 ## Market Explorer switches faster and holds still — 8 November 2026
 

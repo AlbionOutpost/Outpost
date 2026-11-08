@@ -43,6 +43,9 @@ test("a signed-in-only page sends the visitor to sign-in and Discord back to tha
   await page.goto("/timers");
   await expect(page).toHaveURL(/\/signin\?callbackUrl=%2Ftimers$/);
   await expect(page.locator("[data-signin]")).toContainText("you go straight to your timers");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Keep your timers running" }),
+  ).toBeVisible();
   // Clicks before hydration do nothing, so retry until the start request is seen.
   const start = async (expected: string) => {
     posted.length = 0;

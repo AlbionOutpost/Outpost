@@ -1,15 +1,17 @@
-/* Team economy: the Wallet and Rolls & flips tabs and their 3D moments (coin, number drums,
-   loot chest). Shared panels, wells, tables and forms come from teams.module.css; only what is
-   new lives here. Every colour is a token; the metals mix the avatar-frame silver. Motion runs
-   through the Web Animations API in economy-stage.tsx and stops under reduced motion. */
+/* The Treasury: its hero (the pot, the latest ledger lines, the actions), the Wallet and
+   Rolls & flips views and their 3D moments (coin, number drums, loot chest). Shared panels,
+   wells, tables and forms come from teams.module.css; only what is new lives here. Every colour
+   is a token; the metals mix the avatar-frame silver. Motion runs through the Web Animations
+   API in economy-stage.tsx on transforms and opacity only, and stops under reduced motion. */
 
-/* The coin and drum metal (the silver avatar frame's tone) and the chest's wood */
-:global(.app.outpost) :is(.economy, .revealScene, .coinStage, .drum) {
+/* The coin and drum metal (the silver avatar frame's tone), the chest's wood and iron */
+:global(.app.outpost) :is(.economy, .hero, .revealScene, .coinStage, .drum) {
   --tone: color-mix(in srgb, var(--muted) 85%, var(--focus));
   --hi: color-mix(in srgb, var(--tone) 52%, var(--text));
   --lo: color-mix(in srgb, var(--tone) 42%, var(--illustration-bg));
   --wood: color-mix(in srgb, var(--frame-rule) 72%, var(--illustration-bg));
   --wood-dark: color-mix(in srgb, var(--frame-rule) 38%, var(--illustration-bg));
+  --iron: color-mix(in srgb, var(--tone) 34%, var(--illustration-bg));
 }
 :global(.app.outpost) .economy.economy {
   display: grid;
@@ -32,55 +34,6 @@
   color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
-}
-
-/* ---------- Treasury: your balance and the team pot ---------- */
-:global(.app.outpost) .treasury.treasury {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-:global(.app.outpost) .purse.purse {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 4px var(--space-4);
-  min-width: 0;
-  padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: var(--well-inset);
-}
-:global(.app.outpost) .purse.purse[data-lead] {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
-}
-:global(.app.outpost) .purse.purse > img {
-  grid-row: span 2;
-  width: 64px;
-  height: 64px;
-  filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--illustration-bg) 70%, transparent));
-}
-:global(.app.outpost) .purse.purse dt {
-  color: var(--muted);
-  font-size: 13px;
-}
-:global(.app.outpost) .purse.purse dd {
-  margin: 0;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  color: var(--text);
-  text-align: left;
-  font: 800 clamp(30px, 4vw, 42px) / 1 var(--font-display);
-  font-variant-numeric: tabular-nums;
-}
-:global(.app.outpost) .purse.purse[data-lead] dd {
-  color: var(--accent-ink);
-}
-:global(.app.outpost) .purse.purse dd small {
-  margin-left: 6px;
-  color: var(--muted);
-  font: 600 14px/1 var(--font-ui);
 }
 
 /* ---------- Balances and ledger ---------- */
@@ -128,14 +81,16 @@
 :global(.app.outpost) .ledgerWrap.ledgerWrap table td.amount {
   font-family: var(--font-data);
 }
-:global(.app.outpost) .ledgerWrap.ledgerWrap table td:nth-child(4),
-:global(.app.outpost) .ledgerWrap.ledgerWrap table th:nth-child(4) {
+:global(.app.outpost) .ledgerWrap.ledgerWrap table .reasonCol {
   text-align: left;
 }
-:global(.app.outpost) .ledgerWrap.ledgerWrap table td:nth-child(4) {
+:global(.app.outpost) .ledgerWrap.ledgerWrap table td.reasonCol {
   max-width: 220px;
   overflow-wrap: anywhere;
   color: var(--secondary);
+}
+:global(.app.outpost) .ledgerWrap.ledgerWrap table .textCol {
+  text-align: left;
 }
 :global(.app.outpost) .when.when {
   color: var(--muted);
@@ -218,13 +173,13 @@
 }
 :global(.app.outpost) .arenaStage.arenaStage {
   display: grid;
+  align-content: center;
   justify-items: center;
   gap: var(--space-3);
   min-width: 0;
-  /* Headroom for the throw, so the coin stays over its own well; the WebGL canvas is wider
-     than a phone's well, so its sides are clipped rather than scrolling the page */
+  /* Headroom for the throw, so the coin stays over its own well */
   overflow-x: clip;
-  padding: 104px var(--space-3) var(--space-4);
+  padding: 96px var(--space-3) var(--space-4);
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background:
@@ -238,9 +193,11 @@
 }
 :global(.app.outpost) .verdict.verdict {
   display: grid;
+  align-content: center;
   justify-items: center;
   gap: 2px;
-  min-height: 52px;
+  /* Room for the winner's frame and both lines, so the result never moves the coin */
+  min-height: 112px;
   margin: 0;
   text-align: center;
 }
@@ -254,7 +211,7 @@
 }
 /* A result that just landed slams in; the winner's frame pulses with an ember ring */
 :global(.app.outpost) .verdict.verdict[data-slam] strong {
-  animation: verdictSlam 560ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  animation: verdictSlam 480ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
 }
 :global(.app.outpost) .verdict.verdict[data-slam] > :first-child {
   border-radius: 50%;
@@ -263,11 +220,11 @@
 @keyframes verdictSlam {
   0% {
     opacity: 0;
-    transform: scale(2.2);
+    transform: scale(1.6);
   }
-  50% {
+  55% {
     opacity: 1;
-    transform: scale(0.92);
+    transform: scale(0.95);
   }
   100% {
     transform: scale(1);
@@ -299,170 +256,6 @@
 :global(.app.outpost) .sideLabel.sideLabel img {
   width: 20px;
   height: 20px;
-}
-
-:global(.app.outpost) .coinStage.coinStage {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  place-items: end center;
-  width: calc(var(--coin) * 1.6);
-  height: calc(var(--coin) * 1.35);
-  perspective: 760px;
-  perspective-origin: 50% 0%;
-}
-/* The WebGL coin: a transparent canvas over the CSS coin's spot, with headroom for the throw.
-   The CSS coin stays until the canvas has drawn, and is the fallback without WebGL. */
-:global(.app.outpost) .coinHost.coinHost {
-  position: relative;
-}
-:global(.app.outpost) .coinCanvas.coinCanvas {
-  position: absolute;
-  z-index: 3;
-  left: 50%;
-  max-width: none;
-  translate: -50% 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-:global(.app.outpost) .coinHost[data-gl] > .coinCanvas {
-  visibility: visible;
-}
-:global(.app.outpost) .coinHost[data-gl] > .coinStage {
-  visibility: hidden;
-}
-/* Two shadows on the well: a soft one that shrinks while the coin is high, a sharp contact one */
-:global(.app.outpost) .coinStage :is(.coinShadow, .coinContact, .coinRing) {
-  position: absolute;
-  left: 50%;
-  border-radius: 50%;
-  pointer-events: none;
-}
-:global(.app.outpost) .coinStage .coinShadow {
-  bottom: calc(var(--coin) * -0.02);
-  width: calc(var(--coin) * 1.1);
-  height: calc(var(--coin) * 0.26);
-  margin-left: calc(var(--coin) * -0.55);
-  background: radial-gradient(
-    closest-side,
-    var(--illustration-bg),
-    color-mix(in srgb, var(--illustration-bg) 50%, transparent) 55%,
-    transparent
-  );
-  opacity: 0.85;
-}
-:global(.app.outpost) .coinStage .coinContact {
-  bottom: calc(var(--coin) * 0.035);
-  width: calc(var(--coin) * 0.78);
-  height: calc(var(--coin) * 0.09);
-  margin-left: calc(var(--coin) * -0.39);
-  background: radial-gradient(closest-side, var(--illustration-bg) 55%, transparent);
-}
-:global(.app.outpost) .coinStage .coinRing {
-  bottom: calc(var(--coin) * -0.05);
-  width: calc(var(--coin) * 1.1);
-  height: calc(var(--coin) * 0.3);
-  margin-left: calc(var(--coin) * -0.55);
-  border: 2px solid color-mix(in srgb, var(--hi) 70%, var(--warning));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--warning) 45%, transparent);
-  opacity: 0;
-}
-:global(.app.outpost) .coinStage .coinDust {
-  position: absolute;
-  bottom: calc(var(--coin) * 0.04);
-  left: 50%;
-  width: 7px;
-  height: 7px;
-  margin-left: -3.5px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--hi) 55%, var(--frame-rule));
-  opacity: 0;
-  pointer-events: none;
-}
-:global(.app.outpost) .coinLift.coinLift,
-:global(.app.outpost) .coinTilt.coinTilt,
-:global(.app.outpost) .coin.coin {
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-:global(.app.outpost) .coinLift.coinLift {
-  margin-bottom: calc(var(--coin) * 0.07);
-}
-/* Seen from a little above, so the rim shows at rest */
-:global(.app.outpost) .coinTilt.coinTilt {
-  rotate: x 28deg;
-}
-:global(.app.outpost) .coin.coin {
-  position: relative;
-  width: var(--coin);
-  height: var(--coin);
-}
-:global(.app.outpost) .coinFace.coinFace,
-:global(.app.outpost) .coinEdge.coinEdge {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-:global(.app.outpost) .coinFace.coinFace {
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  backface-visibility: hidden;
-  background:
-    /* the raised inner ring */
-    radial-gradient(
-      circle,
-      transparent 61%,
-      color-mix(in srgb, var(--hi) 80%, transparent) 62%,
-      color-mix(in srgb, var(--lo) 80%, transparent) 64.5%,
-      transparent 66%
-    ),
-    radial-gradient(circle at 32% 24%, var(--hi), var(--tone) 46%, var(--lo) 100%);
-  box-shadow:
-    inset 0 0 0 calc(var(--coin) * 0.04) color-mix(in srgb, var(--tone) 70%, var(--hi)),
-    inset 0 0 0 calc(var(--coin) * 0.055) var(--lo),
-    inset 0 calc(var(--coin) * -0.05) calc(var(--coin) * 0.12)
-      color-mix(in srgb, var(--illustration-bg) 45%, transparent);
-}
-:global(.app.outpost) .coinFace.coinFace[data-side="heads"] {
-  transform: translateZ(calc(var(--coin) * 0.05));
-}
-:global(.app.outpost) .coinFace.coinFace[data-side="tails"] {
-  transform: rotateX(180deg) translateZ(calc(var(--coin) * 0.05));
-}
-/* The charge is embossed: darkened into the metal, lit on its upper edge, shaded below */
-:global(.app.outpost) .coinFace.coinFace img {
-  width: 56%;
-  height: 56%;
-  object-fit: contain;
-  filter: brightness(0.5) contrast(1.3)
-    drop-shadow(calc(var(--coin) * -0.008) calc(var(--coin) * -0.008) 0 var(--hi))
-    drop-shadow(
-      calc(var(--coin) * 0.01) calc(var(--coin) * 0.015) calc(var(--coin) * 0.01)
-        var(--illustration-bg)
-    );
-}
-/* A specular band that sweeps the face as it turns past the light */
-:global(.app.outpost) .coinSheen.coinSheen {
-  position: absolute;
-  inset: -40%;
-  background: linear-gradient(
-    125deg,
-    transparent 34%,
-    color-mix(in srgb, var(--text) 75%, transparent) 46%,
-    color-mix(in srgb, var(--text) 25%, transparent) 54%,
-    transparent 64%
-  );
-  transform: translate(-70%, -70%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-/* The rim: stacked discs, alternating light and dark like a milled edge */
-:global(.app.outpost) .coinEdge.coinEdge {
-  background: linear-gradient(180deg, var(--hi), var(--tone) 45%, var(--lo));
-}
-:global(.app.outpost) .coinEdge.coinEdge[data-dark] {
-  background: linear-gradient(180deg, var(--tone), var(--lo) 50%, var(--illustration-bg));
 }
 
 /* ---------- Loot rolls ---------- */
@@ -589,6 +382,457 @@
   text-shadow: none;
 }
 
+/* ---------- Treasury: one tab for loot splits, the wallet and rolls & flips ---------- */
+:global(.app.outpost) .treasuryShell.treasuryShell {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+:global(.app.outpost) .treasuryNav.treasuryNav {
+  justify-self: start;
+  max-width: 100%;
+}
+:global(.app.outpost) .treasuryNav.treasuryNav > a {
+  padding: 0 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- Treasury hero: the pot, your balance, the latest lines, the actions ---------- */
+:global(.app.outpost) .hero.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+:global(.app.outpost) .heroPot.heroPot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  align-content: start;
+  gap: var(--space-5) var(--space-5);
+  min-width: 0;
+}
+/* A struck medallion: the painted silver in a lit metal ring, an ember glow behind it */
+:global(.app.outpost) .heroMark.heroMark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 64%
+    ),
+    var(--well);
+  box-shadow:
+    inset 0 0 0 1px var(--well-border),
+    inset 0 2px 10px color-mix(in srgb, var(--illustration-bg) 70%, transparent),
+    0 0 0 4px color-mix(in srgb, var(--tone) 30%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--hi) 30%, transparent),
+    0 18px 40px -12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+:global(.app.outpost) .heroMark.heroMark img {
+  width: 76px;
+  height: 76px;
+  filter: drop-shadow(0 8px 12px color-mix(in srgb, var(--illustration-bg) 75%, transparent));
+}
+:global(.app.outpost) .heroFigures.heroFigures {
+  display: grid;
+  align-content: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+:global(.app.outpost) .heroLabel.heroLabel {
+  margin: 0;
+  color: var(--secondary);
+  font: 600 13px/1.2 var(--font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+:global(.app.outpost) .heroFigure.heroFigure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+  min-height: 1em;
+  margin: 0;
+  font: 800 clamp(44px, 5.4vw, 72px) / 0.95 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+:global(.app.outpost) .heroFigure.heroFigure > span[aria-hidden] {
+  background: linear-gradient(
+    180deg,
+    var(--text) 30%,
+    color-mix(in srgb, var(--text) 62%, var(--accent-ink))
+  );
+  background-clip: text;
+  color: transparent;
+}
+:global(.app.outpost) .heroFigure.heroFigure small {
+  color: var(--muted);
+  font: 600 15px/1 var(--font-ui);
+  letter-spacing: 0;
+}
+:global(.app.outpost) .heroFigure.heroFigure[data-missing] {
+  color: var(--muted);
+}
+:global(.app.outpost) .heroFigure.heroFigure[data-loading] .skeleton {
+  width: min(280px, 100%);
+  height: 0.8em;
+}
+:global(.app.outpost) .heroStats.heroStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: var(--space-1) 0 0;
+}
+:global(.app.outpost) .heroStats.heroStats > div {
+  display: grid;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+}
+:global(.app.outpost) .heroStats.heroStats dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+:global(.app.outpost) .heroStats.heroStats dd {
+  margin: 0;
+  color: var(--text);
+  text-align: left;
+  font: 600 17px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .heroStats.heroStats > div:first-child dd {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .heroActions.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-self: end;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .heroNote.heroNote {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+/* The latest ledger lines, cut into the hero */
+:global(.app.outpost) .heroFeed.heroFeed {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-4);
+}
+:global(.app.outpost) .heroFeedHead.heroFeedHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .heroFeedHead.heroFeedHead h3,
+:global(.app.outpost) .heroStart.heroStart h3 {
+  margin: 0;
+  font: 800 19px/1.15 var(--font-display);
+}
+:global(.app.outpost) .heroLink.heroLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--accent-ink);
+  font: 600 13px/1.2 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .heroLink.heroLink:hover {
+  text-decoration: underline;
+}
+:global(.app.outpost) .heroLedger.heroLedger {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .heroLedger.heroLedger > li {
+  display: grid;
+  grid-template-columns: minmax(104px, auto) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 52px;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .heroLedger.heroLedger > li:first-child {
+  border-top: 0;
+}
+:global(.app.outpost) .heroDelta.heroDelta {
+  font: 700 15px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+:global(.app.outpost) .heroDelta.heroDelta[data-sign="+"] {
+  color: var(--positive);
+}
+:global(.app.outpost) .heroDelta.heroDelta[data-sign="-"] {
+  color: var(--negative);
+}
+:global(.app.outpost) .heroLine.heroLine {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+:global(.app.outpost) .heroLine.heroLine strong {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+:global(.app.outpost) .heroLine.heroLine small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .heroLedger.heroLedger time {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+:global(.app.outpost) .heroLedger.heroLedger > li .skeleton:last-child {
+  height: 12px;
+}
+:global(.app.outpost) .heroLedger.heroLedger > li.heroQuiet {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+:global(.app.outpost) .heroError.heroError {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: var(--space-2);
+  color: var(--secondary);
+  font-size: 13px;
+}
+:global(.app.outpost) .heroError.heroError strong {
+  color: var(--error);
+}
+/* A new team: the three jobs that fill the books */
+:global(.app.outpost) .heroStart.heroStart {
+  display: grid;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .heroStart.heroStart ol {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+:global(.app.outpost) .heroStart.heroStart li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-areas:
+    "icon title"
+    "icon line";
+  align-items: center;
+  gap: 0 var(--space-3);
+  padding: var(--space-2) 0;
+}
+:global(.app.outpost) .heroStart.heroStart li > span {
+  display: grid;
+  grid-area: icon;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .heroStart.heroStart li strong {
+  grid-area: title;
+  font-size: 14px;
+}
+:global(.app.outpost) .heroStart.heroStart li small {
+  grid-area: line;
+  color: var(--muted);
+  font-size: 13px;
+}
+/* Loading placeholders: still under reduced motion */
+:global(.app.outpost) .skeleton.skeleton {
+  display: block;
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--text) 9%, transparent);
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+@keyframes skeletonPulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- The coin ---------- */
+:global(.app.outpost) .coinStage.coinStage {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: end center;
+  width: calc(var(--coin) * 1.6);
+  height: calc(var(--coin) * 1.3);
+  perspective: 820px;
+  perspective-origin: 50% 0%;
+}
+:global(.app.outpost) .coinStage.coinStage[data-flying] {
+  cursor: pointer;
+}
+:global(.app.outpost) .coinStage :is(.coinShadow, .coinRing, .coinSpark) {
+  position: absolute;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+:global(.app.outpost) .coinStage .coinShadow {
+  bottom: calc(var(--coin) * -0.02);
+  width: calc(var(--coin) * 1.05);
+  height: calc(var(--coin) * 0.24);
+  margin-left: calc(var(--coin) * -0.525);
+  background: radial-gradient(
+    closest-side,
+    var(--illustration-bg),
+    color-mix(in srgb, var(--illustration-bg) 45%, transparent) 60%,
+    transparent
+  );
+  opacity: 0.9;
+}
+:global(.app.outpost) .coinStage .coinRing {
+  bottom: calc(var(--coin) * -0.05);
+  width: calc(var(--coin) * 1.1);
+  height: calc(var(--coin) * 0.3);
+  margin-left: calc(var(--coin) * -0.55);
+  border: 2px solid color-mix(in srgb, var(--hi) 60%, var(--warning));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--warning) 50%, transparent);
+  opacity: 0;
+}
+:global(.app.outpost) .coinStage .coinSpark {
+  bottom: calc(var(--coin) * 0.05);
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  background: color-mix(in srgb, var(--warning) 60%, var(--hi));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--warning) 70%, transparent);
+  opacity: 0;
+}
+:global(.app.outpost) :is(.coinLift, .coinView, .coinTilt, .coin) {
+  transform-style: preserve-3d;
+}
+:global(.app.outpost) .coinLift.coinLift {
+  margin-bottom: calc(var(--coin) * 0.06);
+  will-change: transform;
+}
+/* Seen from a little above, so the reeded rim shows at rest */
+:global(.app.outpost) .coinView.coinView {
+  transform: rotateX(30deg);
+}
+:global(.app.outpost) .coin.coin {
+  position: relative;
+  width: var(--coin);
+  height: var(--coin);
+  will-change: transform;
+}
+:global(.app.outpost) .coinFace.coinFace,
+:global(.app.outpost) .coinEdge.coinEdge {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+:global(.app.outpost) .coinFace.coinFace {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  backface-visibility: hidden;
+  background:
+    /* a beaded border inside the rim */
+    radial-gradient(
+      circle,
+      transparent 70%,
+      color-mix(in srgb, var(--hi) 85%, transparent) 71%,
+      color-mix(in srgb, var(--lo) 85%, transparent) 73.5%,
+      transparent 75%
+    ),
+    repeating-conic-gradient(
+      from 0deg,
+      transparent 0 4deg,
+      color-mix(in srgb, var(--lo) 35%, transparent) 4deg 5deg
+    ),
+    radial-gradient(circle at 32% 24%, var(--hi), var(--tone) 48%, var(--lo) 100%);
+  box-shadow:
+    inset 0 0 0 calc(var(--coin) * 0.045) color-mix(in srgb, var(--tone) 70%, var(--hi)),
+    inset 0 0 0 calc(var(--coin) * 0.06) var(--lo),
+    inset 0 calc(var(--coin) * -0.05) calc(var(--coin) * 0.12)
+      color-mix(in srgb, var(--illustration-bg) 45%, transparent),
+    inset 0 calc(var(--coin) * 0.03) calc(var(--coin) * 0.05)
+      color-mix(in srgb, var(--text) 30%, transparent);
+}
+:global(.app.outpost) .coinFace.coinFace[data-side="heads"] {
+  transform: translateZ(calc(var(--coin) * 0.052));
+}
+:global(.app.outpost) .coinFace.coinFace[data-side="tails"] {
+  transform: rotateX(180deg) translateZ(calc(var(--coin) * 0.052));
+}
+/* The charge is struck: darkened into the metal, lit on its upper edge, shaded below */
+:global(.app.outpost) .coinFace.coinFace img {
+  width: 54%;
+  height: 54%;
+  object-fit: contain;
+  filter: brightness(0.5) contrast(1.3)
+    drop-shadow(calc(var(--coin) * -0.008) calc(var(--coin) * -0.008) 0 var(--hi))
+    drop-shadow(
+      calc(var(--coin) * 0.01) calc(var(--coin) * 0.015) calc(var(--coin) * 0.01)
+        var(--illustration-bg)
+    );
+}
+/* A specular band that sweeps the face as it turns past the light */
+:global(.app.outpost) .coinSheen.coinSheen {
+  position: absolute;
+  inset: -10%;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    color-mix(in srgb, var(--text) 70%, transparent) 47%,
+    color-mix(in srgb, var(--text) 20%, transparent) 56%,
+    transparent 68%
+  );
+  transform: translateX(-120%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+/* The rim: discs stacked through the thickness, reeded round their edge */
+:global(.app.outpost) .coinEdge.coinEdge {
+  background: repeating-conic-gradient(from 0deg, var(--hi) 0 2deg, var(--lo) 2deg 4deg);
+}
+
 /* ---------- Loot chest reveal ---------- */
 :global(.app.outpost) .revealScene.revealScene {
   position: relative;
@@ -598,12 +842,7 @@
   min-width: 0;
   padding: var(--space-2) 0 var(--space-4);
 }
-/* The WebGL chest and its coins share one canvas over the whole reveal; the open lid needs
-   more headroom than the CSS chest */
-:global(.app.outpost) .revealScene[data-gl] > .chestStage {
-  height: 380px;
-}
-:global(.app.outpost) .revealScene[data-gl] {
+:global(.app.outpost) .revealScene.revealScene:not([data-phase="done"]) {
   cursor: pointer;
 }
 :global(.app.outpost) .revealSkip.revealSkip {
@@ -612,73 +851,37 @@
   right: 0;
   z-index: 4;
 }
-/* The total slams in once the last coin is home */
-:global(.app.outpost) .revealScene[data-gl] > .revealTotal:not([data-slam]) {
-  visibility: hidden;
-}
-:global(.app.outpost) .revealScene[data-gl] > .revealTotal[data-slam] {
-  animation: totalSlam 620ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-}
-@keyframes totalSlam {
-  0% {
-    opacity: 0;
-    transform: scale(1.8);
-  }
-  45% {
-    opacity: 1;
-    transform: scale(0.9);
-  }
-  70% {
-    transform: scale(1.06);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-/* A card pops with a glow ring when its first coin lands */
-:global(.app.outpost) .revealScene[data-gl] .payoutCard[data-lit] {
-  animation: cardPop 760ms var(--ease-out-expo);
-}
-@keyframes cardPop {
-  0% {
-    box-shadow:
-      0 0 0 0 color-mix(in srgb, var(--accent) 75%, transparent),
-      0 0 24px color-mix(in srgb, var(--accent) 60%, transparent);
-  }
-  100% {
-    box-shadow:
-      0 0 0 16px transparent,
-      0 0 0 transparent;
-  }
-}
-:global(.app.outpost) .revealCanvas.revealCanvas {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
 :global(.app.outpost) .chestStage.chestStage {
+  --mouth: 142px;
   position: relative;
   display: grid;
   place-items: end center;
   width: 100%;
-  height: 230px;
-  perspective: 820px;
-  perspective-origin: 50% 10%;
+  height: 290px;
+  overflow: clip;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(
+      ellipse 50% 60% at 50% 88%,
+      color-mix(in srgb, var(--accent) 14%, transparent),
+      transparent 70%
+    ),
+    var(--well);
+  box-shadow: var(--well-inset);
+  perspective: 900px;
+  perspective-origin: 50% 15%;
 }
-:global(.app.outpost) .chestGlow.chestGlow,
-:global(.app.outpost) .chestBeam.chestBeam {
+:global(.app.outpost) :is(.chestGlow, .chestRays, .chestFlash, .burst) {
   position: absolute;
   left: 50%;
   pointer-events: none;
 }
 :global(.app.outpost) .chestGlow.chestGlow {
-  bottom: 30px;
-  width: 380px;
+  bottom: calc(var(--mouth) - 130px);
+  width: 360px;
   height: 260px;
-  margin-left: -190px;
+  margin-left: -180px;
   border-radius: 50%;
   background: radial-gradient(
     closest-side,
@@ -688,56 +891,94 @@
   );
   opacity: 0;
 }
-/* A beam of light rising from the open chest */
-:global(.app.outpost) .chestBeam.chestBeam {
-  bottom: 96px;
-  width: 180px;
-  height: 200px;
-  margin-left: -90px;
-  background: linear-gradient(
-    0deg,
-    color-mix(in srgb, var(--warning) 75%, var(--hi)),
-    color-mix(in srgb, var(--warning) 30%, transparent) 45%,
-    transparent
+/* Slow rays fanning up from the open chest */
+:global(.app.outpost) .chestRays.chestRays {
+  bottom: calc(var(--mouth) - 200px);
+  width: 400px;
+  height: 400px;
+  margin-left: -200px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--warning) 26%, transparent) 0 7deg,
+    transparent 7deg 22deg
   );
-  clip-path: polygon(30% 100%, 70% 100%, 100% 0, 0 0);
-  transform-origin: 50% 100%;
+  mask-image: radial-gradient(closest-side, var(--text) 18%, transparent 92%);
   opacity: 0;
-  mix-blend-mode: screen;
 }
-:global(.app.outpost) :is(.chestGlow, .chestBeam)[data-open] {
-  opacity: 0.8;
-}
-:global(.app.outpost) .chestShake.chestShake {
-  position: relative;
-  z-index: 1;
-  transform-style: preserve-3d;
-}
-:global(.app.outpost) .chestShadow.chestShadow {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  width: 240px;
-  height: 36px;
-  margin-left: -120px;
+:global(.app.outpost) .chestFlash.chestFlash {
+  bottom: calc(var(--mouth) - 90px);
+  width: 180px;
+  height: 180px;
+  margin-left: -90px;
   border-radius: 50%;
   background: radial-gradient(
     closest-side,
-    color-mix(in srgb, var(--illustration-bg) 85%, transparent),
+    color-mix(in srgb, var(--text) 85%, var(--warning)),
+    color-mix(in srgb, var(--warning) 40%, transparent) 45%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+:global(.app.outpost) .revealScene:not([data-phase="closed"]) .chestGlow {
+  opacity: 0.85;
+}
+:global(.app.outpost) .revealScene:not([data-phase="closed"]) .chestRays {
+  opacity: 0.6;
+  transform: rotate(18deg);
+}
+:global(.app.outpost) .burst.burst {
+  bottom: var(--mouth);
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+:global(.app.outpost) .burstCoin.burstCoin {
+  position: absolute;
+  top: -13px;
+  left: -13px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 52%, var(--lo) 56% 62%, transparent 66%),
+    radial-gradient(circle at 32% 26%, var(--hi), var(--tone) 50%, var(--lo));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--warning) 45%, transparent);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+:global(.app.outpost) .chestDrop.chestDrop {
+  position: relative;
+  z-index: 1;
+  transform-style: preserve-3d;
+  transform-origin: 50% 100%;
+}
+:global(.app.outpost) .chestShadow.chestShadow {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  width: 250px;
+  height: 40px;
+  margin-left: -125px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--illustration-bg) 90%, transparent),
     transparent
   );
 }
 :global(.app.outpost) .chest.chest {
-  --w: 168px;
-  --d: 100px;
-  --h: 80px;
-  --l: 36px;
+  --w: 200px;
+  --d: 118px;
+  --h: 92px;
+  --l: 44px;
   position: relative;
   width: var(--w);
   height: var(--h);
-  margin-bottom: 30px;
+  margin-bottom: 46px;
   transform-style: preserve-3d;
-  transform: rotateX(-18deg) rotateY(-28deg);
+  transform: rotateX(-18deg) rotateY(-26deg);
 }
 :global(.app.outpost) .chestBody.chestBody,
 :global(.app.outpost) .chestLid.chestLid {
@@ -759,29 +1000,37 @@
 :global(.app.outpost) .chest.chest[data-open] .chestLid {
   transform: rotateX(110deg);
 }
-:global(.app.outpost) .chest.chest span {
+/* Planks lit from above, two iron bands and iron-shod corners */
+:global(.app.outpost) .chest.chest span[data-face] {
   position: absolute;
   box-sizing: border-box;
-  border: 2px solid var(--wood-dark);
+  border: 3px solid var(--iron);
+  border-radius: 3px;
   background:
     linear-gradient(
-      90deg,
-      transparent 11%,
-      var(--metal) 11% 17%,
-      transparent 17% 83%,
-      var(--metal) 83% 89%,
-      transparent 89%
+      180deg,
+      color-mix(in srgb, var(--text) 10%, transparent),
+      transparent 35%,
+      color-mix(in srgb, var(--illustration-bg) 35%, transparent)
     ),
-    repeating-linear-gradient(180deg, var(--wood) 0 18px, var(--wood-dark) 18px 20px);
+    linear-gradient(
+      90deg,
+      transparent 13%,
+      var(--iron) 13% 19%,
+      transparent 19% 81%,
+      var(--iron) 81% 87%,
+      transparent 87%
+    ),
+    repeating-linear-gradient(180deg, var(--wood) 0 17px, var(--wood-dark) 17px 19px);
 }
 /* Faces turned from the light are darker, so the box reads as a solid */
 :global(.app.outpost)
   .chest.chest
   :is([data-face="left"], [data-face="back"], [data-face="bottom"]) {
-  filter: brightness(0.62);
+  filter: brightness(0.6);
 }
 :global(.app.outpost) .chest.chest [data-face="right"] {
-  filter: brightness(0.82);
+  filter: brightness(0.8);
 }
 :global(.app.outpost) .chest.chest :is([data-face="front"], [data-face="back"]) {
   inset: 0;
@@ -814,17 +1063,35 @@
   transform: rotateX(-90deg) translateZ(calc(var(--h) / 2));
 }
 /* The open mouth: heaped silver lit from inside */
-:global(.app.outpost) .chest.chest [data-face="inside"] {
+:global(.app.outpost) .chest.chest span[data-face="inside"] {
+  border-color: var(--wood-dark);
   background:
-    radial-gradient(circle at 30% 40%, var(--hi) 0 6px, transparent 7px),
-    radial-gradient(circle at 62% 55%, var(--hi) 0 7px, transparent 8px),
-    radial-gradient(circle at 45% 70%, var(--tone) 0 6px, transparent 7px),
+    radial-gradient(circle at 28% 40%, var(--hi) 0 7px, transparent 8px),
+    radial-gradient(circle at 46% 58%, var(--hi) 0 8px, transparent 9px),
+    radial-gradient(circle at 64% 42%, var(--tone) 0 7px, transparent 8px),
+    radial-gradient(circle at 72% 66%, var(--hi) 0 6px, transparent 7px),
+    radial-gradient(circle at 36% 72%, var(--tone) 0 6px, transparent 7px),
     radial-gradient(
       closest-side,
-      color-mix(in srgb, var(--warning) 70%, var(--hi)),
+      color-mix(in srgb, var(--warning) 75%, var(--hi)),
       var(--wood-dark)
     );
-  transform: rotateX(90deg) translateZ(calc(var(--h) / 2 - 6px));
+  transform: rotateX(90deg) translateZ(calc(var(--h) / 2 - 8px));
+}
+/* The brass lock plate on the body's front, just under the lid */
+:global(.app.outpost) .chestBody.chestBody [data-face="front"]::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 28px;
+  height: 32px;
+  margin-left: -14px;
+  border-radius: 3px 3px 10px 10px;
+  background:
+    radial-gradient(circle at 50% 40%, var(--illustration-bg) 0 3.5px, transparent 4px),
+    linear-gradient(180deg, color-mix(in srgb, var(--metal) 70%, var(--text)), var(--metal));
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--illustration-bg) 60%, transparent);
 }
 :global(.app.outpost) .chestLid.chestLid :is([data-face="left"], [data-face="right"]) {
   height: var(--l);
@@ -836,37 +1103,38 @@
   height: var(--d);
 }
 :global(.app.outpost) .chestLid.chestLid [data-face="top"] {
+  filter: brightness(1.12);
   transform: rotateX(90deg) translateZ(calc(var(--l) / 2));
 }
-:global(.app.outpost) .chestLid.chestLid [data-face="under"] {
+:global(.app.outpost) .chestLid.chestLid span[data-face="under"] {
   background: linear-gradient(
     180deg,
     var(--wood-dark),
-    color-mix(in srgb, var(--warning) 35%, var(--wood-dark))
+    color-mix(in srgb, var(--warning) 40%, var(--wood-dark))
   );
   transform: rotateX(-90deg) translateZ(calc(var(--l) / 2));
 }
-/* The lock plate on the lid's front */
-:global(.app.outpost) .chestLid.chestLid [data-face="front"]::after {
-  content: "";
+/* Light leaking from the seam while the lid strains */
+:global(.app.outpost) .chestSeam.chestSeam {
   position: absolute;
-  bottom: -14px;
-  left: 50%;
-  width: 26px;
-  height: 30px;
-  margin-left: -13px;
-  border-radius: 4px 4px 9px 9px;
-  background:
-    radial-gradient(circle at 50% 42%, var(--illustration-bg) 0 3px, transparent 3.5px),
-    linear-gradient(180deg, var(--hi), var(--metal));
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--illustration-bg) 60%, transparent);
+  top: -3px;
+  left: 6%;
+  width: 88%;
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--warning) 70%, var(--text));
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--warning) 80%, transparent),
+    0 0 28px color-mix(in srgb, var(--accent) 60%, transparent);
+  transform: translateZ(calc(var(--d) / 2 + 1px));
+  opacity: 0;
 }
 :global(.app.outpost) .revealTotal.revealTotal {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   margin: 0;
-  font: 800 38px/1 var(--font-display);
+  font: 800 40px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 :global(.app.outpost) .revealTotal.revealTotal img {
@@ -896,23 +1164,52 @@
   gap: 2px var(--space-3);
   min-width: 0;
   padding: 10px 12px;
-  border: 1px solid var(--well-border);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--well-border));
   border-radius: var(--radius-md);
   background: var(--well);
-  transition:
-    transform 380ms var(--ease-out-expo),
-    border-color 380ms var(--ease-out-expo);
+  box-shadow: var(--well-inset);
 }
-:global(.app.outpost) .payoutCard.payoutCard[data-lit] {
-  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
-  transform: scale(1.022);
+/* Before the lid gives, the total and the shares hold their place unseen (no layout shift) */
+:global(.app.outpost)
+  .revealScene:is([data-phase="closed"], [data-phase="open"])
+  :is(.revealTotal, .payoutCard) {
+  opacity: 0;
+}
+:global(.app.outpost) .revealScene[data-phase="result"] .revealTotal {
+  animation: totalIn 520ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+:global(.app.outpost) .revealScene[data-phase="result"] .payoutCard {
+  animation: cardIn 460ms var(--ease-out-expo) calc(min(var(--i), 7) * 60ms + 120ms) both;
+}
+@keyframes totalIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes cardIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 :global(.app.outpost) .payoutCard.payoutCard > :first-child {
   grid-area: face;
 }
 :global(.app.outpost) .potMark.potMark {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
 }
 :global(.app.outpost) .payoutName.payoutName {
   display: grid;
@@ -942,97 +1239,52 @@
   width: 22px;
   height: 22px;
 }
-:global(.app.outpost) .coinLayer.coinLayer {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  overflow: visible;
-  pointer-events: none;
-  perspective: 900px;
-  transform-style: preserve-3d;
-}
-/* Each burst coin is a small 3D coin: two faces and a rim, spinning on its own */
-:global(.app.outpost) .flyCoin.flyCoin {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 34px;
-  height: 34px;
-  margin: -17px 0 0 -17px;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="face"],
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="back"] {
-  background:
-    radial-gradient(circle, transparent 55%, var(--lo) 57% 62%, transparent 64%),
-    radial-gradient(circle at 32% 26%, var(--hi), var(--tone) 50%, var(--lo));
-  backface-visibility: hidden;
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="face"] {
-  transform: translateZ(2.5px);
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="back"] {
-  transform: rotateY(180deg) translateZ(2.5px);
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="edge"] {
-  background: var(--lo);
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="edge"]:nth-child(2) {
-  transform: translateZ(1.2px);
-}
-:global(.app.outpost) .flyCoinSpin.flyCoinSpin i[data-part="edge"]:nth-child(4) {
-  transform: translateZ(-1.2px);
-}
-:global(.app.outpost) .revealActions.revealActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  width: 100%;
-}
-/* ---------- Treasury: one tab for loot splits, the wallet and rolls & flips ---------- */
-:global(.app.outpost) .treasuryShell.treasuryShell {
-  display: grid;
-  gap: 22px;
-  min-width: 0;
-}
-:global(.app.outpost) .treasuryNav.treasuryNav {
-  justify-self: start;
-  max-width: 100%;
-}
-:global(.app.outpost) .treasuryNav.treasuryNav > a {
-  padding: 0 18px;
-  font-weight: 600;
-  text-decoration: none;
-}
 
 @media (max-width: 1000px) {
   :global(.app.outpost) .columns.columns,
-  :global(.app.outpost) .arena.arena {
+  :global(.app.outpost) .arena.arena,
+  :global(.app.outpost) .hero.hero {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 700px) {
-  :global(.app.outpost) .treasury.treasury {
-    grid-template-columns: minmax(0, 1fr);
+  :global(.app.outpost) .hero.hero {
+    gap: var(--space-4);
+    padding: var(--space-4);
   }
-  :global(.app.outpost) .purse.purse {
-    padding: var(--space-3) var(--space-4);
+  :global(.app.outpost) .heroPot.heroPot {
+    gap: var(--space-4);
   }
-  :global(.app.outpost) .purse.purse > img {
-    width: 48px;
-    height: 48px;
+  :global(.app.outpost) .heroMark.heroMark {
+    width: 72px;
+    height: 72px;
+  }
+  :global(.app.outpost) .heroMark.heroMark img {
+    width: 52px;
+    height: 52px;
+  }
+  :global(.app.outpost) .heroActions.heroActions > :global(.button) {
+    flex: 1 1 auto;
+  }
+  :global(.app.outpost) .heroFeed.heroFeed {
+    padding: var(--space-3);
+  }
+  :global(.app.outpost) .heroLedger.heroLedger > li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "line delta"
+      "line time";
+    gap: 2px var(--space-3);
+  }
+  :global(.app.outpost) .heroLine.heroLine {
+    grid-area: line;
+  }
+  :global(.app.outpost) .heroDelta.heroDelta {
+    grid-area: delta;
+  }
+  :global(.app.outpost) .heroLedger.heroLedger time {
+    grid-area: time;
+    text-align: right;
   }
   :global(.app.outpost) .holder.holder {
     gap: var(--space-2);
@@ -1046,21 +1298,16 @@
     justify-self: stretch;
   }
   :global(.app.outpost) .chestStage.chestStage {
-    height: 200px;
+    height: 250px;
   }
   :global(.app.outpost) .chest.chest {
-    scale: 0.8;
-  }
-  :global(.app.outpost) .revealScene[data-gl] > .chestStage {
-    height: 280px;
+    scale: 0.85;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   :global(.app.outpost) .verdict.verdict[data-slam] *,
-  :global(.app.outpost) .revealScene[data-gl] > .revealTotal[data-slam] {
-    animation: none;
-  }
-  :global(.app.outpost) .payoutCard.payoutCard {
-    transition: none;
+  :global(.app.outpost) .revealScene :is(.revealTotal, .payoutCard),
+  :global(.app.outpost) .skeleton.skeleton {
+    animation: none !important;
   }
 }

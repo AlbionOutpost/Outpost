@@ -16,6 +16,7 @@ import { canReadBuild } from "@/lib/builds/validation";
 import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
 import { BuildShareControls } from "@/components/build-share-controls";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { displayName } from "@/lib/display-name";
 export async function generateMetadata({
   params,
   searchParams,
@@ -52,7 +53,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         collection="community"
         title={build.title}
         description={build.description}
-        author={build.author.name || "Adventurer"}
+        author={displayName(build.author.name)}
         authorHref={`/players/${build.author.id}`}
         activity={build.contentType}
         updatedAt={build.updatedAt.toISOString()}
@@ -94,7 +95,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         extraActions={<BuildCompositionLink fromBuild={build.id} />}
         information={{
           activity: build.contentType,
-          author: build.author.name || "Adventurer",
+          author: displayName(build.author.name),
           updatedAt: build.updatedAt.toISOString(),
           version: build.version,
           playerCount: build.playerCount,
