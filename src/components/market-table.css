@@ -77,8 +77,8 @@
   height: 14px;
 }
 
-/* One price on one line: the figure at the right edge, its tag, age and stale mark before it.
-   In narrower wells the age line drops under the figure. */
+/* One price on one line: the figure at the right edge, its age (if any) before it. In
+   narrower wells the age drops under the figure. */
 .app.outpost .mx-table .mx-price {
   display: inline-flex;
   flex-flow: row-reverse nowrap;
@@ -93,36 +93,40 @@
 .app.outpost .mx-table .market-inline-time {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   margin: 0;
   color: var(--muted);
   font: 500 12px/1.2 var(--font-ui);
 }
-.app.outpost .mx-table .market-inline-time.is-stale time {
-  color: var(--warning);
-}
 .app.outpost .mx-table .market-price-missing {
   color: var(--muted);
 }
-.app.outpost .mx-table .mx-best {
+/* Age by tone (priceAge): fresh shows none, stale a muted amber "6 h", old dims the figure */
+.app.outpost .mx-table .mx-price:is(.is-stale, .is-old) time {
+  color: color-mix(in srgb, var(--warning) 70%, var(--muted));
+}
+.app.outpost .mx-table .mx-price.is-old .silver {
+  color: var(--muted);
+}
+.app.outpost .mx-table .mx-price.is-old .silver img {
+  opacity: 0.55;
+}
+/* Lowest sell / highest buy: the figure in accent ink behind a small accent dot */
+.app.outpost .mx-table .mx-figure {
   display: inline-flex;
   align-items: center;
-  min-height: 18px;
-  padding: 0 6px;
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  border-radius: 999px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font: 700 12px/1 var(--font-ui);
+  gap: var(--space-2);
 }
-/* Stale: a hollow warning dot beside the amber age; "Stale" on hover and for assistive tech */
-.app.outpost :is(.mx-table, .mx-figures) .mx-stale-mark {
+.app.outpost .mx-table .mx-price.is-best .silver {
+  color: var(--accent-ink);
+  font-weight: 800;
+}
+.app.outpost .mx-table .mx-best {
   flex: none;
-  width: 8px;
-  height: 8px;
-  border: 2px solid var(--warning);
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  cursor: help;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
 }
 .app.outpost .mx-table .is-gain {
   color: var(--success);

@@ -65,12 +65,12 @@
   .app.outpost .mx .mx-board > :first-child {
     margin-bottom: var(--space-3);
   }
-  /* The chart grows with the screen instead of pushing the page down */
+  /* The chart is the side column's weight: it takes the height the screen gives it */
   .app.outpost .mx-history .history-panel {
-    --chart-h: clamp(140px, calc(100vh - 660px), 250px);
+    --chart-h: clamp(180px, calc(100vh - 620px), 360px);
     gap: var(--space-3);
   }
-  /* Side-column history controls: city and range on one row, refresh and hide on the next */
+  /* Side-column history controls: the city and Refresh on one row (Hide sits in the head) */
   .app.outpost .mx-history .history-panel .history-controls {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -79,18 +79,15 @@
   .app.outpost .mx-history .history-panel .history-city {
     max-width: none;
   }
-  .app.outpost .mx-history .history-panel .history-controls > button {
-    justify-self: start;
-  }
-  /* Side-column heads put their tabs or actions under the title */
-  .app.outpost .mx-main > :is(.mx-history, .mx-saved) > :first-child {
+  /* Research's head puts its tabs under the title; Price history keeps Hide beside it */
+  .app.outpost .mx-main > .mx-saved > :first-child {
     flex-wrap: wrap;
     row-gap: var(--space-3);
   }
-  .app.outpost .mx-main > :is(.mx-history, .mx-saved) > :first-child > :first-child {
+  .app.outpost .mx-main > .mx-saved > :first-child > :first-child {
     flex-basis: 100%;
   }
-  .app.outpost .mx-main > :is(.mx-history, .mx-saved) > :first-child > :last-child {
+  .app.outpost .mx-main > .mx-saved > :first-child > :last-child {
     margin-left: 0;
   }
   /* A side-column chart labels its first, middle and last day */
@@ -119,6 +116,19 @@
   }
   .app.outpost .mx-main > :first-child > .mx-hero {
     flex: none;
+  }
+  /* A slightly smaller item well and a tighter footer gap leave all eight City orders rows
+     room to show without scrolling their own well */
+  .app.outpost .mx-hero .mx-item-well {
+    width: 56px;
+    height: 56px;
+  }
+  .app.outpost .mx-hero .mx-item-well img {
+    width: 48px;
+    height: 48px;
+  }
+  .app.outpost .mx .mx-board > .market-quality-availability {
+    margin-top: var(--space-2);
   }
   .app.outpost .mx-main > :first-child > .mx-board {
     display: flex;
@@ -513,9 +523,16 @@
   display: none;
 }
 
-/* A stale headline figure: the amber age and the City orders ring (market-table.css) */
-.app.outpost .mx-figures time.is-stale {
-  color: var(--warning);
+/* A headline figure's age, by tone as in City orders: none within the hour, a muted amber
+   "6 h" when stale, the figure dimmed past a day */
+.app.outpost .mx-figures .mx-age {
+  color: color-mix(in srgb, var(--warning) 70%, var(--muted));
+}
+.app.outpost .mx-figures > .is-old b {
+  color: var(--muted);
+}
+.app.outpost .mx-figures > .is-old b .silver img {
+  opacity: 0.55;
 }
 /* The newest observation keeps its city dot on the line with its text */
 .app.outpost .mx-figures small.mx-newest {
@@ -794,14 +811,41 @@
     font-size: 20px;
   }
 }
-@media (max-width: 380px) {
+/* Phones: the three figures stack as rows, the label and city on the left and the figure at
+   the right edge, so each reads on one or two short lines at 390 and 320 */
+@media (max-width: 560px) {
   .app.outpost .mx-figures {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
-  .app.outpost .mx-figures > div:last-child {
-    grid-column: 1 / -1;
+  .app.outpost .mx-figures > div {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+  }
+  .app.outpost .mx-figures > div + div {
     border-top: 1px solid var(--well-border);
     border-left: 0;
+  }
+  .app.outpost .mx-figures dd {
+    display: contents;
+  }
+  .app.outpost .mx-figures dt {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .app.outpost .mx-figures small {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .app.outpost .mx-figures b {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+  }
+  .app.outpost .mx-figures small.mx-newest > span {
+    min-width: 0;
+    text-align: left;
   }
 }
 @media (max-width: 700px) {
@@ -810,9 +854,17 @@
     min-height: 40px;
   }
   /* Panel heads stack their controls under the title and line, like the section heading */
-  .app.outpost .mx :is(.mx-board, .mx-history, .mx-saved) > :first-child > * {
+  .app.outpost .mx :is(.mx-board, .mx-saved) > :first-child > * {
     flex: 1 1 100%;
     margin-left: 0;
+  }
+  /* Price history keeps its one small Hide button beside the title */
+  .app.outpost .mx .mx-history > :first-child > :first-child {
+    flex: 1 1 0;
+  }
+  .app.outpost .mx .mx-history > :first-child > :last-child {
+    flex: none;
+    margin-left: auto;
   }
   .app.outpost .mx-rail-toggle {
     display: flex;

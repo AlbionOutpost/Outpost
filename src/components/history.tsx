@@ -1,7 +1,7 @@
 "use client";
 import "./history.css";
 import "./market-table.css";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -52,6 +52,8 @@ export function History({
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const [rangeDays, setRangeDays] = useState(30);
+  // The point under the pointer or keyboard focus: a crosshair and its date and price.
+  const [active, setActive] = useState<number | null>(null);
   const current = `${kind}:${region}:${item}:${quality}:${city}`;
   const failed = pendingKey !== current && errorKey === current;
   // Auto-loading, the moment before the request goes out counts as loading too.
@@ -176,6 +178,60 @@ export function History({
     ? visible.reduce((best, p) => (p.price > best.price ? p : best))
     : undefined;
   const gradient = `history-fill-${kind}`;
+  const hover = active !== null && active < visible.length ? active : null;
+  const pointAt = (clientX: number, plot: HTMLElement) => {
+    const box = plot.getBoundingClientRect();
+    const x = ((clientX - box.left) / Math.max(1, box.width)) * 700;
+    let best = 0;
+    coords.forEach((c, i) => {
+      if (Math.abs(c.x - x) < Math.abs(coords[best].x - x)) best = i;
+    });
+    return best;
+  };
+  const onPlotKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    const from = hover ?? visible.length - 1;
+    const next =
+      e.key === "ArrowLeft"
+        ? Math.max(0, from - 1)
+        : e.key === "ArrowRight"
+          ? Math.min(visible.length - 1, from + 1)
+          : e.key === "Home"
+            ? 0
+            : e.key === "End"
+              ? visible.length - 1
+              : null;
+    if (next === null) return;
+    e.preventDefault();
+    setActive(next);
+  };
+  // Five value lines (top, quarters, bottom), each labelled on the axis
+  const ticks = [1, 0.75, 0.5, 0.25, 0];
+  const grid = ticks.map((fraction) => (
+    <line
+      key={fraction}
+      x1="0"
+      x2="700"
+      y1={Y1 - fraction * (Y1 - Y0)}
+      y2={Y1 - fraction * (Y1 - Y0)}
+      className="history-grid"
+    />
+  ));
+  const tickTop = (fraction: number) =>
+    ({ "--tick-y": `${((Y1 - fraction * (Y1 - Y0)) / 210) * 100}%` }) as React.CSSProperties;
+  const range = kind === "history" && (
+    <div className="history-range" role="group" aria-label="History date range">
+      {[7, 30].map((days) => (
+        <button
+          type="button"
+          aria-pressed={rangeDays === days}
+          key={days}
+          onClick={() => setRangeDays(days)}
+        >
+          {days} days
+        </button>
+      ))}
+    </div>
+  );
   // Market history while a series loads: the chart's skeleton (gold keeps its empty frame).
   const skeleton = kind === "history" && busy && !visible.length;
   const status = busy
@@ -211,20 +267,6 @@ export function History({
               </WellSelect>
             </label>
           )}
-          {kind === "history" && (visible.length > 0 || skeleton) && (
-            <div className="history-range" role="group" aria-label="History date range">
-              {[7, 30].map((days) => (
-                <button
-                  type="button"
-                  aria-pressed={rangeDays === days}
-                  key={days}
-                  onClick={() => setRangeDays(days)}
-                >
-                  {days} days
-                </button>
-              ))}
-            </div>
-          )}
           {refresh}
           {actions}
         </form>
@@ -248,42 +290,33 @@ export function History({
         // The next series is on its way: the chart keeps its frame, axis and footer while the
         // figures shimmer, so the panel neither collapses nor shows the previous item's line.
         <>
-          <div className="history-chart is-loading" aria-hidden="true">
-            <div className="history-chart-head">
-              <span className="history-series-key">Daily sell-order average · {city}</span>
+          <div className="history-chart is-loading">
+            <div className="history-range-slot">{range}</div>
+            <div className="history-chart-head" aria-hidden="true">
               <span className="history-last">
                 <b className="numeric">
                   <Skeleton>0,000</Skeleton>
                 </b>
                 <small>
-                  <Skeleton>00 Mon</Skeleton>
+                  <Skeleton>Lymhurst · 00 Mon</Skeleton>
                 </small>
               </span>
             </div>
-            <div className="reference-price-figure">
+            <div className="reference-price-figure" aria-hidden="true">
               <div className="reference-price-axis">
-                {[0, 1, 2].map((i) => (
-                  <span key={i}>
+                {ticks.map((fraction) => (
+                  <span key={fraction} style={tickTop(fraction)}>
                     <Skeleton>0,000</Skeleton>
                   </span>
                 ))}
               </div>
               <div className="history-plot">
                 <svg viewBox="0 0 700 210" preserveAspectRatio="none" className="price-chart">
-                  {[0, 0.5, 1].map((fraction) => (
-                    <line
-                      key={fraction}
-                      x1="0"
-                      x2="700"
-                      y1={Y1 - fraction * (Y1 - Y0)}
-                      y2={Y1 - fraction * (Y1 - Y0)}
-                      className="history-grid"
-                    />
-                  ))}
+                  {grid}
                 </svg>
               </div>
             </div>
-            <div className="chart-range">
+            <div className="chart-range" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((i) => (
                 <span key={i}>
                   <Skeleton>00 Mon</Skeleton>
@@ -304,16 +337,7 @@ export function History({
         <div className={`history-state${kind === "gold" && !failed ? " is-chart" : ""}`}>
           {kind === "gold" && !failed && (
             <svg viewBox="0 0 700 210" preserveAspectRatio="none" aria-hidden="true">
-              {[0, 0.5, 1].map((fraction) => (
-                <line
-                  key={fraction}
-                  x1="0"
-                  x2="700"
-                  y1={Y1 - fraction * (Y1 - Y0)}
-                  y2={Y1 - fraction * (Y1 - Y0)}
-                  className="history-grid"
-                />
-              ))}
+              {grid}
             </svg>
           )}
           <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
@@ -352,35 +376,50 @@ export function History({
       )}
       {visible.length > 0 && (
         <div className="history-chart">
+          <div className="history-range-slot">{range}</div>
           <div className="history-chart-head">
-            <span className="history-series-key">
-              {kind === "gold"
-                ? `Silver per gold · ${regions[region].label}`
-                : `Daily sell-order average · ${city}`}
-            </span>
-            {last && kind === "history" && (
+            {last && kind === "history" ? (
+              // The current value: the newest daily sell-order average, its city and day
               <span className="history-last">
                 <b className="numeric">{last.price.toLocaleString("en-US")}</b>
-                <small>{day(last.timestamp)}</small>
+                <small>
+                  {city} · {day(last.timestamp)}
+                  <span className="sr-only">, latest daily sell-order average</span>
+                </small>
+              </span>
+            ) : (
+              <span className="history-series-key">
+                {kind === "gold"
+                  ? `Silver per gold · ${regions[region].label}`
+                  : `Daily sell-order average · ${city}`}
               </span>
             )}
           </div>
           <div className="reference-price-figure">
             <div className="reference-price-axis" aria-hidden="true">
-              {[max, (min + max) / 2, min].map((price, i) => (
-                <span key={i} title={`${price} silver`}>
-                  {compact(price)}
-                </span>
-              ))}
+              {ticks.map((fraction) => {
+                const price = min + fraction * (max - min);
+                return (
+                  <span key={fraction} style={tickTop(fraction)} title={`${price} silver`}>
+                    {compact(price)}
+                  </span>
+                );
+              })}
             </div>
-            <div className="history-plot">
+            <div
+              className="history-plot"
+              role="group"
+              tabIndex={0}
+              aria-label="Price chart. Arrow keys read each observation."
+              onPointerMove={(e) => setActive(pointAt(e.clientX, e.currentTarget))}
+              onPointerLeave={() => setActive(null)}
+              onKeyDown={onPlotKey}
+              onFocus={() => setActive((a) => a ?? visible.length - 1)}
+              onBlur={() => setActive(null)}
+            >
               <svg
                 role="img"
-                aria-label={
-                  visible.length
-                    ? `${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in the observations list.`
-                    : `${kind} price chart, no observations shown`
-                }
+                aria-label={`${kind} observed price chart, minimum ${min}, maximum ${max} silver, ${visible.length} observations from ${stamp(visible[0].timestamp)} to ${stamp(visible[visible.length - 1].timestamp)}, latest ${visible[visible.length - 1].price} silver. Full values in the observations list.`}
                 viewBox="0 0 700 210"
                 preserveAspectRatio="none"
                 className="price-chart"
@@ -391,16 +430,7 @@ export function History({
                     <stop offset="1" stopColor="currentColor" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-                {[0, 0.5, 1].map((fraction) => (
-                  <line
-                    key={fraction}
-                    x1="0"
-                    x2="700"
-                    y1={Y1 - fraction * (Y1 - Y0)}
-                    y2={Y1 - fraction * (Y1 - Y0)}
-                    className="history-grid"
-                  />
-                ))}
+                {grid}
                 {coords.length > 1 && <path d={area} fill={`url(#${gradient})`} />}
                 {coords.length > 0 && (
                   <polyline
@@ -411,14 +441,47 @@ export function History({
                     vectorEffect="non-scaling-stroke"
                   />
                 )}
+                {/* A zero-length round-capped stroke stays a circle however the plot stretches */}
                 {visible.map((p, i) => (
-                  <circle key={i} cx={coords[i].x} cy={coords[i].y} r="3">
+                  <path
+                    key={i}
+                    className="history-point"
+                    d={`M${coords[i].x.toFixed(1)} ${coords[i].y.toFixed(1)}h0`}
+                  >
                     <title>
                       {p.timestamp} UTC: {p.price} silver
                     </title>
-                  </circle>
+                  </path>
                 ))}
               </svg>
+              {hover !== null && (
+                <span
+                  className={`history-hover${coords[hover].x > 420 ? " is-flipped" : ""}`}
+                  style={
+                    {
+                      "--hover-x": `${coords[hover].x / 7}%`,
+                      "--hover-y": `${(coords[hover].y / 210) * 100}%`,
+                    } as React.CSSProperties
+                  }
+                  aria-hidden="true"
+                >
+                  <span className="history-crosshair" />
+                  <span className="history-dot" />
+                  <span className="history-tip">
+                    <b>
+                      <Silver value={visible[hover].price} />
+                    </b>
+                    <small>
+                      {hourly ? stamp(visible[hover].timestamp) : day(visible[hover].timestamp)}
+                    </small>
+                  </span>
+                </span>
+              )}
+              <p className="sr-only" aria-live="polite">
+                {hover !== null
+                  ? `${stamp(visible[hover].timestamp)}: ${visible[hover].price.toLocaleString("en-US")} silver`
+                  : ""}
+              </p>
             </div>
           </div>
           <div className="chart-range" aria-hidden="true">

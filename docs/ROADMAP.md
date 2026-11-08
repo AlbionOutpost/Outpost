@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Market Explorer gets quieter — 8 November 2026
+
+- Prices seen within the hour no longer carry an age; older ones show a short amber age ("6 h") and prices over a day old are dimmed ("2 d"). The exact UTC time stays on hover and for screen readers; the stale rings and "Lowest"/"Highest" pills are gone (a small accent dot marks the best price).
+- Price history is the side column's main element: a taller chart with five labelled value lines, the current value and a prominent 7/30-day switch on top, and a hover or arrow-key crosshair with the day's price. Same data, same requests.
+- Phones: the masthead tabs fit one row (Orders · History · Research) and scroll with snap and edge fades when they must; the hero's three figures stack as clean rows. The desktop search placeholder fits its field.
+- All eight City orders rows fit their well again at 1440×900 (`market-visual` table overflow check).
+
 ## One kill card and a feed that stays current — 8 November 2026
 
 - The kill and death feeds use the landing's killboard card in full: the victim's inventory, "Show N participants" with each kit, and an "Item details" disclosure beside it in the same row of wells; a delayed fight's note sits under the card. The loading skeleton is the same card. One `KillCard` (`kill-card.tsx`), no feed-only foot.

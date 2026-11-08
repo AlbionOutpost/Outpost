@@ -5,7 +5,7 @@ import { Silver } from "./silver";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceAge } from "@/lib/albion/source-age";
 import { sourceTimestamp } from "@/lib/albion/freshness";
-import { Skeleton, observedAt } from "./market-city-table";
+import { Skeleton, observedAt, priceAge } from "./market-city-table";
 
 export const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 
@@ -122,7 +122,7 @@ export function MarketQuoteHero({
                     <Skeleton>00,000</Skeleton>
                   </b>
                   <small>
-                    <Skeleton>Fort Sterling · 15 min ago</Skeleton>
+                    <Skeleton>Fort Sterling · 6 h</Skeleton>
                   </small>
                 </dd>
               </div>
@@ -175,30 +175,26 @@ function Figure({
   missing: string;
   now: number;
 }) {
-  const age = sourceAge(date, now);
+  const age = row && date ? priceAge(date, now) : null;
+  // Within the hour the city stands alone; older figures add a short age, past a day dimmed.
   return (
-    <div>
+    <div className={age ? `is-${age.tone}` : undefined}>
       <dt>{label}</dt>
-      <dd>
+      <dd title={age ? `Seen ${age.exact}` : undefined}>
         <b className="numeric">{row && value ? <Silver value={value} /> : "—"}</b>
         <small>
-          {row && date ? (
+          {row && age ? (
             <>
               <span className="city-dot" data-city={row.city} aria-hidden="true" />
-              {row.city} ·{" "}
-              <time
-                dateTime={date}
-                title={`${observedAt(date)} UTC`}
-                className={age.stale ? "is-stale" : undefined}
-              >
-                {age.label}
+              {row.city}
+              <time dateTime={date}>
+                {age.tone !== "fresh" && (
+                  <span className="mx-age" aria-hidden="true">
+                    · {age.short}
+                  </span>
+                )}
+                <span className="sr-only">, {age.spoken}</span>
               </time>
-              {/* Past an hour the age turns amber beside a hollow ring, as in City orders */}
-              {age.stale && (
-                <span className="mx-stale-mark" title="Stale: seen more than an hour ago">
-                  <span className="sr-only">Stale</span>
-                </span>
-              )}
             </>
           ) : (
             missing
