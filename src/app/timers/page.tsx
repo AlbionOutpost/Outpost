@@ -6,10 +6,11 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { TimerManager } from "@/components/timer-manager";
 import styles from "@/components/account.module.css";
+import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Timers");
 export default async function Page() {
   const s = await getServerSession(authOptions);
-  if (!s?.user?.id) redirect("/signin");
+  if (!s?.user?.id) redirect(signInPath("/timers"));
   const timers = await db.timer.findMany({
     where: { userId: s.user.id },
     orderBy: [...accountPageOrder],

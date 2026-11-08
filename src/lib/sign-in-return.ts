@@ -1,5 +1,18 @@
 import { buildCompositionLaunch, compositionLaunchPath } from "./compositions/build-launch";
-/** Narrow return destinations for composition drafts and team invitation confirmation. */
+
+/** Signed-in-only pages a player can be sent back to after Discord; anything else falls back to /settings. */
+const returnPages = [
+  /^\/(?:dashboard|settings|timers|favorites|groups\/new)$/,
+  /^\/(?:groups|compositions)\?mine=1$/,
+  /^\/admin(?:\/(?:reports|review|audit|users))?$/,
+  /^\/(?:builds|compositions)\/[A-Za-z0-9_-]{1,64}\/edit$/,
+  /^\/groups\/[a-z0-9]+(?:-[a-z0-9]+)*(?:#join)?$/,
+];
+
+/** The sign-in page that returns to `path` (a same-origin page from the list above). */
+export const signInPath = (path: string) => `/signin?${new URLSearchParams({ callbackUrl: path })}`;
+
+/** Narrow return destinations: signed-in pages, composition drafts and team invitation confirmation. */
 export function safeSignInReturn(value: unknown): string {
   if (value === "/settings" || value === undefined || value === null || value === "")
     return "/settings";
@@ -13,6 +26,7 @@ export function safeSignInReturn(value: unknown): string {
   )
     return "/settings";
   if (/^\/invitations\/[a-f0-9]{64}$/.test(value)) return value;
+  if (value.length <= 120 && returnPages.some((page) => page.test(value))) return value;
   try {
     const url = new URL(value, "https://outpost.invalid");
     if (

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { startDiscordSignIn } from "../src/lib/discord-sign-in";
 import { signInErrorMessage } from "../src/lib/sign-in-error";
-import { safeSignInPageReturn, safeSignInReturn } from "../src/lib/sign-in-return";
+import { safeSignInPageReturn, safeSignInReturn, signInPath } from "../src/lib/sign-in-return";
 const origin = "https://albionoutpost.com";
 const callback = "/compositions/new?fromLibrary=battleaxe-mist-build&region=asia";
 function authorize(patch: Record<string, string> = {}) {
@@ -161,6 +161,43 @@ describe("OAuth retry destinations and errors", () => {
     expect(safeSignInPageReturn(origin + "/unused/%2e%2e/" + invite.slice(1), origin)).toBe(
       "/settings",
     );
+  });
+  it.each([
+    "/dashboard",
+    "/settings",
+    "/timers",
+    "/favorites",
+    "/groups/new",
+    "/groups?mine=1",
+    "/compositions?mine=1",
+    "/admin",
+    "/admin/reports",
+    "/builds/clx0abc123/edit",
+    "/compositions/clx0abc123/edit",
+    "/groups/ironbound-company",
+    "/groups/ironbound-company#join",
+  ])("returns to the signed-in page the player was sent from (%s)", (value) => {
+    expect(safeSignInReturn(value)).toBe(value);
+    expect(safeSignInPageReturn(origin + value, origin)).toBe(value);
+  });
+  it.each([
+    "https://attacker.invalid/dashboard",
+    "//attacker.invalid/dashboard",
+    "/\\attacker.invalid/dashboard",
+    "/dashboard?next=https://attacker.invalid",
+    "/dashboard#x",
+    "/builds/../admin/edit",
+    "/builds/a%2F..%2Fb/edit",
+    "/groups/Bad_Slug",
+    "/groups/x#accept",
+    "/tools/market",
+    "dashboard",
+  ])("ignores foreign, absolute or unknown returns (%s)", (value) => {
+    expect(safeSignInReturn(value)).toBe("/settings");
+    expect(safeSignInPageReturn(value, origin)).toBe("/settings");
+  });
+  it("names the sign-in page that returns to a gated page", () => {
+    expect(signInPath("/builds/abc/edit")).toBe("/signin?callbackUrl=%2Fbuilds%2Fabc%2Fedit");
   });
   it("restores NextAuth absolute same-origin returns through the existing narrow relative allowlist", () => {
     expect(safeSignInPageReturn(origin + callback, origin)).toBe(callback);

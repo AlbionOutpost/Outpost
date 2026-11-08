@@ -12,6 +12,7 @@ import { logEvent } from "@/lib/logging";
 import { deleteAccountRecord, verifyDeletionBilling } from "@/lib/account-deletion";
 import { HttpError } from "@/lib/http-error";
 import { avatarFrameIds } from "@/lib/avatar-frames";
+import { signInPath } from "@/lib/sign-in-return";
 const settings = z.object({
   name: z.string().trim().min(1).max(60),
   region: regionSchema,
@@ -38,7 +39,7 @@ export async function saveSettings(
     logEvent("error", "settings_session_unavailable", { code: "SERVICE_UNAVAILABLE" });
     return { error: "Account service unavailable. Your draft is retained; retry later." };
   }
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect(signInPath("/settings"));
 
   const parsed = settings.safeParse(Object.fromEntries(form));
   if (!parsed.success)
@@ -78,7 +79,7 @@ export async function deleteAccount(
     logEvent("error", "settings_session_unavailable", { code: "SERVICE_UNAVAILABLE" });
     return { error: "Account service unavailable. Your draft is retained; retry later." };
   }
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect(signInPath("/settings"));
   if (form.get("confirmation") !== "DELETE")
     return { error: "Type DELETE to confirm account deletion." };
   try {

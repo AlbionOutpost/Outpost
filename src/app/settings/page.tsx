@@ -13,6 +13,7 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AvatarFrame } from "@/components/avatar-frame";
 import account from "@/components/account.module.css";
 import styles from "./settings.module.css";
+import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Settings");
 
 /** One settings group: its name and a line on the left, the controls in a panel on the right. */
@@ -59,9 +60,9 @@ export default async function Settings({
   searchParams: Promise<{ saved?: string; error?: string }>;
 }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect(signInPath("/settings"));
   const user = await db.user.findUnique({ where: { id: session.user.id } });
-  if (!user) redirect("/signin");
+  if (!user) redirect(signInPath("/settings"));
   const query = await searchParams;
   const name = user.name || "Adventurer";
   const staff = ["ADMIN", "MODERATOR"].includes(user.role);

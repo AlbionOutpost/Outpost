@@ -38,7 +38,15 @@ export default async function Signin({
         ? "your loadout"
         : callbackUrl.startsWith("/groups")
           ? "your team workspace"
-          : "your dashboard";
+          : callbackUrl.startsWith("/admin")
+            ? "the admin console"
+            : callbackUrl === "/settings"
+              ? "your settings"
+              : callbackUrl === "/timers"
+                ? "your timers"
+                : callbackUrl === "/favorites"
+                  ? "your favorites"
+                  : "your dashboard";
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);
   const error = signInErrorMessage(params.error);
   const retry = `/signin?${new URLSearchParams({ callbackUrl })}`;
@@ -122,7 +130,7 @@ export default async function Signin({
             {
               href: "/tools/crafting",
               emblem: "tool-craft",
-              title: "Crafting Calculator",
+              title: "Crafting calculator",
               line: "See if a craft makes silver.",
               scene: "build",
             },

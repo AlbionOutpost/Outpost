@@ -5,11 +5,12 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AdminNav } from "@/components/admin-nav";
+import { signInPath } from "@/lib/sign-in-return";
 
 /** The signed-in staff role, read once per request (the layout gate and the frame share it). */
 export const adminRole = cache(async () => {
   const s = await getServerSession(authOptions);
-  if (!s?.user?.id) redirect("/signin");
+  if (!s?.user?.id) redirect(signInPath("/admin"));
   const user = await db.user.findUnique({ where: { id: s.user.id }, select: { role: true } });
   if (!user || !["ADMIN", "MODERATOR"].includes(user.role)) notFound();
   return user.role;

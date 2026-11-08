@@ -92,7 +92,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 
 ## Security model
 
-**Identity.** NextAuth v4 with Discord only (`identify email`, PKCE + state), database sessions (14 days), sign-in at `/signin`. The owner is promoted to `ADMIN` server-side when the verified Discord account ID equals `OUTPOST_OWNER_DISCORD_ID`; there is no role-assignment endpoint.
+**Identity.** NextAuth v4 with Discord only (`identify email`, PKCE + state), database sessions (14 days), sign-in at `/signin`. Signed-in-only pages redirect there with `callbackUrl` (`signInPath` in `src/lib/sign-in-return.ts`); `safeSignInReturn` accepts only same-origin relative paths from a fixed list (dashboard, settings, timers, favorites, new Team, admin, owned build/comp edit, a Team page, comp drafts and invitation confirmation) and sends anything else, including absolute or foreign URLs, to `/settings`. The owner is promoted to `ADMIN` server-side when the verified Discord account ID equals `OUTPOST_OWNER_DISCORD_ID`; there is no role-assignment endpoint.
 
 **Mutations** go through `mutationUser` (`src/lib/http.ts`): exact `Origin` match with `NEXTAUTH_URL`, a server session, and `content:<userId>` budgets (30/min, plus 600/day so one account cannot fill the shared private store). Bodies use `boundedJson` (JSON only, 64 KiB default, 1 MiB for comps). Errors are non-disclosing.
 
