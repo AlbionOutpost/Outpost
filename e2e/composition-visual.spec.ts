@@ -92,7 +92,7 @@ test("populated five and twenty player fixtures remain editable and export a wid
         }
         await page.goto(`/compositions/${comp.id}/edit`);
         if (count === 5 && width === 1440) {
-          await page.getByRole("button", { name: "7 players", exact: true }).click();
+          await page.getByLabel("Party size", { exact: true }).selectOption("7");
           await expect(page.locator("[data-party-card]")).toHaveCount(7);
           await page.getByRole("button", { name: "Undo roster change", exact: true }).click();
           await expect(page.locator("[data-party-card]")).toHaveCount(5);

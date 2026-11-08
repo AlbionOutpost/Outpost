@@ -15,11 +15,14 @@ export function LoadoutPriceCheck({
   equipment,
   region: sourceRegion,
   autoLoad = false,
+  compact = false,
 }: {
   equipment: { slot: string; itemId: string; quality: number }[];
   region?: Region;
   /** Check prices once the section scrolls into view instead of waiting for the button. */
   autoLoad?: boolean;
+  /** A narrow column beside a board, as in the build editor: a short heading and line. */
+  compact?: boolean;
 }) {
   const selectedRegion = useOutpostRegion();
   const region = sourceRegion ?? selectedRegion;
@@ -50,10 +53,14 @@ export function LoadoutPriceCheck({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoLoad, region, selectionKey]);
   return (
-    <section className="loadout-price-check" ref={root}>
+    <section className={`loadout-price-check${compact ? " is-compact" : ""}`} ref={root}>
       <PanelHead
-        title="What will this loadout cost?"
-        line={`One of each equipped item at its quality, bought in the city you pick on the ${regions[region].label} server.`}
+        title={compact ? "Cost" : "What will this loadout cost?"}
+        line={
+          compact
+            ? `One of each piece from one ${regions[region].label} city.`
+            : `One of each equipped item at its quality, bought in the city you pick on the ${regions[region].label} server.`
+        }
         actions={
           <div className="loadout-quote-actions">
             <label>
@@ -141,7 +148,9 @@ export function LoadoutPriceCheck({
                 .join(" · ")
             : busy
               ? `Checking prices in ${city}…`
-              : "Pick a city and check prices. Prices are player scans and can be out of date."}
+              : compact
+                ? "Prices are player scans and can be out of date."
+                : "Pick a city and check prices. Prices are player scans and can be out of date."}
         </StatusLine>
       </div>
       <details>
