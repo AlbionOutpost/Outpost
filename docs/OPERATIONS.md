@@ -1,6 +1,6 @@
 # Operations
 
-Production is https://albionoutpost.com on Cloudflare Free. Source is `AlbionOutpost/Outpost` on GitHub. **Merging to `main` deploys.**
+Production is https://albionoutpost.com on Cloudflare Workers Paid (zone on the Free plan). Source is `AlbionOutpost/Outpost` on GitHub. **Merging to `main` deploys.**
 
 ## Deploying
 
@@ -11,7 +11,7 @@ Production is https://albionoutpost.com on Cloudflare Free. Source is `AlbionOut
 3. **Deploy** (environment `cloudflare-production`, one at a time, after both Quality and Verify pass):
    1. Regenerate the SQLite runtime.
    2. Production build with the Turnstile site key, `cloudflare-release-config.mjs` writes the real configs, secret scans.
-   3. `cloudflare-free-check.mjs` (each bundle ≤3 MiB gzip, no paid features), then `wrangler deploy` **data Worker first, then web Worker**.
+   3. `cloudflare-free-check.mjs` (each bundle ≤10 MiB gzip, the Workers Paid limit; no unreviewed routes or extra paid services), then `wrangler deploy` **data Worker first, then web Worker**.
    4. `cloudflare-deployment-check.mjs` probes the live site.
 
 What CI does **not** do: upload runtime secrets, push catalog/library data to D1, or prove the live site works — GitHub runners are challenged by Bot Fight Mode, so the probe reports `BLOCKED` as a warning. After a deploy, smoke-test from your own machine:
@@ -117,7 +117,7 @@ Switch-on order (done 6 Nov 2026 up to the imprint): client id → deploy → co
 
 | Budget             | Limit / setting                                                                                                                                                                                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Worker bundle      | 3 MiB gzip each (web ≈2.31 MiB after the game data, data ≈1.02 MB)                                                                                                                                                                                           |
+| Worker bundle      | 10 MiB gzip each on Workers Paid (web ≈2.96 MiB, data ≈1.02 MB)                                                                                                                                                                                              |
 | Daily requests     | 100 k Worker and 100 k Durable Object requests per day; static assets are free                                                                                                                                                                               |
 | DO duration        | 13,000 GB-s per day (≈ 28 h of one session object at 128 MB); over it every page answers Error 1101 until 00:00 UTC. Renders are capped at 30 s and `waitUntil` work at 10 s (`cloudflare/web/worker.ts`); Workers Paid raises the allowance to 400,000 GB-s |
 | Session DO         | 240 requests/min per browser session, in memory (no storage writes)                                                                                                                                                                                          |

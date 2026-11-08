@@ -1,6 +1,6 @@
 # Architecture
 
-Outpost is a Next.js 16 / React 19 / TypeScript app that runs in production entirely on **Cloudflare's free tier**: two Workers, SQLite Durable Objects and a D1 database, built with OpenNext. Locally the same code runs on Node with Postgres and Redis. One codebase, two runtimes; the Cloudflare build swaps a handful of infrastructure modules at bundle time.
+Outpost is a Next.js 16 / React 19 / TypeScript app that runs in production on **Cloudflare Workers Paid** (zone on the Free plan): two Workers, SQLite Durable Objects and a D1 database, built with OpenNext. Locally the same code runs on Node with Postgres and Redis. One codebase, two runtimes; the Cloudflare build swaps a handful of infrastructure modules at bundle time.
 
 ## Production topology
 
@@ -45,6 +45,8 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 4. Market/combat data is fetched from AODP / Game Info on demand and cached in the Workers Cache API (≤1 h).
 
 ### Free-tier budget
+
+The Workers account is on Workers Paid (10 MiB bundles, higher request quotas); these Free-tier figures stay the design target so page views stay cheap.
 
 Free allows 100,000 Worker requests and 100,000 Durable Object requests per day (plus 5 M D1 rows read, 100 k rows written). Every dynamic request costs one web Worker invocation and one `OutpostSession` request; static assets cost nothing. To stay inside that:
 
@@ -115,7 +117,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 - **Single private DO** (`accounts-v1-eu`): every session lookup and write is serialized through one object — a throughput ceiling and single point of failure. Scaling means partitioning by tenant or moving to a paid database.
 - **No backups** of the private DO are scripted or tested yet.
 - **Two schemas** must be kept in parity by generation scripts; local tests run against Postgres, not the production SQLite path (the Cloudflare e2e run and `qa-cloudflare-database.mjs` cover that).
-- **Bundle headroom:** web ≈1.98 MB / data ≈1.02 MB gzip against a 3 MiB Free limit each. Client-only heavy libraries stay out of the Worker: three.js and the Treasury coin and chest scenes (≈160 KB gzip in their own browser chunks) is reached only through `import()` behind `typeof window` in `src/components/economy-scene-loader.ts`, which the server build compiles away, and it is fetched only when a flip or a loot reveal plays with WebGL and motion allowed.
+- **Bundle headroom:** web ≈2.96 MiB / data ≈1.02 MB gzip against the 10 MiB Workers Paid limit each; smaller still starts faster. Client-only heavy libraries stay out of the Worker: three.js and the Treasury coin and chest scenes (≈160 KB gzip in their own browser chunks) is reached only through `import()` behind `typeof window` in `src/components/economy-scene-loader.ts`, which the server build compiles away, and it is fetched only when a flip or a loot reveal plays with WebGL and motion allowed.
 - Public downloads and new composition/trade exports use `albion-outpost-*`; composition imports also accept the legacy `albion-atlas-composition` format. Historical cookies (`atlas-theme`/`atlas-region`), cache keys (`atlas:*`), database names, source version identifiers and ICS UIDs remain stable so preferences, cached budgets, provenance and existing calendar events retain their identity. Calendar producer metadata uses Albion Outpost. Archived evidence retains the name used when captured.
 
 ## Administrative controls (schema 7)

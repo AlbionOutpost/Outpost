@@ -9,14 +9,14 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 
 ## Targets
 
-| Metric                 | Target                | Last known (lab, mobile, 29 Oct)                        |
-| ---------------------- | --------------------- | ------------------------------------------------------- |
-| LCP                    | ≤ 2.5 s               | 3.6–5.3 s on home, library, detail, market, crafting    |
-| INP                    | ≤ 200 ms              | not measured in the field                               |
-| CLS                    | ≤ 0.1                 | library once 0.06                                       |
-| Lighthouse perf / a11y | ≥ 90 / ≥ 95           | 78–89                                                   |
-| Web Worker bundle      | well under 3 MiB gzip | ≈ 1.98 MB                                               |
-| Global CSS             | as small as possible  | homepage 308 KB inlined (7 Nov, Node build; was 405 KB) |
+| Metric                 | Target                                                      | Last known (lab, mobile, 29 Oct)                        |
+| ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------- |
+| LCP                    | ≤ 2.5 s                                                     | 3.6–5.3 s on home, library, detail, market, crafting    |
+| INP                    | ≤ 200 ms                                                    | not measured in the field                               |
+| CLS                    | ≤ 0.1                                                       | library once 0.06                                       |
+| Lighthouse perf / a11y | ≥ 90 / ≥ 95                                                 | 78–89                                                   |
+| Web Worker bundle      | under 10 MiB gzip (Workers Paid); keep it lean for start-up | ≈ 2.96 MiB                                              |
+| Global CSS             | as small as possible                                        | homepage 308 KB inlined (7 Nov, Node build; was 405 KB) |
 
 ## Measure
 

@@ -12,7 +12,7 @@ Outpost aims to be the best Albion Online site there is. Every change should lea
 2. **Server-side authority.** Every read and mutation of private data re-checks ownership, membership and role against current database rows on the server. Client state, hidden buttons and cached roles are never authority. See [ARCHITECTURE.md § Security model](ARCHITECTURE.md#security-model).
 3. **One design system.** Use the tokens, components and page archetypes in [DESIGN.md](../DESIGN.md). Don't add another global stylesheet "pass"; fix the owning rule or consolidate. Never reintroduce a rejected direction.
 4. **Albion vocabulary.** Comps, builds, loadout, swaps, IP, spec, focus, RRR, buy/sell order, Teams.
-5. **Free-tier aware.** Each page view costs Worker, Durable Object and D1 requests; the web bundle must stay under 3 MiB gzip. Measure before and after anything heavy.
+5. **Cost aware.** Outpost runs on Workers Paid. Each page view costs Worker, Durable Object and D1 requests; each Worker bundle must stay under 10 MiB gzip, and a smaller one starts faster. Measure before and after anything heavy.
 6. **Secrets stay secret.** Never print, commit or copy `.env*` values. Use the wrapper scripts, which redact.
 7. **Next.js 16 has breaking changes.** APIs and conventions differ from older versions. Check `node_modules/next/dist/docs/` for the installed version before using an API you are unsure of, and heed deprecation notices.
 
