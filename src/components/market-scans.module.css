@@ -1,18 +1,5 @@
 /* Shared by the Black Market board and the craft finder; the rows reuse the flip scanner's
    result well in calculators.module.css. */
-.tax {
-  display: grid;
-  grid-template-columns: minmax(96px, 140px) minmax(0, 1fr);
-  gap: var(--space-3);
-  align-items: end;
-}
-.tax > label {
-  display: grid;
-  gap: 6px;
-}
-.tax > :global(.segmented) {
-  justify-self: start;
-}
 .wide {
   grid-column: 1 / -1;
 }
@@ -27,13 +14,4 @@
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
-}
-@media (max-width: 560px) {
-  .tax {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .tax > :global(.segmented) {
-    justify-self: stretch;
-    flex-wrap: nowrap;
-  }
 }

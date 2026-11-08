@@ -4,6 +4,7 @@ import { cities, regionSchema } from "./region-config";
 import { trade } from "./calculations";
 import { isStale } from "./freshness";
 import { decimalRatio } from "./decimal";
+import { DEFAULT_SALES_TAX } from "./sales-tax";
 /**
  * Trips needed to carry the load, from the exact decimal inputs: 3 × 0.1 kg in 0.3 kg is one
  * trip, though 3 × 0.1 / 0.3 is 1.0000000000000002 in floating point.
@@ -71,7 +72,7 @@ export function initialTransport(region: TransportInput["region"]): TransportInp
     capacity: 100,
     costPerTrip: 0,
     risk: 0,
-    tax: 0,
+    tax: DEFAULT_SALES_TAX,
     fee: 0,
     buy: p,
     sell: { ...p, execution: null },

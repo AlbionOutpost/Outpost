@@ -38,6 +38,7 @@ import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
 const steps = ["farming-plan", "farming-prices", "farming-result"];
 const cropLabel = (crop: (typeof crops)[number]) => `T${crop.tier} · ${crop.type}`;
 export function FarmingCalculator() {
@@ -342,7 +343,6 @@ export function FarmingCalculator() {
                 ["seedYieldBase", "Unwatered seed yield (%)", 300],
                 ["seedYieldWatered", "Watered seed yield (%)", 300],
                 ["buyFee", "Seed purchase fee (%)", 100],
-                ["sellFee", "Produce sales tax + setup (%)", 100],
                 ["operatingCost", "Other costs per harvest · silver", 1e12],
               ] as const
             ).map(([key, label, max]) => (
@@ -358,6 +358,11 @@ export function FarmingCalculator() {
                 />
               </label>
             ))}
+            <SalesTaxField
+              label="Produce sales tax + setup (%)"
+              value={draft.sellFee}
+              onValueChange={(v) => update("sellFee", v ?? NaN)}
+            />
             <p className={s.help}>
               Seed returns are past values for this crop; check yours in game. 200% means two seeds
               back per plant.

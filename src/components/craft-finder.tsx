@@ -18,7 +18,8 @@ import { RetryLine } from "./calculator-shell";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import { NumberField } from "./number-field";
-import { TaxField } from "./tax-field";
+import { SalesTaxField } from "./sales-tax-field";
+import { DEFAULT_SALES_TAX } from "@/lib/albion/sales-tax";
 import { Observed, coin, PRICE_ERROR } from "./calculator-figures";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
@@ -47,7 +48,7 @@ export function CraftFinder() {
     [sellCity, setSellCity] = useState<CraftSettings["sellCity"]>("Lymhurst"),
     [dailyBonus, setDailyBonus] = useState<CraftSettings["dailyBonus"]>(0),
     [budget, setBudget] = useState<number | null>(null),
-    [tax, setTax] = useState<number | null>(4),
+    [tax, setTax] = useState<number | null>(DEFAULT_SALES_TAX),
     [setupFee, setSetupFee] = useState<number | null>(2.5),
     [showAll, setShowAll] = useState(false),
     [result, setResult] = useState<{ key: string; data: Data } | null>(null),
@@ -253,7 +254,7 @@ export function CraftFinder() {
           </label>
         </div>
         <div className={c.scanItems}>
-          <TaxField value={tax} onChange={setTax} />
+          <SalesTaxField value={tax ?? ""} onValueChange={setTax} />
           <div className={s.stack}>
             <Disclosure
               summary="Returns & fees"

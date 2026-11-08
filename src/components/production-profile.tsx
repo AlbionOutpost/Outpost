@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "@/components/link";
 import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
 import shell from "./calculator-shell.module.css";
 import own from "@/app/production-calculator.module.css";
-import { readMasteryLevels, writeMasteryLevels } from "@/lib/mastery-storage";
+import { useMasteryLevels } from "./use-mastery-levels";
 import {
   mechanicsProfile,
   productionCities,
@@ -53,15 +53,11 @@ export function ProductionProfile({
   const savedKey = JSON.stringify(saved);
   const [record, setRecord] = useState({ key: savedKey, value: saved || initialProfile });
   const profile = record.key === savedKey ? record.value : saved || initialProfile;
-  const [levels, setLevelsState] = useState<Record<string, number>>({});
-  // Share levels with the Specialization & focus page on this device.
-  useEffect(() => queueMicrotask(() => setLevelsState(readMasteryLevels())), []);
+  // Levels are shared with the Specialization & focus page: on the account when signed in.
+  const stored = useMasteryLevels(),
+    levels = stored.levels;
   const setLevels = (update: (l: Record<string, number>) => Record<string, number>) =>
-    setLevelsState((current) => {
-      const next = update(current);
-      writeMasteryLevels(next);
-      return next;
-    });
+    stored.save(update(levels));
   const [message, setMessage] = useState("");
   const specs = focusSpecsFor(output);
   // Refining keeps its five tier specs in the saved profile so scenarios restore them.

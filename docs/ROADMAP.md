@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Tax defaults and saves on the account — 9 November 2026
+
+- Every sales-tax field starts at 4% (Premium) with "Premium 4%" and "No premium 8%" beside it: flipping and its route scan, the Black Market board and Profitable crafts (one shared field now), the crafting family, transport, laborers (was 8%), farming and fishing (was empty). Saved runs and links keep their own rate (owner decision, 8 Nov 2026).
+- Signed in, library favorites and Specialization & focus levels are kept on the account and follow you to every device; the browser's own copy moves over once after sign-in without duplicates. Guests keep them in the browser as before. Private-store schema 14 (`0015_account_saves`).
+- Fishing hides its detail rows until every input is in, so the page stays on one screen with the fee filled.
+
 ## Legal page unpublished — 8 November 2026
 
 - `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.

@@ -27,8 +27,8 @@ for (const width of [390, 320]) {
     await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
     await page.getByRole("button", { name: "Review profit", exact: true }).click();
-    // 10 × (3,000 - 16 × 100 - 8 × 50) = 10,000 silver, no supplied fees or returns.
-    await expectResultText(page.locator("output[data-result=total-profit]"), "10,000", {
+    // 10 × (3,000 - 120 sales tax at the 4% default - 16 × 100 - 8 × 50) = 8,800 silver.
+    await expectResultText(page.locator("output[data-result=total-profit]"), "8,800", {
       exact: true,
     });
     await expect(page.locator("#production-results")).toBeFocused();

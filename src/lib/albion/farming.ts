@@ -3,6 +3,7 @@ import crops from "./farming-crops.json" with { type: "json" };
 import { cities, regionSchema } from "./region-config";
 import { observation } from "./production";
 import { isStale } from "./freshness";
+import { DEFAULT_SALES_TAX } from "./sales-tax";
 export { crops };
 const amount = z.number().min(0).max(1e9).nullable();
 export const farmingSchema = z
@@ -52,7 +53,7 @@ export function initialFarming(region: FarmingInput["region"]): FarmingInput {
     seedPrice: { ...empty },
     productPrice: { ...empty },
     buyFee: 0,
-    sellFee: 0,
+    sellFee: DEFAULT_SALES_TAX,
     operatingCost: 0,
     focus: null,
   };

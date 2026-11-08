@@ -7,7 +7,8 @@ test("calculate a trade with real input", async ({ page }) => {
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");
-  await expectResultText(page.locator('[data-result="trade-profit"]'), "500");
+  // 10 × (150 − 100) − 4% default sales tax on 1,500 (60) = 440.
+  await expectResultText(page.locator('[data-result="trade-profit"]'), "440");
 });
 test("market failure never substitutes prices", async ({ page }) => {
   await page.route("**/api/market?**", (route) =>

@@ -51,6 +51,7 @@ it.each(["americas", "europe", "asia"] as const)(
 );
 it("uses Normal refined-material identity even for legacy saved quality assumptions", () => {
   const input = initialProduction("refining", "asia");
+  input.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
   input.quality = 5;
   for (const [id, value] of Object.entries({ T4_ORE: 100, T3_METALBAR: 25, T4_METALBAR: 500 }))
     input.prices[id] = {

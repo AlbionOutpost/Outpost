@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { regionSchema, type Region } from "./albion/region-config";
+import type { LibraryBuild } from "./grind-library-types";
 const publicBuild = z
   .object({
     id: z.string().min(1).max(100),
@@ -16,6 +17,19 @@ const publicBuild = z
   })
   .strict();
 export type SavedLibraryBuild = z.infer<typeof publicBuild>;
+/** The summary a favorite keeps of a library build: the device copy, or the account's list. */
+export function savedLibraryBuild(build: LibraryBuild): SavedLibraryBuild {
+  return {
+    id: build.id,
+    slug: build.slug.length <= 200 ? build.slug : build.id,
+    title: build.title.slice(0, 200),
+    author: build.author.slice(0, 100),
+    weaponName: build.weaponName.slice(0, 100),
+    category: build.category.slice(0, 100),
+    itemId: build.equipment.find((row) => row.slot === "Main hand")?.itemId || "",
+    updatedAt: build.updatedAt.slice(0, 64),
+  };
+}
 export const bookmarksSchema = z
   .object({ version: z.literal(1), region: regionSchema, builds: z.array(publicBuild).max(100) })
   .strict()

@@ -53,6 +53,7 @@ import {
   mergeProductionObservations,
 } from "@/lib/albion/production-observations";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
 // The shared calculator wells, plus the crafting family's own rules.
 const s = { ...shell, ...own };
 /** Raw resources are never crafted: a recipe that outputs one is a transmutation (resource + silver). */
@@ -664,16 +665,7 @@ export function ProductionCalculator({
                   ? "No fixed recipe silver charge is recorded for this recipe. Confirm charges in game and enter them above."
                   : `The recipe's own ${money(recipe.silver)} silver per craft is already included. Enter only extra station charges.`}
               </p>
-              <label>
-                Sales tax (%)
-                <NumberField
-                  min={0}
-                  max={100}
-                  decimals={2}
-                  value={draft.tax}
-                  onValueChange={(v) => update("tax", v ?? NaN)}
-                />
-              </label>
+              <SalesTaxField value={draft.tax} onValueChange={(v) => update("tax", v ?? NaN)} />
               <label>
                 Sell order setup fee (%)
                 <NumberField

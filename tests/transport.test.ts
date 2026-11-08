@@ -48,6 +48,7 @@ it("counts trips exactly at decimal capacity boundaries", () => {
 });
 it("rejects zero-valued source sentinels while preserving deliberate manual zero prices", () => {
   const v = initialTransport("europe");
+  v.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
   v.buy = {
     ...v.buy,
     value: 0,
