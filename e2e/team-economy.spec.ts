@@ -189,7 +189,7 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     await page.getByLabel("Reason", { exact: true }).fill("Guild tax");
     await page.getByRole("button", { name: "Credit 75,000 silver" }).click();
     await expect(page.getByRole("table")).toContainText("Guild tax");
-    await expect(page.getByText("Team pot").first()).toBeVisible();
+    await expect(page.getByText("Team pot", { exact: true }).first()).toBeVisible();
     expect(
       (await db.groupWalletEntry.findFirstOrThrow({ where: { groupId, userId: null } })).amount,
     ).toBe(75000);
