@@ -197,6 +197,8 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             const role = await teamRole(action.roleId);
             if (role.isDefault)
               throw new HttpError(409, "Pick another default role before deleting this one");
+            if (!canGrant(access, role.permissions, 0))
+              throw new HttpError(403, "You can only delete roles whose permissions you have");
             await tx.groupCustomRole.delete({ where: { id: role.id } });
             await revokeStaleInvites(tx, groupId);
             return { deleted: true };
@@ -227,6 +229,9 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
           case "role-default": {
             need("manageRoles", "Choosing the default role needs the Manage roles permission");
             const role = await teamRole(action.roleId);
+            // Every new member gets the default role: it may carry only rights the chooser holds.
+            if (!canGrant(access, 0, role.permissions))
+              throw new HttpError(403, "The default role can only carry permissions you have");
             await tx.groupCustomRole.updateMany({
               where: { groupId, isDefault: true },
               data: { isDefault: false },
@@ -245,7 +250,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             const wanted = new Set(action.roleIds);
             const roles = await tx.groupCustomRole.findMany({
               where: { groupId },
-              select: { id: true, position: true },
+              select: { id: true, position: true, permissions: true },
             });
             if ([...wanted].some((id) => !roles.some((r) => r.id === id)))
               throw new HttpError(404, "Role not found");
@@ -260,6 +265,13 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             const changed = roles.filter((r) => wanted.has(r.id) !== held.has(r.id));
             if (changed.some((r) => !outranksRole(access, r)))
               throw new HttpError(403, "You can only give or take roles below your highest role");
+            // Handing out a role hands out its rights: only those the actor holds, so nobody can
+            // raise themselves (or an alt) through a lower role that carries more.
+            if (changed.some((r) => !canGrant(access, 0, r.permissions)))
+              throw new HttpError(
+                403,
+                "You can only give or take roles whose permissions you have",
+              );
             const removed = changed.filter((r) => held.has(r.id)).map((r) => r.id);
             const added = changed.filter((r) => !held.has(r.id)).map((r) => r.id);
             if (removed.length)

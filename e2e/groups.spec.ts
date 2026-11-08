@@ -294,6 +294,39 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
       ).status(),
     ).toBe(200);
     expect(await held(ids[3])).toEqual(["Caller", "Member"]);
+    // A role below the recruiter that carries rights they lack can't be handed out (to anyone,
+    // themselves included), made the default or deleted by them: nobody climbs through it.
+    const treasurer = await (
+      await action(0, {
+        action: "role-create",
+        name: "Treasurer",
+        color: "gold",
+        permissions: ["manageTeam"],
+      })
+    ).json();
+    for (const target of [ids[2], ids[3]])
+      expect(
+        (
+          await action(2, {
+            action: "member-roles",
+            userId: target,
+            roleIds: [
+              ...(
+                await db.groupRoleAssignment.findMany({ where: { groupId, userId: target } })
+              ).map((a) => a.roleId),
+              treasurer.id,
+            ],
+          })
+        ).status(),
+      ).toBe(403);
+    expect((await action(2, { action: "role-default", roleId: treasurer.id })).status()).toBe(403);
+    expect((await action(2, { action: "role-delete", roleId: treasurer.id })).status()).toBe(403);
+    expect(await held(ids[2])).toEqual(["Member", "Officer", "Recruiter"]);
+    expect(await held(ids[3])).toEqual(["Caller", "Member"]);
+    expect(
+      (await db.groupCustomRole.findUniqueOrThrow({ where: { id: treasurer.id } })).isDefault,
+    ).toBe(false);
+    expect((await action(0, { action: "role-delete", roleId: treasurer.id })).status()).toBe(200);
     // The default role cannot be deleted; an ordinary one can, and its holders lose it.
     expect(
       (await action(0, { action: "role-delete", roleId: await roleId("Member") })).status(),
