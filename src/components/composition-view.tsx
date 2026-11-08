@@ -10,7 +10,7 @@ import { PartyReadiness } from "./party-readiness";
 import { SavedEquipmentSets } from "./saved-equipment-sets";
 import { CompositionPngExport } from "./composition-png-export";
 import { ItemIcon } from "./item-icon";
-import { LoadoutBoard } from "./loadout-board";
+import { BuildCardLoadout } from "./build-card-loadout";
 import { RosterRows } from "./comp-roster";
 import { CompParty } from "./comp-members";
 import { BuildWindow } from "./build-window";
@@ -208,8 +208,8 @@ export function memberWindow(
           {slot.notes && <p className={`preserve ${styles.memberNote}`}>{slot.notes}</p>}
         </div>
       ) : slot.equipment.length ? undefined : (
-        // An open slot keeps the empty board, so every window in a row is the same box
-        <LoadoutBoard pieces={[]} size="card" abilities={false} label={`Member ${n} equipment`} />
+        // An open slot keeps the card's empty loadout, so every window in a row is the same box
+        <BuildCardLoadout pieces={[]} abilities={false} label={`Member ${n} equipment`} />
       )}
     </BuildWindow>
   );

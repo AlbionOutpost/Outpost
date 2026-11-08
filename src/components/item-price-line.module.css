@@ -1,0 +1,50 @@
+/* The item database's price line: the cheapest sell order in Geist Mono with the coin, then its
+   city dot, city and age; amber age and a hollow ring when stale, a muted em dash when missing */
+.line {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.figure {
+  color: var(--text);
+  font: 600 14px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+.figure :global(.silver) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.figure :global(.silver) img {
+  width: 14px;
+  height: 14px;
+}
+.where {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: inherit;
+  gap: 0 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.city {
+  color: var(--secondary);
+}
+.stale time {
+  color: var(--warning);
+}
+.staleMark {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--warning);
+  border-radius: 50%;
+  cursor: help;
+}
+.missing .figure {
+  color: var(--muted);
+  font-family: var(--font-ui);
+}

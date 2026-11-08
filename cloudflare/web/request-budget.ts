@@ -51,9 +51,21 @@ export async function requestBudget(
     // varies the query (or sends a session cookie) misses the edge cache on every request.
     if (pathname === "/api/search" && !(await binding.rateLimit(`edge:search:${client}`, 30, 60)))
       return denied(request, "Too many searches. Please wait a minute, then retry.", 429, true);
+    const asked = url.searchParams.get("region") || "europe";
+    const region = /^(europe|americas|asia)$/.test(asked) ? asked : "invalid";
+    // Paging through the item database has its own allowance, so browsing it never spends the
+    // market budget a player needs for Market Explorer and the calculators.
+    if (
+      pathname === "/api/items/prices" &&
+      !(await binding.rateLimit(`edge:item-prices:${region}:${client}`, 20, 60))
+    )
+      return denied(
+        request,
+        "Too many price requests. Please wait a minute, then retry.",
+        429,
+        true,
+      );
     if (marketRoutes.has(pathname) || /^\/api\/builds\/[^/]+\/cost$/.test(pathname)) {
-      const asked = url.searchParams.get("region") || "europe";
-      const region = /^(europe|americas|asia)$/.test(asked) ? asked : "invalid";
       if (!(await binding.rateLimit(`edge:market:${region}:${client}`, 20, 60)))
         return denied(
           request,
