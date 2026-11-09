@@ -284,7 +284,7 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
     if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
     return this.env.KILLS.getByName(region).recent();
   }
-  /** Every minute: read each server's live kill feed and the weekly ranking into its shortlist
+  /** Every two minutes: read each server's live kill feed and the weekly ranking into its shortlist
    * and its window of newest fights. */
   async scheduled() {
     await Promise.allSettled(
