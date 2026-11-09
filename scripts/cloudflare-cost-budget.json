@@ -77,7 +77,7 @@
         "KILLS": "KillBoard"
       },
       "migrations": ["v1", "v2-kill-board"],
-      "crons": ["* * * * *"],
+      "crons": ["*/2 * * * *"],
       "ratelimits": []
     }
   }
