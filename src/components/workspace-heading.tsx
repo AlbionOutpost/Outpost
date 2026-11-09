@@ -1,6 +1,7 @@
 import type { ToolIcon } from "./tool-icon";
 import type { ComponentProps } from "react";
 import { toolEmblem } from "@/lib/search-emblems";
+import { variantSrcSet } from "@/lib/image-variants";
 type Glyph = ComponentProps<typeof ToolIcon>["name"];
 /** Painted scenes behind page titles. Working panels below never get background art. */
 export type Scene = "market" | "economy" | "builds" | "comps" | "guides" | "roads";
@@ -36,6 +37,7 @@ export function WorkspaceHeading({
   /** Primary action rendered at the right edge of the masthead. */
   actions?: React.ReactNode;
 }) {
+  const paintedEmblem = `/albion/icons/${icon === "timer" && !glyph ? "team-calendar" : toolEmblem(glyph ?? icon)}.webp`;
   return (
     <header
       className="workspace-identity"
@@ -46,14 +48,18 @@ export function WorkspaceHeading({
         <div className="workspace-identity-head">
           <span className="workspace-emblem" aria-hidden="true">
             {emblem ?? (
-              // The painted emblem for what the page does, like the landing's windows
+              // The painted emblem for what the page does, like the landing's windows. Often the
+              // page's largest paint, so its 64/128px cuts are fetched first.
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 className="painted-emblem"
-                src={`/albion/icons/${icon === "timer" && !glyph ? "team-calendar" : toolEmblem(glyph ?? icon)}.webp`}
+                src={paintedEmblem}
+                srcSet={variantSrcSet(paintedEmblem)}
+                sizes="64px"
                 alt=""
                 width={64}
                 height={64}
+                fetchPriority="high"
               />
             )}
           </span>

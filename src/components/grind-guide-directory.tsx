@@ -87,11 +87,14 @@ export function GrindGuideDirectory({
   const count = matches.length;
   return (
     <>
-      <section
-        className={`grind-guide-library ${styles.section}`}
-        {...(filtered ? { "aria-labelledby": "guides-library" } : { "aria-label": "Every guide" })}
-      >
-        {/* Unfiltered, the masthead already names the list; a search gets its own heading */}
+      <section className={`grind-guide-library ${styles.section}`} aria-labelledby="guides-library">
+        {/* Unfiltered, the masthead already names the list (the heading is for screen readers,
+            so the cards' h3 titles sit under an h2); a search gets its own visible heading */}
+        {!filtered && (
+          <h2 id="guides-library" className="sr-only">
+            Every guide
+          </h2>
+        )}
         {filtered && (
           <SectionHeading
             id="guides-library"
