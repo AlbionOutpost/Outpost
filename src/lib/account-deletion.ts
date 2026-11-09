@@ -3,24 +3,15 @@ import { Prisma } from "./prisma-runtime";
 import { HttpError } from "./http-error";
 import { retrySerialization } from "./serialization-retry";
 import { billingProfile } from "./billing/plan";
-import { parseCheckoutIntent, resolveCheckout, verifyCheckout } from "./billing/checkout";
-import {
-  stripeConfig,
-  listSubscriptions,
-  listCheckoutSessions,
-  expireCheckoutSession,
-  type StripeCheckout,
-} from "./billing/stripe";
-import {
-  requireSettledCheckout,
-  selectSupporterSubscription,
-  terminalSubscription,
-} from "./billing/reconciliation";
+import { closeUnpaidOrder, parseCheckoutIntent, resolveOrder } from "./billing/checkout";
+import { stripeConfig, listSubscriptions, getOrderSubscription } from "./billing/stripe";
+import { selectSupporterSubscription, terminalSubscription } from "./billing/reconciliation";
 
 type BillingClearance = { customerId: string; expectedUpdatedAt: string };
 
-/** No subscription is canceled implicitly. Unpaid checkout links are expired so they
- * cannot create a subscription after the account and its billing association disappear. */
+/** No paid subscription is canceled implicitly. Unpaid orders (an `incomplete` subscription
+ * with an open first invoice) are closed so they cannot be paid after the account and its
+ * billing association disappear. */
 export async function verifyDeletionBilling(userId: string): Promise<BillingClearance | null> {
   const profile = await billingProfile(userId);
   if (!profile) throw new HttpError(404, "Account not found");
@@ -36,28 +27,22 @@ export async function verifyDeletionBilling(userId: string): Promise<BillingClea
       "Billing verification is unavailable. Retry before deleting your account.",
     );
   const intent = parseCheckoutIntent(profile.billingCheckout);
-  let trackedSession: StripeCheckout | undefined;
   if (intent) {
     if (intent.userId !== userId || intent.customerId !== profile.stripeCustomerId)
       throw new HttpError(409, "Billing association changed. Reload before deleting.");
-    trackedSession = await resolveCheckout(config, intent);
-    if (trackedSession.status === "open") {
-      trackedSession = verifyCheckout(
-        await expireCheckoutSession(config, trackedSession.id),
-        intent,
-      );
-      if (trackedSession.status === "open")
-        throw new HttpError(409, "Close the pending checkout before account deletion.");
-    }
+    // Resolve (or create, with the same key) the operation's subscription, so an order
+    // request still in flight cannot create a payable one after this check.
+    await resolveOrder(config, intent);
   }
-  // Check every checkout before the final subscription read: a legacy checkout may
-  // have completed while it was being inspected and created a new subscription.
-  const sessions = await listCheckoutSessions(config, profile.stripeCustomerId);
-  if (sessions.some((session) => !["complete", "expired"].includes(session.status)))
-    throw new HttpError(
-      409,
-      "An open checkout still exists. Close it before deleting your account.",
-    );
+  const unpaid = (await listSubscriptions(config, profile.stripeCustomerId)).filter(
+    (subscription) => subscription.status === "incomplete",
+  );
+  for (const { id } of unpaid)
+    if (!(await closeUnpaidOrder(config, await getOrderSubscription(config, id))))
+      throw new HttpError(
+        409,
+        "A payment is still being processed. Try again in a few minutes before deleting your account.",
+      );
   const subscriptions = await listSubscriptions(config, profile.stripeCustomerId);
   // Validate complete provider records even though deletion checks all products.
   selectSupporterSubscription(subscriptions, config.priceId);
@@ -66,8 +51,6 @@ export async function verifyDeletionBilling(userId: string): Promise<BillingClea
       409,
       "Cancel your subscription in Manage subscription and wait for cancellation to finish before deleting your account.",
     );
-  for (const session of sessions) requireSettledCheckout(session, subscriptions);
-  if (trackedSession) requireSettledCheckout(trackedSession, subscriptions);
   return {
     customerId: profile.stripeCustomerId,
     expectedUpdatedAt: profile.updatedAt.toISOString(),

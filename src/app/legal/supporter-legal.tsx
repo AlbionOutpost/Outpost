@@ -87,8 +87,8 @@ export function supporterTermsSection(
         <h3>{g ? "4. Preis und Zahlung" : "4. Price and payment"}</h3>
         <p>
           {g
-            ? "Es gilt der Preis, der bei der Bestellung auf der Supporter-Seite und im Stripe-Checkout angezeigt wird. Er ist monatlich im Voraus fällig und wird über Stripe eingezogen. "
-            : "The price shown on the Supporter page and in Stripe Checkout when you order applies. It is due monthly in advance and collected through Stripe. "}
+            ? "Es gilt der Preis, der bei der Bestellung auf der Supporter-Seite angezeigt wird. Er ist monatlich im Voraus fällig und wird über Stripe eingezogen. "
+            : "The price shown on the Supporter page when you order applies. It is due monthly in advance and collected through Stripe. "}
           {vatLine(locale, operator)}
           {g
             ? " Schlägt eine Zahlung fehl, versucht Stripe sie erneut; die Leistungen bleiben so lange bestehen, bis Stripe den Einzug aufgibt."

@@ -5,7 +5,7 @@ import { db } from "../src/lib/db";
 import { mutateGroup, acceptInvitation } from "../src/lib/groups/service";
 import { seedTeamRoles } from "../src/lib/groups/roles";
 import { applySubscription } from "../src/lib/billing/plan";
-import { beginCheckout, resolveCheckout, updateCheckout } from "../src/lib/billing/checkout";
+import { beginCheckout, resolveOrder, updateCheckout } from "../src/lib/billing/checkout";
 import { verifyDeletionBilling, deleteAccountRecord } from "../src/lib/account-deletion";
 
 const database = new URL(process.env.DATABASE_URL || "");
@@ -17,112 +17,111 @@ const users = ["owner", "officer", "outside", "recovery", "paid", "race", "track
 );
 const originalFetch = globalThis.fetch;
 const environment = Object.fromEntries(
-  ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "STRIPE_PRICE_SUPPORTER"].map((key) => [
-    key,
-    process.env[key],
-  ]),
+  [
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_PRICE_SUPPORTER",
+    "STRIPE_PUBLISHABLE_KEY",
+  ].map((key) => [key, process.env[key]]),
 );
 process.env.STRIPE_SECRET_KEY = "fixture-only";
 process.env.STRIPE_WEBHOOK_SECRET = "fixture-only";
 process.env.STRIPE_PRICE_SUPPORTER = "price_fixture";
+process.env.STRIPE_PUBLISHABLE_KEY = "pk_test_fixture";
 const config = {
   secretKey: "fixture-only",
   webhookSecret: "fixture-only",
   priceId: "price_fixture",
+  publishableKey: "pk_test_fixture",
 };
-type Session = {
+type Sub = {
   id: string;
   customer: string;
-  mode: string;
   status: string;
-  url: string;
-  metadata: { outpostCheckoutId: string };
-  subscription?: string;
+  created: number;
+  current_period_end: null;
+  metadata?: { outpostCheckoutId?: string };
+  items: { data: { price: { id: string } }[] };
+  latest_invoice?: string;
 };
-const sessions: Session[] = [];
-const subscriptions = new Map<string, object[]>();
+const subscriptions = new Map<string, Sub[]>();
+// Each order's first invoice and its PaymentIntent status.
+const invoices = new Map<string, { status: string; payment: string }>();
 let unavailable = false,
   creates = 0,
   groupId = "",
-  passed = 0,
-  completeDuringListing: string | null = null,
-  hiddenSessionCustomer: string | null = null;
+  passed = 0;
 const check = (name: string) => {
   passed++;
   console.log(JSON.stringify({ name, passed: true }));
+};
+const expanded = (sub: Sub) => {
+  const invoice = sub.latest_invoice ? invoices.get(sub.latest_invoice) : undefined;
+  return {
+    ...sub,
+    latest_invoice: invoice && {
+      id: sub.latest_invoice,
+      status: invoice.status,
+      customer: sub.customer,
+      payment_intent: { id: `pi_${sub.id}`, status: invoice.payment, client_secret: "fixture" },
+    },
+  };
 };
 globalThis.fetch = async (input, init) => {
   if (unavailable) throw new Error("Fixture provider unavailable");
   const url = new URL(String(input));
   assert.equal(url.origin, "https://api.stripe.com", "No unexpected network target");
-  const reply = (value: unknown) => new Response(JSON.stringify(value));
-  if (url.pathname === "/v1/subscriptions")
+  const reply = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status });
+  const method = init?.method ?? "GET";
+  if (url.pathname === "/v1/subscriptions" && method === "GET")
     return reply({
       data: subscriptions.get(url.searchParams.get("customer")!) || [],
       has_more: false,
     });
-  if (url.pathname === "/v1/checkout/sessions" && init?.method === "GET") {
-    if (completeDuringListing === url.searchParams.get("customer")) {
-      const paidCustomer = completeDuringListing!;
-      sessions.push({
-        id: "cs_legacy",
-        subscription: "sub_active",
-        customer: paidCustomer,
-        mode: "subscription",
-        status: "complete",
-        url: "",
-        metadata: { outpostCheckoutId: "legacy" },
-      });
-      subscriptions.set(paidCustomer, [
-        {
-          id: "sub_active",
-          customer: paidCustomer,
-          status: "active",
-          created: 3,
-          current_period_end: null,
-          items: { data: [{ price: { id: config.priceId } }] },
-        },
-      ]);
-      completeDuringListing = null;
-    }
-    return reply({
-      data: sessions.filter(
-        (session) =>
-          session.customer === url.searchParams.get("customer") &&
-          session.customer !== hiddenSessionCustomer,
-      ),
-      has_more: false,
-    });
-  }
-  if (url.pathname === "/v1/checkout/sessions" && init?.method === "POST") {
-    const body = new URLSearchParams(String(init.body));
+  if (url.pathname === "/v1/subscriptions" && method === "POST") {
+    const body = new URLSearchParams(String(init!.body));
     const key = body.get("metadata[outpostCheckoutId]")!;
-    assert.equal((init.headers as Record<string, string>)["Idempotency-Key"], `checkout-${key}`);
-    const old = sessions.find((session) => session.metadata.outpostCheckoutId === key);
-    if (old) return reply(old);
+    assert.equal(
+      (init!.headers as Record<string, string>)["Idempotency-Key"],
+      `subscription-${key}`,
+    );
+    assert.equal(body.get("payment_behavior"), "default_incomplete");
+    const list = subscriptions.get(body.get("customer")!) ?? [];
+    const old = list.find((sub) => sub.metadata?.outpostCheckoutId === key);
+    if (old) return reply(expanded(old));
     creates++;
-    const created = {
-      id: `cs_${randomUUID()}`,
+    const created: Sub = {
+      id: `sub_${randomUUID()}`,
       customer: body.get("customer")!,
-      mode: "subscription",
-      status: "open",
-      url: "https://checkout.stripe.com/fixture",
+      status: "incomplete",
+      created: Date.now(),
+      current_period_end: null,
       metadata: { outpostCheckoutId: key },
+      items: { data: [{ price: { id: body.get("items[0][price]")! } }] },
+      latest_invoice: `in_${randomUUID()}`,
     };
-    sessions.push(created);
-    return reply(created);
+    invoices.set(created.latest_invoice!, { status: "open", payment: "requires_payment_method" });
+    subscriptions.set(created.customer, [...list, created]);
+    return reply(expanded(created));
   }
-  const found = sessions.find((session) => url.pathname.includes(session.id));
-  assert.ok(found, "Unknown provider fixture path");
-  if (url.pathname.endsWith("/expire")) found.status = "expired";
-  return reply(found);
+  const [, , kind, id] = url.pathname.split("/");
+  if (kind === "invoices" && url.pathname.endsWith("/void")) {
+    const invoice = invoices.get(id)!;
+    if (invoice.status !== "open" || ["processing", "succeeded"].includes(invoice.payment))
+      return reply({ error: { code: "invoice_not_open" } }, 400);
+    Object.assign(invoice, { status: "void", payment: "canceled" });
+    return reply({ id, status: "void" });
+  }
+  const found = [...subscriptions.values()].flat().find((sub) => sub.id === id);
+  assert.ok(kind === "subscriptions" && found, "Unknown provider fixture path");
+  if (method === "DELETE") found.status = "canceled";
+  return reply(expanded(found));
 };
 const customer = (user: string) => `cus_${user}`;
 const checkoutInput = (user: string) => ({
   customerId: customer(user),
   priceId: config.priceId,
-  successUrl: "https://outpost.test/success",
-  cancelUrl: "https://outpost.test/cancel",
+  consentAt: new Date().toISOString(),
 });
 const current = (user: string) => db.user.findUniqueOrThrow({ where: { id: user } });
 try {
@@ -210,7 +209,7 @@ try {
     (
       await beginCheckout(recover, {
         ...checkoutInput(recover),
-        successUrl: "https://changed.test/",
+        consentAt: new Date(Date.now() + 1000).toISOString(),
       })
     ).key,
     intent.key,
@@ -219,24 +218,19 @@ try {
   await assert.rejects(() => verifyDeletionBilling(recover));
   assert.ok((await current(recover)).billingCheckout);
   unavailable = false;
-  // Stripe succeeds, but the caller crashes before saving its session id.
-  await resolveCheckout(config, intent);
+  // Stripe succeeds, but the caller crashes before saving its subscription id.
+  await resolveOrder(config, intent);
   assert.equal(creates, 1);
   const cleared = await verifyDeletionBilling(recover);
   assert.equal(creates, 1);
-  assert.equal(
-    sessions.find((session) => session.customer === customer(recover))!.status,
-    "expired",
-  );
+  const [order] = subscriptions.get(customer(recover))!;
+  assert.equal(order.status, "canceled");
+  assert.equal(invoices.get(order.latest_invoice!)!.status, "void");
   await deleteAccountRecord(recover, cleared);
   assert.equal(await db.user.count({ where: { id: recover } }), 0);
-  check("failed and interrupted checkout recovery expires its sole session before deletion");
+  check("failed and interrupted order recovery voids and ends its sole unpaid subscription");
 
   const paid = users[4];
-  completeDuringListing = customer(paid);
-  await assert.rejects(() => verifyDeletionBilling(paid), { status: 409 });
-  assert.equal(await db.user.count({ where: { id: paid } }), 1);
-  check("legacy checkout completing during enumeration is caught by the final subscription read");
   subscriptions.set(customer(paid), [
     {
       id: "sub_active",
@@ -282,10 +276,8 @@ try {
     },
   ]);
   await assert.rejects(() => verifyDeletionBilling(paid), { status: 409 });
-  subscriptions.set(customer(paid), []);
-  await assert.rejects(() => verifyDeletionBilling(paid), { status: 409 });
   assert.equal(await db.user.count({ where: { id: paid } }), 1);
-  check("completed checkout with absent subscription history preserves account");
+  check("an unknown provider subscription status preserves the account");
   subscriptions.set(customer(paid), [
     {
       id: "sub_active",
@@ -312,29 +304,16 @@ try {
   check("checkout beginning after billing clearance blocks stale deletion; retry recovers safely");
   const tracked = users[6];
   const trackedIntent = await beginCheckout(tracked, checkoutInput(tracked));
-  const trackedSession = await resolveCheckout(config, trackedIntent);
-  await updateCheckout(tracked, trackedIntent.key, trackedSession.id);
-  const providerSession = sessions.find((session) => session.id === trackedSession.id)!;
-  providerSession.status = "complete";
-  providerSession.subscription = "sub_tracked";
-  hiddenSessionCustomer = customer(tracked);
+  const trackedOrder = await resolveOrder(config, trackedIntent);
+  await updateCheckout(tracked, trackedIntent.key, trackedOrder.id);
+  invoices.get(subscriptions.get(customer(tracked))![0].latest_invoice!)!.payment = "processing";
   await assert.rejects(() => verifyDeletionBilling(tracked), { status: 409 });
   assert.equal(await db.user.count({ where: { id: tracked } }), 1);
-  subscriptions.set(customer(tracked), [
-    {
-      id: "sub_tracked",
-      customer: customer(tracked),
-      status: "canceled",
-      created: 4,
-      current_period_end: null,
-      items: { data: [{ price: { id: config.priceId } }] },
-    },
-  ]);
+  assert.equal(subscriptions.get(customer(tracked))![0].status, "incomplete");
+  subscriptions.get(customer(tracked))![0].status = "canceled";
   await deleteAccountRecord(tracked, await verifyDeletionBilling(tracked));
   assert.equal(await db.user.count({ where: { id: tracked } }), 0);
-  check(
-    "tracked completed checkout missing from session history still needs its exact terminal subscription before deletion",
-  );
+  check("an order whose payment is processing is never voided and blocks deletion until it ends");
   console.log(
     JSON.stringify({
       passed,

@@ -81,6 +81,7 @@ describe("when the plan is on sale", () => {
     vi.stubEnv("STRIPE_SECRET_KEY", "sk_fixture");
     vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_fixture");
     vi.stubEnv("STRIPE_PRICE_SUPPORTER", "price_fixture");
+    vi.stubEnv("STRIPE_PUBLISHABLE_KEY", "pk_test_fixture");
     legal.published = true;
     launchGrant.closedAt = new Date("2026-11-15T00:00:00Z");
   });
@@ -103,32 +104,16 @@ describe("when the plan is on sale", () => {
 
 describe("the order's consent and price", () => {
   afterEach(() => vi.unstubAllGlobals());
-  it("keeps the consent time on the checkout session and on the subscription", async () => {
-    const { createCheckoutSession } = await import("@/lib/billing/stripe");
-    const sent: URLSearchParams[] = [];
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async (_url: string, init: RequestInit) => {
-        sent.push(new URLSearchParams(String(init.body)));
-        return Response.json({ id: "cs_1", status: "open" });
-      }),
-    );
-    const config = { secretKey: "sk", webhookSecret: "wh", priceId: "price_1" };
-    const input = {
-      customerId: "cus_1",
-      userId: "u1",
-      successUrl: "https://outpost.test/s",
-      cancelUrl: "https://outpost.test/c",
-      priceId: "price_1",
-    };
-    await createCheckoutSession(config, { ...input, consentAt: "2026-11-20T10:00:00.000Z" }, "op");
-    expect(sent[0].get("metadata[outpostConsentAt]")).toBe("2026-11-20T10:00:00.000Z");
-    expect(sent[0].get("subscription_data[metadata][outpostConsentAt]")).toBe(
-      "2026-11-20T10:00:00.000Z",
-    );
-    // Operations saved before consent was recorded replay without inventing one.
-    await createCheckoutSession(config, input, "op-old");
-    expect(sent[1].has("metadata[outpostConsentAt]")).toBe(false);
+  it("needs all four Stripe settings, the publishable key included", async () => {
+    const { stripeConfig } = await import("@/lib/billing/stripe");
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_fixture");
+    vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_fixture");
+    vi.stubEnv("STRIPE_PRICE_SUPPORTER", "price_fixture");
+    vi.stubEnv("STRIPE_PUBLISHABLE_KEY", "");
+    expect(stripeConfig()).toBeNull();
+    vi.stubEnv("STRIPE_PUBLISHABLE_KEY", "pk_test_fixture");
+    expect(stripeConfig()?.publishableKey).toBe("pk_test_fixture");
+    vi.unstubAllEnvs();
   });
   it("reads the Stripe price in the visitor's language, never a fixed number", async () => {
     const { formatPrice } = await import("@/lib/billing/price");

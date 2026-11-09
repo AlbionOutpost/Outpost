@@ -42,6 +42,8 @@ export const POST = apiHandler("billing.cancel", async (req: NextRequest) => {
     (subscription) =>
       subscription.customer === customerId &&
       !terminalSubscription(subscription.status) &&
+      // An unpaid order is no contract to cancel; it expires on Stripe's side after 23 hours.
+      subscription.status !== "incomplete" &&
       subscription.items?.data.some((item) => item.price?.id === config.priceId),
   );
   if (!live.length) throw new HttpError(404, "There is no subscription on this account.");

@@ -334,21 +334,21 @@ try {
     },
   );
   await check(
-    "checkout intent survives RPC and clears to SQL null without permitting unverified deletion",
+    "order intent survives RPC and clears to SQL null without permitting unverified deletion",
     async () => {
       await service("rememberCustomer", userB, `cus_${fixture}`);
       const input = {
         customerId: `cus_${fixture}`,
         priceId: "price_fixture",
-        successUrl: "https://outpost.test/success",
-        cancelUrl: "https://outpost.test/cancel",
+        consentAt: new Date().toISOString(),
       };
       const intent = await service("beginCheckout", userB, input);
       assert.equal((await service("beginCheckout", userB, input)).key, intent.key);
-      await service("updateCheckout", userB, intent.key, "cs_fixture");
+      await service("updateCheckout", userB, intent.key, "sub_fixture");
       assert.equal(
-        (await query("user", "findUnique", { where: { id: userB } })).billingCheckout.sessionId,
-        "cs_fixture",
+        (await query("user", "findUnique", { where: { id: userB } })).billingCheckout
+          .subscriptionId,
+        "sub_fixture",
       );
       await denied(409, "deleteAccountRecord", userB, null);
       await service("updateCheckout", userB, intent.key, null);

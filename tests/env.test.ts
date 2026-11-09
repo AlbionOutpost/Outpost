@@ -23,3 +23,23 @@ it("never includes secret values in configuration errors", () => {
     expect(String(e)).not.toContain("sensitive");
   }
 });
+it("refuses a partial Stripe set and a secret key in the publishable slot", () => {
+  const stripe = {
+    STRIPE_SECRET_KEY: "sk_test_fixture",
+    STRIPE_WEBHOOK_SECRET: "whsec_fixture",
+    STRIPE_PRICE_SUPPORTER: "price_fixture",
+    STRIPE_PUBLISHABLE_KEY: "pk_test_fixture",
+  };
+  expect(validateEnvironment({ ...good, ...stripe }).STRIPE_PUBLISHABLE_KEY).toBe(
+    "pk_test_fixture",
+  );
+  expect(() => validateEnvironment({ ...good, ...stripe, STRIPE_PUBLISHABLE_KEY: "" })).toThrow(
+    "STRIPE_SECRET_KEY",
+  );
+  expect(() =>
+    validateEnvironment({ ...good, STRIPE_PUBLISHABLE_KEY: "pk_test_fixture" }),
+  ).toThrow();
+  expect(() =>
+    validateEnvironment({ ...good, ...stripe, STRIPE_PUBLISHABLE_KEY: "sk_live_secret" }),
+  ).toThrow("STRIPE_PUBLISHABLE_KEY");
+});

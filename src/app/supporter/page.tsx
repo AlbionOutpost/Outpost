@@ -26,7 +26,7 @@ import { supporterPrice } from "@/lib/billing/price";
 import { billingEnabled, getSubscription, stripeConfig } from "@/lib/billing/stripe";
 import { resolveLegalLocale } from "@/lib/legal-language";
 import { smallBusiness } from "@/lib/legal";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import "@/app/landing-window.css";
 import windows from "@/components/landing/windows.module.css";
 import "@/app/supporter.css";
@@ -63,9 +63,28 @@ export async function generateMetadata({ searchParams }: SeoPageProps) {
 export default async function Supporter({
   searchParams,
 }: {
-  searchParams: Promise<{ region?: string; checkout?: string; lang?: string }>;
+  searchParams: Promise<{
+    region?: string;
+    checkout?: string;
+    lang?: string;
+    redirect_status?: string;
+    payment_intent?: string;
+    payment_intent_client_secret?: string;
+  }>;
 }) {
   const params = await searchParams;
+  // Stripe returns from a redirect payment step with the payment's id and secret in the URL;
+  // keep only its outcome, so the secret never stays in history, logs or a shared link.
+  if (params.payment_intent || params.payment_intent_client_secret) {
+    const clean = new URLSearchParams();
+    for (const key of ["region", "lang", "checkout", "redirect_status"] as const)
+      if (typeof params[key] === "string") clean.set(key, params[key]);
+    redirect(`/supporter?${clean}`);
+  }
+  // Back from paying: Stripe says the payment failed, or it went through (the plan follows the
+  // webhook). Neither is trusted for anything but this message.
+  const paymentFailed = params.checkout === "success" && params.redirect_status === "failed";
+  const paid = params.checkout === "success" && !paymentFailed;
   const region = regionSchema
     .catch("europe")
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
@@ -115,7 +134,7 @@ export default async function Supporter({
   );
   // The order box: a signed-in account that can buy the plan right now.
   const showOrder =
-    onSale && !!profile && !launch && source !== "plan" && !gifted && params.checkout !== "success";
+    onSale && !!config && !!profile && !launch && source !== "plan" && !gifted && !paid;
   const cancelLink = (
     <Link href="/supporter/cancel" className="button secondary">
       Cancel subscription
@@ -159,7 +178,7 @@ export default async function Supporter({
           line: "A launch grant: every Outpost account, including new ones, is a lifetime Supporter, free. Sign in with Discord and yours has it straight away.",
           actions: signIn,
         }
-    : launchAccount && !gifted && params.checkout !== "success"
+    : launchAccount && !gifted && !paid
       ? {
           title: (
             <>
@@ -230,14 +249,14 @@ export default async function Supporter({
                   line: `No ads, the Supporter badge and the right to create Teams${price ? `, for ${price}` : ""}. The plan lives on your Outpost account, so sign in first.`,
                   actions: signIn,
                 }
-              : params.checkout === "success"
+              : paid
                 ? {
                     title: (
                       <>
                         Almost <em>there</em>
                       </>
                     ),
-                    line: "Stripe confirmed your payment. The plan reaches your account as soon as the confirmation arrives, usually within a minute; reload this page to check.",
+                    line: "Your payment went to Stripe. The plan reaches your account as soon as Stripe confirms it, usually within a minute; reload this page to check.",
                     actions: free,
                   }
                 : {
@@ -264,12 +283,14 @@ export default async function Supporter({
           </span>
         )}
       </SupporterBand>
-      {showOrder && (
+      {showOrder && config && (
         <SupporterOrder
           region={region}
           price={orderPrice}
           locale={locale}
           smallBusiness={smallBusiness()}
+          publishableKey={config.publishableKey}
+          failed={paymentFailed}
         />
       )}
       <section className="supporter-includes" aria-labelledby="supporter-includes">

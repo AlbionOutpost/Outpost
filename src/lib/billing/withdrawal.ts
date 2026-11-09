@@ -42,7 +42,8 @@ export function withdrawalDeadline(startSeconds: number) {
 export const contractStart = (subscription: StripeSubscription) =>
   subscription.start_date ?? subscription.created;
 
-/** The account's Supporter subscriptions that are still inside the withdrawal period. */
+/** The account's Supporter subscriptions that are still inside the withdrawal period. An unpaid
+ * order (`incomplete`) is no contract yet; it expires on its own. */
 export function withinWithdrawal(
   subscriptions: StripeSubscription[],
   priceId: string,
@@ -51,6 +52,7 @@ export function withinWithdrawal(
   return subscriptions.filter(
     (subscription) =>
       subscription.status !== "incomplete_expired" &&
+      subscription.status !== "incomplete" &&
       Number.isFinite(contractStart(subscription)) &&
       now <= withdrawalDeadline(contractStart(subscription)) &&
       subscription.items?.data.some((item) => item.price?.id === priceId),

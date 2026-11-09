@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adsActive } from "@/components/adsense-loader";
 import { legalPublished } from "@/lib/legal";
+import { billingEnabled } from "@/lib/billing/stripe";
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const dev = process.env.NODE_ENV === "development";
@@ -8,18 +9,24 @@ export function proxy(request: NextRequest) {
   const ads = adsActive();
   const google =
     " https://*.googlesyndication.com https://*.doubleclick.net https://www.google.com https://fundingchoicesmessages.google.com https://*.adtrafficquality.google";
+  // Stripe.js for the Supporter payment form, only while billing is configured. It is loaded on
+  // /supporter alone, but the policy is site-wide: a client-side navigation keeps the policy of
+  // the first page. Origins from Stripe's CSP guide (Stripe.js, 3-D Secure, Link).
+  const stripe = billingEnabled();
+  const stripeScript = stripe ? " https://js.stripe.com https://*.js.stripe.com" : "";
+  const link = " https://link.com https://*.link.com";
   const policy = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${dev ? " 'unsafe-eval'" : ""}`,
-    `frame-src https://challenges.cloudflare.com${ads ? google : ""}`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${stripeScript}${dev ? " 'unsafe-eval'" : ""}`,
+    `frame-src https://challenges.cloudflare.com${stripe ? `${stripeScript} https://hooks.stripe.com${link}` : ""}${ads ? google : ""}`,
     "style-src 'self' 'unsafe-inline'",
-    `img-src 'self' data: blob: https://render.albiononline.com https://cdn.discordapp.com${ads ? " https:" : ""}`,
+    `img-src 'self' data: blob: https://render.albiononline.com https://cdn.discordapp.com${stripe ? " https://*.link.com" : ""}${ads ? " https:" : ""}`,
     `font-src 'self'${ads ? " https://fonts.gstatic.com" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    `connect-src 'self' https://challenges.cloudflare.com${ads ? `${google} https://csi.gstatic.com` : ""}${dev ? " ws: wss:" : ""}`,
+    `connect-src 'self' https://challenges.cloudflare.com${stripe ? ` https://api.stripe.com${link}` : ""}${ads ? `${google} https://csi.gstatic.com` : ""}${dev ? " ws: wss:" : ""}`,
   ].join("; ");
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
