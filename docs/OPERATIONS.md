@@ -10,16 +10,19 @@ Production is https://albionoutpost.com on Cloudflare Workers Paid (zone on the 
 2. **Verify** — generate and verify the SQLite runtime (Prisma wasm client, domain constraints, D1 schema check), stage catalog + library into a local D1, run `qa-cloudflare-database.mjs`, build Cloudflare, typecheck both Workers, then run `test:e2e:core` in Cloudflare mode. The separate full-suite workflow runs all browser tests.
 3. **Deploy** (environment `cloudflare-production`, one at a time, after both Quality and Verify pass):
    1. Regenerate the SQLite runtime.
-   2. Production build with the Turnstile site key, `cloudflare-release-config.mjs` writes the real configs, secret scans.
-   3. `cloudflare-free-check.mjs` (each bundle ≤10 MiB gzip, the Workers Paid limit; no unreviewed routes or extra paid services), then `wrangler deploy` **data Worker first, then web Worker**.
-   4. `cloudflare-deployment-check.mjs` probes the live site.
+   2. Production build with the Turnstile site key (`cloudflare-build-check.mjs` then checks that `robots.txt`, the manifest and the sitemap are static assets and that `robots.txt` has the crawler rules), `cloudflare-release-config.mjs` writes the real configs, secret scans.
+   3. `cloudflare-free-check.mjs` (each bundle ≤10 MiB gzip, the Workers Paid limit; no unreviewed routes or extra paid services), then `wrangler deploy` **data Worker first, then web Worker**. The web Worker's version id goes to `.qa/cloudflare-release/web-version`.
+   4. `cloudflare-deployment-check.mjs` probes the live site and waits up to 5 minutes for `/wp-admin` to answer with that version in `X-Outpost-Version`; it fails if the edge keeps serving another one. A challenged runner skips this, so run it from your own machine (below).
 
 What CI does **not** do: upload runtime secrets, push catalog/library data to D1, or prove the live site works — GitHub runners are challenged by Bot Fight Mode, so the probe reports `BLOCKED` as a warning. After a deploy, smoke-test from your own machine:
 
 ```bash
+OUTPOST_EXPECTED_VERSION=<web "Current Version ID" from the deploy log> node scripts/cloudflare-deployment-check.mjs
 node scripts/qa-cloudflare-hosted.mjs
 node scripts/qa-cloudflare-auth.mjs
 ```
+
+**"Deployed" is not "served."** On 9 Nov 2026 the API listed each new version of both Workers as deployed at 100 % (15:48, 15:57, 16:06 UTC) while every request was still answered by the 15:41 versions (Workers Observability `$workers.scriptVersion.id`) until 16:09, when the 16:06 versions took over, so #142's robots.txt, manifest and probe 404 never reached the site. Wrangler and the deployments API cannot show this; the served version can. If the check fails, compare `$workers.scriptVersion.id` in Workers Observability with `wrangler deployments list`, and open a Cloudflare support case (redeploying did not help on 9 Nov).
 
 Every PR runs `quality.yml`; PRs and pushes that touch docs or Markdown also run `documentation.yml` (format, docs check, secret scan). A push to `main` deploys unless **every** changed file is under `docs/` or is `*.md`.
 

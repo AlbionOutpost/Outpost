@@ -108,6 +108,17 @@ try {
     });
     assert.equal(response.status, 401);
   });
+  await check("crawler files are static and probes get a bare 404", async () => {
+    const robots = await request("/robots.txt");
+    assert.equal(robots.status, 200);
+    assert.ok((await robots.text()).includes("User-agent: AhrefsBot"));
+    for (const response of [robots, await request("/manifest.webmanifest")])
+      assert.equal(response.headers.get("x-nextjs-cache"), null, "served by Next, not as a file");
+    const probe = await request("/wp-admin");
+    assert.equal(probe.status, 404);
+    assert.equal(await probe.text(), "Not found");
+    return { version: probe.headers.get("x-outpost-version") };
+  });
   for (const path of ["/.env", "/.git/config", "/api/internal/verification-probe"])
     await check(`owned sensitive-path WAF denial ${path}`, async () => {
       assert.equal((await request(path)).status, 403);

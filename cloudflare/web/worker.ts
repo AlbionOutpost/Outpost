@@ -100,4 +100,15 @@ const worker = {
     return secureResponse(result, request);
   },
 };
-export default worker;
+
+/** Every Worker answer names the version that made it, so the deploy check can tell whether the
+ * edge serves the version Cloudflare reports as deployed (scripts/cloudflare-deployment-check.mjs). */
+const versioned = {
+  async fetch(request: Request, env: OutpostWebEnv, ctx: ExecutionContext) {
+    const response = await worker.fetch(request, env, ctx);
+    if (env.CF_VERSION_METADATA?.id)
+      response.headers.set("X-Outpost-Version", env.CF_VERSION_METADATA.id);
+    return response;
+  },
+};
+export default versioned;

@@ -49,11 +49,14 @@ const child = spawn(
 child.on("exit", (code) => {
   process.exitCode = code ?? 1;
   if (code === 0) {
-    const result = spawnSync(process.execPath, ["scripts/cloudflare-public-assets.mjs"], {
-      stdio: "inherit",
-      env: process.env,
-    });
-    process.exitCode = result.status ?? 1;
+    for (const script of [
+      "scripts/cloudflare-build-check.mjs",
+      "scripts/cloudflare-public-assets.mjs",
+    ]) {
+      const result = spawnSync(process.execPath, [script], { stdio: "inherit", env: process.env });
+      process.exitCode = result.status ?? 1;
+      if (process.exitCode !== 0) break;
+    }
   }
 });
 child.on("error", () => {
