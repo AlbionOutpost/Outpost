@@ -48,7 +48,7 @@ export type CombatFeed = {
 };
 const PAGE = 20;
 /** A window the collector filled within this long is current enough to serve from. */
-const WINDOW_FRESH_MS = 3 * 60_000;
+const WINDOW_FRESH_MS = 5 * 60_000;
 const iso = (at: number | null) => (at === null ? null : new Date(at).toISOString());
 type Saved = Omit<CombatFeed, "newestAt" | "latestSeenAt" | "freshness" | "region" | "offset"> & {
   seen: number | null;

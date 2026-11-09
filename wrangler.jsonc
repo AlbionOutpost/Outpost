@@ -19,5 +19,5 @@
   "limits": { "cpu_ms": 10000 },
   "migrations": [{ "tag": "v1-sessions", "new_sqlite_classes": ["OutpostSession"] }],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  "observability": { "enabled": true, "head_sampling_rate": 0.2 },
 }
