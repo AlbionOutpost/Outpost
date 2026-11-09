@@ -67,6 +67,30 @@ describe("trusted edge request budgets", () => {
       await requestBudget(req("/api/market?region=europe", "203.0.113.2"), binding),
     ).toBeNull();
   });
+  it("gives item database prices their own allowance, so browsing never spends the market's", async () => {
+    const binding = budgets();
+    for (let i = 0; i < 20; i++)
+      expect(
+        await requestBudget(req(`/api/items/prices?region=europe&items=T4_BAG${i}`), binding),
+      ).toBeNull();
+    const denied = await requestBudget(
+      req("/api/items/prices?region=europe&items=T4_BAG"),
+      binding,
+    );
+    expect(denied?.status).toBe(429);
+    expect(denied?.headers.get("Retry-After")).toBe("60");
+    expect((await denied!.json()).error).toMatch(/Too many price requests/);
+    expect(binding.rateLimit).not.toHaveBeenCalledWith(
+      expect.stringMatching(/^edge:market:/),
+      expect.anything(),
+      expect.anything(),
+    );
+    // The market budget is untouched, and another server has its own allowance.
+    expect(await requestBudget(req("/api/market?region=europe"), binding)).toBeNull();
+    expect(
+      await requestBudget(req("/api/items/prices?region=asia&items=T4_BAG"), binding),
+    ).toBeNull();
+  });
   it("limits uncached searches per caller, whatever the query or cookie", async () => {
     const binding = budgets();
     for (let i = 0; i < 30; i++)

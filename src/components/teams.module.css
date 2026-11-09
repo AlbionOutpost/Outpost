@@ -1558,12 +1558,22 @@
 }
 
 /* ---------- Comps and Builds tabs: the landing's windows, three across ---------- */
+:global(.app.outpost) .buildWindow .windowBar.windowBar {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+/* The whole title, two lines at most, over the chip */
 :global(.app.outpost) .windowTitle.windowTitle {
+  display: -webkit-box;
   overflow: hidden;
   margin: 0;
   font: inherit;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 :global(.app.outpost) .shareBar.shareBar {
   display: grid;

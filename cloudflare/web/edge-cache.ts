@@ -7,13 +7,15 @@
  * Search returns user-made public builds and comps, so its TTL is short: a build made private or
  * hidden by moderation drops out of signed-out search within two minutes.
  *
- * Market Explorer's two reads keep their server cache lives: prices 60 s, history 5 min. */
+ * Market Explorer's two reads keep their server cache lives: prices 60 s, history 5 min. The item
+ * database's price line keeps 2 min, as the scans do: each price shows its own observation age. */
 import {
   craftCategoryIds,
   gearCategoryIds,
   type CraftCategory,
 } from "../../src/lib/albion/craft-categories";
 import { cities } from "../../src/lib/albion/region-config";
+import { ITEM_PRICE_BATCH } from "../../src/lib/albion/item-prices";
 
 const regions = new Set(["europe", "americas", "asia"]);
 const itemId = /^[A-Z0-9_@]{3,100}$/;
@@ -89,6 +91,21 @@ const rules: Record<string, Rule> = {
       const [region, item, quality] = ["region", "item", "quality"].map((k) => params.get(k) || "");
       return regions.has(region) && itemId.test(item) && /^[1-5]$/.test(quality)
         ? `region=${region}&item=${encodeURIComponent(item)}&quality=${quality}`
+        : null;
+    },
+  },
+  // The item database's price line: one page of items, keyed by the sorted set so any order of
+  // the same page shares one answer (the route sorts its answer the same way).
+  "/api/items/prices": {
+    ttl: 120,
+    key: (params) => {
+      const region = params.get("region") || "";
+      const items = (params.get("items") || "").split(",");
+      return regions.has(region) &&
+        items.length <= ITEM_PRICE_BATCH &&
+        items.every((id) => itemId.test(id)) &&
+        new Set(items).size === items.length
+        ? `region=${region}&items=${items.sort().join(",")}`
         : null;
     },
   },

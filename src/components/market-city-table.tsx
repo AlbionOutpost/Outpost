@@ -2,7 +2,7 @@ import { Silver } from "./silver";
 import "./market-table.css";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceAge } from "@/lib/albion/source-age";
-import { sourceTimestamp } from "@/lib/albion/freshness";
+import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
 
 /** "2026-10-25 14:03" for a source timestamp (UTC), or "Unknown". */
 export function observedAt(value: string) {
@@ -13,10 +13,36 @@ export function observedAt(value: string) {
 }
 
 /**
- * Every city's best sell and buy order for one item and quality, one line per city. Each price
- * carries its own age (exact UTC time on hover and for assistive tech) and, past one hour, a
- * stale mark that says "Stale" to assistive tech and on hover; a side nobody observed is an em
- * dash with its reason, never a zero.
+ * How loudly a price shows its age. Seen within the hour ("fresh") it shows none; older
+ * ("stale") a short muted-amber age such as "6 h"; past a day ("old") the figure dims beside
+ * "2 d". Every tone keeps the exact UTC time on hover and, spoken in full, for assistive tech.
+ */
+export function priceAge(date: string, now: number) {
+  const age = sourceAge(date, now);
+  const exact = `${observedAt(date)} UTC`;
+  if (!age.known)
+    return { tone: "old", short: age.label, exact, spoken: `Stale, ${age.label}` } as const;
+  const minutes = Math.max(0, Math.round((now - sourceTimestamp(date)) / 60000));
+  const short =
+    minutes < 1
+      ? "<1 min"
+      : minutes < 60
+        ? `${minutes} min`
+        : minutes < 24 * 60
+          ? `${Math.round(minutes / 60)} h`
+          : `${Math.round(minutes / 1440)} d`;
+  const tone = !isStale(date, now) ? "fresh" : minutes > 24 * 60 ? "old" : "stale";
+  // Assistive tech hears the age in full, and "Stale" past the hour, as the eye sees amber.
+  const spoken = `${tone === "fresh" ? "" : "Stale, "}seen ${age.label}, ${exact}`;
+  return { tone, short, exact, spoken } as const;
+}
+
+/**
+ * Every city's best sell and buy order for one item and quality, one line per city. A price
+ * seen within the hour stands alone; an older one carries its short age (see `priceAge`), and
+ * every one keeps its exact time on hover and for assistive tech. The lowest sell and highest
+ * buy are marked by a small accent dot; a side nobody observed is an em dash with its reason,
+ * never a zero.
  */
 export function MarketCityTable({
   rows,
@@ -48,7 +74,7 @@ export function MarketCityTable({
     >
       <table className="mx-table">
         <caption className="sr-only">
-          Lowest sell order and highest buy order per city, with each observation&apos;s age
+          Lowest sell order and highest buy order per city, with the time each was seen
         </caption>
         <thead>
           <tr>
@@ -155,27 +181,28 @@ function Price({
       <span className="mx-price">
         <Skeleton>0,000</Skeleton>
         <small className="market-inline-time">
-          <Skeleton>1 min ago</Skeleton>
+          <Skeleton>0 h</Skeleton>
         </small>
       </span>
     );
   if (!value) return <Missing label={missing} />;
-  const age = sourceAge(date, now);
+  const age = priceAge(date, now);
   // The figure comes first for assistive tech; the row lays it out at the right edge.
   return (
-    <span className="mx-price">
-      <Silver value={value} />
-      <small className={`market-inline-time${age.stale ? " is-stale" : ""}`}>
-        {best && <span className="mx-best">{best}</span>}
-        <time dateTime={date} title={`${observedAt(date)} UTC`}>
-          {age.label}
-          <span className="sr-only"> ({observedAt(date)} UTC)</span>
+    <span
+      className={`mx-price is-${age.tone}${best ? " is-best" : ""}`}
+      title={`${best ? `${best} · ` : ""}Seen ${age.exact}`}
+    >
+      <span className="mx-figure">
+        {best && <span className="mx-best" aria-hidden="true" />}
+        <Silver value={value} />
+        {best && <span className="sr-only"> {best}</span>}
+      </span>
+      <small className="market-inline-time">
+        <time dateTime={date}>
+          {age.tone !== "fresh" && <span aria-hidden="true">{age.short}</span>}
+          <span className="sr-only">{age.spoken}</span>
         </time>
-        {age.stale && (
-          <span className="mx-stale-mark" title="Stale: seen more than an hour ago">
-            <span className="sr-only">Stale</span>
-          </span>
-        )}
       </small>
     </span>
   );
