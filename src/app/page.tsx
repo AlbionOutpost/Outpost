@@ -37,6 +37,8 @@ import { DiscordMark } from "@/components/discord-mark";
 import { ArrowRight, Hammer, LayoutDashboard } from "lucide-react";
 
 const showcase = landingShowcase;
+/** Account counts below this stay off the hero: a handful of accounts makes the site look empty. */
+const MIN_SHOWN_COUNT = 100;
 
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/", await searchParams);
@@ -94,15 +96,18 @@ export default async function Home({
       minutes: readingMinutes(g.content),
     }));
   const n = (value: number) => value.toLocaleString("en-US");
-  // Measured counts only; the two account counts drop out if the database cannot answer.
+  // Measured counts only. The account counts drop out if the database cannot answer, and while
+  // they are below MIN_SHOWN_COUNT, where a small number reads as an empty site.
+  const counted = (value: number | undefined, label: string) =>
+    value !== undefined && value >= MIN_SHOWN_COUNT ? [{ value, label }] : [];
   const stats = [
-    ...(players ? [{ value: players.monthlyPlayers, label: "Accounts" }] : []),
+    ...counted(players?.monthlyPlayers, "Accounts"),
     { value: library.builds, label: "Builds" },
     // While the Supporter plan is off (no billing configured), the fifth figure is the comps.
     ...(billing ? [] : [{ value: library.compositions, label: "Comps" }]),
     { value: library.guides, label: "Guides" },
     { value: tools.length, label: "Tools" },
-    ...(players && billing ? [{ value: players.supporters, label: "Supporters" }] : []),
+    ...(billing ? counted(players?.supporters, "Supporters") : []),
   ];
   const accountAction = signedIn ? (
     <Link href={`/dashboard${suffix}`} className="button primary">

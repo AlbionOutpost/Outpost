@@ -9,7 +9,6 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        compact
         glyph="craft"
         scene="economy"
         title="Profitable crafts"

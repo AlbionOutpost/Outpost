@@ -364,7 +364,7 @@
    pills. */ /* Crafting, refining, enchanting, cooking and alchemy: one calculator on CalculatorShell.
    Everything here is scoped to the calculator; the shell owns the layout. */
 :global(.app.outpost) .page.page {
-  width: min(100%, var(--workspace-width));
+  width: min(100%, var(--page-width));
   margin-inline: auto;
 }
 :global(.app.outpost) .journey.journey {

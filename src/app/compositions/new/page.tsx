@@ -93,7 +93,6 @@ export default async function NewComposition({
   return (
     <div className={styles.workspace}>
       <WorkspaceHeading
-        compact
         glyph="composition"
         scene="comps"
         title="Create a comp"

@@ -1,7 +1,7 @@
 /* Administration: a dense workspace in the landing's language. Panels with PanelHead, wells for
    rows, .tool-table for tables, mixed-case 12px labels. Colours come from tokens only. */
 .app.outpost .admin-shell {
-  max-width: var(--workspace-width, 1392px);
+  max-width: var(--page-width);
   margin: 0 auto;
 }
 .app.outpost .admin-workspace {

@@ -22,7 +22,7 @@ export default async function Guides({
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        emblem={<></>}
+        glyph="guides"
         scene="guides"
         title="Albion Online guides"
         accent="guides"

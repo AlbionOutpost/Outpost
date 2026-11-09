@@ -35,7 +35,6 @@ export default async function GiveawaysPage({
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        compact
         scene="economy"
         title="Outpost giveaways"
         accent="giveaways"

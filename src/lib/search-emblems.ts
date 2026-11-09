@@ -25,6 +25,7 @@ const toolEmblems: Record<string, string> = {
   craft: "tool-craft",
   cook: "tool-cooking",
   alchemy: "tool-alchemy",
+  guides: "tool-reference",
   refine: "tool-refining",
   enchant: "tool-enchanting",
 };

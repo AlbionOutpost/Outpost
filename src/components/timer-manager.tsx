@@ -224,7 +224,6 @@ export function TimerManager({
   return (
     <>
       <WorkspaceHeading
-        compact
         scene="economy"
         title="Personal timers"
         accent="timers"

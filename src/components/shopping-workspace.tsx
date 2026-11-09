@@ -278,7 +278,6 @@ export function ShoppingWorkspace() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        compact
         glyph="catalog"
         scene="market"
         title="Crafting Planner"

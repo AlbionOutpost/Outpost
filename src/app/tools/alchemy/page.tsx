@@ -16,7 +16,6 @@ export default async function Page({
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        compact
         glyph="alchemy"
         scene="economy"
         title="Alchemy calculator"

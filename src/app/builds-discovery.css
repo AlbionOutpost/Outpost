@@ -6,14 +6,6 @@
   margin: 0 auto;
   min-width: 0;
 }
-/* Builds pages fit one screen: the masthead keeps its painting but drops the 300px band, so
-   the list, board or editor starts in the first viewport. */
-.app.outpost :is(.builds-ecosystem, .build-editor-page) > .workspace-identity[data-scene] {
-  min-height: 0;
-  margin-bottom: var(--space-4);
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-5);
-}
 .ecosystem-discovery-layout {
   display: grid;
   grid-template-columns: 252px minmax(0, 1fr);

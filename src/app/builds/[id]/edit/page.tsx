@@ -22,7 +22,6 @@ export default async function EditBuild({ params }: { params: Promise<{ id: stri
   return (
     <div className="build-editor-page">
       <WorkspaceHeading
-        compact
         glyph="builds"
         scene="builds"
         title="Edit your build"

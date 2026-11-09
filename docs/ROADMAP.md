@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## One page width and one masthead — 8 November 2026
+
+- Every inner page shares one content width (`--page-width`, now 1376px) and one left edge, set once on the shell frame; the 1392px workspace width is gone. 1376px (a 1440 window less its gutters) is what the Market Explorer needs to keep every City orders column in view.
+- One masthead everywhere: the same emblem size, title size (`--masthead-title`), lede and short band on hubs, tools and calculators. The `compact` variant and the per-route padding overrides are gone. The guides hub now has its painted emblem (`strip-content`).
+- The landing's hero hides the account count below 100 (`MIN_SHOWN_COUNT`); a handful of accounts made the site look empty. The other figures stay centred.
+
 ## Build cards lead with the weapon; the item database shows prices — 8 November 2026
 
 - Build cards (Builds, Favorites, item pages, comp members, a Team's shared builds, the editor preview and the landing teaser) show the weapon first: main and off hand large with their chosen abilities, the rest of the gear in a smaller row. Slots nothing was recorded for are no longer drawn as grey wells; one "+n empty" note names them. Nearly every library build lacks a bag and a mount, so most cards used to carry two to four empty wells.

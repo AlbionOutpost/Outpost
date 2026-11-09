@@ -1,20 +1,10 @@
 /* Comps (/compositions/*): the hubs, Group Build and player comp pages and the comp planner.
    Windows, rosters and wells follow the landing's comp window; nothing here is global. */
 
-.page {
+.page,
+.workspace {
   max-width: var(--page-width);
   margin-inline: auto;
-}
-.workspace {
-  max-width: var(--workspace-width);
-  margin-inline: auto;
-}
-/* Comp pages fit one screen: the masthead keeps its painting but drops the 300px band */
-:global(.app.outpost) :is(.page, .workspace) > :global(.workspace-identity)[data-scene] {
-  min-height: 0;
-  margin-bottom: var(--space-4);
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-5);
 }
 .section {
   margin-top: var(--space-6);
