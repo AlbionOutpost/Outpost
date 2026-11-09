@@ -510,6 +510,13 @@ test("robots points crawlers at a sitemap of public pages and keeps editors out"
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /builds/new");
   expect(robots).toMatch(/Sitemap: https?:\/\/[^/]+\/sitemap\.xml/);
+  expect(robots).toContain("User-agent: AhrefsBot");
+  if (process.env.E2E_CLOUDFLARE === "1") {
+    // The Worker answers probes before the app: no 40 KB not-found render on a cold isolate.
+    const probe = await request.get("/wp-admin");
+    expect(probe.status()).toBe(404);
+    expect(await probe.text()).toBe("Not found");
+  }
   const sitemap = await (await request.get("/sitemap.xml")).text();
   expect(sitemap).toContain("/builds/library/battleaxe-mist-build</loc>");
   expect(sitemap).toContain("/tools/crafting</loc>");

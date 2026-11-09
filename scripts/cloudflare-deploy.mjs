@@ -3,6 +3,7 @@
 // A failure is reported as a GitHub annotation with the command and its last output lines
 // (API token redacted), because job logs are not always readable where the deploy is reviewed.
 import { spawnSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
 
 const secret = process.env.CLOUDFLARE_API_TOKEN;
 const ci = !!process.env.GITHUB_ACTIONS;
@@ -40,4 +41,8 @@ for (const [title, args] of steps) {
     process.exit(1);
   }
   console.log(`ok ${title}`);
+  // The deployment check compares this with the version the edge answers with.
+  const version =
+    title === "Deploy the web Worker" && /Current Version ID: ([0-9a-f-]{36})/.exec(output);
+  if (version) writeFileSync(".qa/cloudflare-release/web-version", version[1]);
 }
