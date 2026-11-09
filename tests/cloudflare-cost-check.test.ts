@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   alertMessage,
+  alertEmbed,
+  overage,
   billingPeriod,
   collectUsage,
   evaluate,
@@ -104,6 +106,21 @@ describe("projection and thresholds", () => {
     expect(message).not.toContain("DO requests");
     expect(alertMessage(evaluate({}, period, noBindings), period)).toBeNull();
   });
+  it("builds a readable Discord embed with plain names, status icons and an estimated extra", () => {
+    const embed = alertEmbed(rows, period, Date.UTC(2026, 10, 9))!;
+    expect(embed.title).toMatch(/\$5/);
+    expect(embed.description).toContain("Estimated bill: **$5 plan + ~$");
+    const names = embed.fields.map((field: { name: string }) => field.name);
+    expect(names.some((name: string) => name.includes("Worker requests"))).toBe(true);
+    expect(names.at(-1)).toBe("Everything at a glance");
+    expect(embed.timestamp).toBe("2026-11-09T00:00:00.000Z");
+    expect(alertEmbed(evaluate({}, period, noBindings), period)).toBeNull();
+    // No usage past an allowance costs nothing; usage past it is priced per unit.
+    expect(overage({ ...rows[0], available: true, projected: 5e6, included: 10e6 })).toBe(0);
+    expect(
+      overage({ key: "workerCpuMs", available: true, projected: 130e6, included: 30e6 } as never),
+    ).toBeCloseTo(2, 5);
+  });
 });
 
 describe("GraphQL responses", () => {
@@ -172,7 +189,12 @@ describe("run", () => {
     const post = fetcher.mock.calls.find(([url]) => url === webhook)!;
     const body = JSON.parse(String(post[1].body));
     expect(body.allowed_mentions).toEqual({ parse: [] });
-    expect(body.content).toContain("Worker CPU (ms)");
+    expect(body.content).toBe(body.embeds[0].title);
+    const embed = body.embeds[0];
+    expect(embed.description).toContain("$5 plan");
+    expect(JSON.stringify(embed.fields)).toContain("Worker CPU time");
+    expect(embed.fields.at(-1).name).toBe("Everything at a glance");
+    for (const field of embed.fields) expect(field.value.length).toBeLessThanOrEqual(1024);
     expect(output.join("\n")).not.toContain(token);
     expect(output.join("\n")).not.toContain(webhook);
   });
