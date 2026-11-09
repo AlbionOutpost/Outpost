@@ -31,6 +31,8 @@ import {
 } from "@/lib/source-filter";
 import styles from "@/components/comps.module.css";
 import { displayName } from "@/lib/display-name";
+import { badgeSelect, storedSupporter } from "@/lib/billing/plan";
+import { SupporterBadge } from "@/components/supporter-badge";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions", await searchParams);
 }
@@ -111,7 +113,7 @@ export default async function Compositions({
             version: true,
             updatedAt: true,
             slots: true,
-            author: { select: { name: true } },
+            author: { select: { name: true, ...badgeSelect } },
           },
         })
       : Promise.resolve([]);
@@ -171,7 +173,17 @@ export default async function Compositions({
               }
               total={count}
               noun="player"
-              byline={`By ${displayName(r.author.name)}`}
+              byline={
+                <>
+                  By {displayName(r.author.name)}
+                  {storedSupporter(r.author) && (
+                    <>
+                      {" "}
+                      <SupporterBadge compact />
+                    </>
+                  )}
+                </>
+              }
             >
               {count ? (
                 <RosterRows

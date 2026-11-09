@@ -12,6 +12,7 @@ import { SearchInput } from "./field";
 import type { TeamContext } from "./group-dashboard";
 import { plural } from "./group-parts";
 import { AvatarFrame } from "./avatar-frame";
+import { SupporterBadge } from "./supporter-badge";
 import { GroupJoining, GroupLeave } from "./group-settings";
 import roleStyles from "./group-roles.module.css";
 import styles from "./teams.module.css";
@@ -46,6 +47,7 @@ export function MemberRow({
       <span className={styles.rowCopy}>
         <strong>
           {member.name}
+          {member.supporter && <SupporterBadge compact />}
           {self && <span className={styles.youTag}>You</span>}
         </strong>
         <RoleChips roles={roles} held={member.roleIds} owner={member.owner} />
@@ -199,6 +201,7 @@ export function GroupMembers({ ctx, inviteLink }: { ctx: TeamContext; inviteLink
                             name={m.name}
                           />
                           <strong>{m.name}</strong>
+                          {m.supporter && <SupporterBadge />}
                           {self && <span className={styles.youTag}>You</span>}
                         </span>
                       </th>

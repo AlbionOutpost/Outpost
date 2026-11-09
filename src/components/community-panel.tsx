@@ -9,6 +9,7 @@ import Link from "@/components/link";
 import { ReactionFeedback } from "./reaction-feedback";
 import { TurnstileChallenge } from "./turnstile-challenge";
 import { AvatarFrame } from "./avatar-frame";
+import { SupporterBadge } from "./supporter-badge";
 import styles from "./community-panel.module.css";
 import { displayName } from "@/lib/display-name";
 type Comment = {
@@ -18,7 +19,7 @@ type Comment = {
   createdAt: string;
   updatedAt: string;
   authorId: string;
-  author: { name: string | null; avatarFrame?: string | null };
+  author: { name: string | null; avatarFrame?: string | null; supporter?: boolean };
 };
 type Activity = {
   viewerId: string | null;
@@ -227,6 +228,7 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
                       name={displayName(c.author.name)}
                     />
                     <Link href={`/players/${c.authorId}`}>{displayName(c.author.name)}</Link>
+                    {c.author.supporter && <SupporterBadge compact />}
                     <time dateTime={c.createdAt}>
                       {new Date(c.createdAt).toLocaleString("en-GB", {
                         day: "numeric",

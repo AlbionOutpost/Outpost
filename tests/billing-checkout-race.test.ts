@@ -6,11 +6,16 @@ const mocks = vi.hoisted(() => ({
   update: vi.fn(),
   resolve: vi.fn(),
   list: vi.fn(),
+  onSale: { value: true },
 }));
-vi.mock("@/lib/http", () => ({ mutationUser: async () => ({ userId: "owner" }) }));
+vi.mock("@/lib/http", () => ({
+  mutationUser: async () => ({ userId: "owner" }),
+  boundedJson: async (req: Request) => req.json(),
+}));
 vi.mock("@/lib/billing/plan", () => ({
   billingProfile: mocks.profile,
   rememberCustomer: vi.fn(),
+  salesOpen: () => mocks.onSale.value,
   planForStatus: (status: string) =>
     ["active", "trialing", "past_due"].includes(status) ? "SUPPORTER" : "FREE",
 }));
@@ -35,8 +40,13 @@ const open = {
 };
 const complete = { ...open, status: "complete", subscription: "sub_old", url: null };
 const subscription = (status: string) => ({ id: "sub_old", customer: "cus_owner", status });
-const request = () =>
-  new NextRequest("https://outpost.test/api/billing/checkout", { method: "POST" });
+const consent = { terms: true, immediateStart: true };
+const request = (body: unknown = consent) =>
+  new NextRequest("https://outpost.test/api/billing/checkout", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((done) => {
@@ -46,6 +56,7 @@ function deferred<T>() {
 }
 beforeEach(() => {
   vi.resetAllMocks();
+  mocks.onSale.value = true;
   mocks.profile.mockResolvedValue({
     id: "owner",
     plan: "FREE",
@@ -141,4 +152,32 @@ it("expired checkout without live subscriptions can retire", async () => {
   mocks.resolve.mockResolvedValue({ ...open, status: "expired" });
   expect((await POST(request())).status).toBe(409);
   expect(mocks.update).toHaveBeenCalledWith("owner", intent.key, null);
+});
+
+it.each([
+  {},
+  { terms: true },
+  { immediateStart: true },
+  { terms: true, immediateStart: false },
+  { terms: "yes", immediateStart: true },
+  { ...consent, extra: 1 },
+])("an order without both ticked boxes is refused before any billing work: %j", async (body) => {
+  const response = await POST(request(body));
+  expect(response.status).toBe(400);
+  expect(mocks.profile).not.toHaveBeenCalled();
+  expect(mocks.begin).not.toHaveBeenCalled();
+  expect(mocks.resolve).not.toHaveBeenCalled();
+});
+it("records when the boxes were ticked on the checkout operation", async () => {
+  const before = Date.now();
+  expect((await POST(request())).status).toBe(200);
+  const consentAt = mocks.begin.mock.calls[0][1].consentAt;
+  expect(Date.parse(consentAt)).toBeGreaterThanOrEqual(before);
+  expect(Date.parse(consentAt)).toBeLessThanOrEqual(Date.now());
+});
+it("sells nothing while the plan is not on sale (launch open or terms unpublished)", async () => {
+  mocks.onSale.value = false;
+  expect((await POST(request())).status).toBe(503);
+  expect(mocks.profile).not.toHaveBeenCalled();
+  expect(mocks.begin).not.toHaveBeenCalled();
 });

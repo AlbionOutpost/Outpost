@@ -7,6 +7,9 @@ import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { requireRead, canEdit, groupAccess, canDeleteShared } from "@/lib/compositions/service";
 import { db } from "@/lib/db";
+import { displayName } from "@/lib/display-name";
+import { badgeSelect, storedSupporter } from "@/lib/billing/plan";
+import { SupporterBadge } from "@/components/supporter-badge";
 import { readStoredComposition } from "@/lib/compositions/stored";
 import { HttpError } from "@/lib/api-errors";
 import { WorkspaceHeading } from "@/components/workspace-heading";
@@ -35,8 +38,11 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
     if (e instanceof HttpError && e.status === 404) notFound();
     throw e;
   }
-  const editable = !!userId && (await canEdit(row, userId));
-  const access = row.groupId ? await groupAccess(db, row.groupId, userId) : null;
+  const [editable, access, author] = await Promise.all([
+    !!userId && canEdit(row, userId),
+    row.groupId ? groupAccess(db, row.groupId, userId) : null,
+    db.user.findUnique({ where: { id: row.authorId }, select: { name: true, ...badgeSelect } }),
+  ]);
   const deletable =
     row.visibility === "GROUP"
       ? canDeleteShared(access, row.authorId === userId)
@@ -69,6 +75,8 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
       >
         <div className={`landing-chips masthead-chips ${styles.mastChips}`}>
           <span className="landing-chip">{composition.contentType}</span>
+          {author && <span className="landing-chip is-muted">By {displayName(author.name)}</span>}
+          {storedSupporter(author) && <SupporterBadge />}
           <span className="landing-chip is-muted">{visibility[composition.visibility]}</span>
           <span className="landing-chip is-muted">{regions[composition.region]}</span>
           <span className="landing-chip is-muted">Revision {row.version}</span>

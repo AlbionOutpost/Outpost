@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Supporter plan ready for go-live — 9 November 2026
+
+- Owner decision: Supporter is €2.99 a month (price from Stripe) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys, `/legal` stays unpublished and the launch grant stays open. Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
+- Supporter badge beside names on builds, comps, comments, Team rosters, the player profile and the account menu (plan or gift only, derived on the server).
+- German consumer-law pieces: the order box on `/supporter` (required facts, two unticked consents, "Zahlungspflichtig bestellen"), consent time stored in Stripe metadata, the § 312k cancellation page `/supporter/cancel` linked from every footer and Settings, `POST /api/billing/cancel`, and draft terms, cancellation policy and model withdrawal form in `/legal`.
+- Next: legal review; the electronic withdrawal function (§ 356a BGB); confirm Stripe sends cancellation emails for API cancellations.
+
 ## Ads for everyone but Supporters — 9 November 2026
 
 - Owner decision: everyone sees ads except Supporters with a plan or an admin gift. The launch grant keeps every Supporter feature but no longer hides ads; the Supporter page and both privacy texts say so. Ads still switch on only once the Impressum is complete.

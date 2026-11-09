@@ -1,6 +1,8 @@
 import { db, databaseService } from "@/lib/db";
 import { HttpError } from "@/lib/http-error";
 import { giftedSupporter } from "../admin/policy";
+import { legalPublished } from "../legal";
+import { billingEnabled } from "./stripe";
 
 export type Plan = "FREE" | "SUPPORTER";
 /** Stripe statuses that keep the Supporter benefits on. */
@@ -40,6 +42,28 @@ export const launchSupporter = (user: Entitlement) =>
 export const storedSupporter = (user: Entitlement) =>
   user?.plan === "SUPPORTER" || giftedSupporter(user);
 
+/** The columns `storedSupporter` reads. Select them for an author or member, then hand on only
+ * `publicSupporter(row)`: gift dates and plan state never leave the server. */
+export const badgeSelect = {
+  plan: true,
+  supporterGiftUntil: true,
+  supporterGiftPermanent: true,
+} as const;
+type BadgeRow = {
+  plan?: string | null;
+  supporterGiftUntil?: Date | string | null;
+  supporterGiftPermanent?: boolean;
+};
+/** Swaps the entitlement columns for the public badge flag. The badge marks a stored plan or a
+ * gift; the launch grant shows none (owner, 9 Nov 2026: the badge is a paid benefit). */
+export function publicSupporter<T extends BadgeRow>(row: T) {
+  const { plan, supporterGiftUntil, supporterGiftPermanent, ...rest } = row;
+  return {
+    ...rest,
+    supporter: storedSupporter({ plan, supporterGiftUntil, supporterGiftPermanent }),
+  };
+}
+
 /** Supporter from a stored plan, an admin gift or the launch grant. */
 export const isSupporter = (user: Entitlement) => storedSupporter(user) || launchSupporter(user);
 
@@ -52,6 +76,13 @@ export const supporterSource = (user: Entitlement): "plan" | "gift" | "launch" |
       : launchSupporter(user)
         ? "launch"
         : null;
+/**
+ * The plan is for sale: Stripe is configured, the launch grant is closed (nothing is sold while
+ * every account holds it) and the legal page with the terms and withdrawal policy is published.
+ * Cancelling never depends on this, only on `billingEnabled()`.
+ */
+export const salesOpen = () => billingEnabled() && !launchOpen() && legalPublished;
+
 /** How an account's status reads: "Launch Supporter" marks the launch grant. */
 export function supporterLabel(user: Entitlement) {
   const source = supporterSource(user);

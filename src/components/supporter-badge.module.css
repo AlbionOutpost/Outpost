@@ -1,0 +1,22 @@
+/* The Supporter badge: an ember-wash pill with a gem, sized to sit on a line of text */
+.badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  min-height: 20px;
+  padding: 1px 8px 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 700 12px/1.2 var(--font-ui);
+  letter-spacing: 0.01em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.badge[data-compact] {
+  justify-content: center;
+  width: 20px;
+  padding: 0;
+}

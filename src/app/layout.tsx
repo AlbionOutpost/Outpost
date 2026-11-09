@@ -1,6 +1,7 @@
 import { rootMetadata } from "@/lib/seo";
 import { AdsenseLoader } from "@/components/adsense-loader";
 import { storedSupporter } from "@/lib/billing/plan";
+import { billingEnabled } from "@/lib/billing/stripe";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
 import { getServerSession } from "next-auth";
@@ -83,9 +84,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
                   image: user.image,
                   avatarFrame: user.avatarFrame,
                   role: user.role,
+                  supporter: storedSupporter(user),
                 }
               : null
           }
+          billing={billingEnabled()}
           initialLight={initialLight}
           initialRegion={initialRegion}
         >

@@ -3,6 +3,7 @@ import "@/app/build-window.css";
 import windows from "./landing/windows.module.css";
 import type { CSSProperties, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { SupporterBadge } from "./supporter-badge";
 import Link from "@/components/build-region-link";
 import { activityBackgroundFor } from "@/lib/activity-backgrounds";
 import { discoveryDate } from "@/lib/build-discovery";
@@ -28,6 +29,7 @@ export function BuildWindow({
   weaponItemId,
   weaponQuality,
   author,
+  authorSupporter = false,
   updatedAt,
   pieces,
   spellNames,
@@ -52,6 +54,8 @@ export function BuildWindow({
   weaponItemId?: string;
   weaponQuality?: number;
   author?: string | null;
+  /** Server-derived Supporter badge for the author. */
+  authorSupporter?: boolean;
   updatedAt?: string | Date;
   pieces?: BoardPiece[];
   spellNames?: Record<string, string>;
@@ -127,6 +131,12 @@ export function BuildWindow({
               {line ?? (
                 <>
                   By {author || "Adventurer"}
+                  {authorSupporter && (
+                    <>
+                      {" "}
+                      <SupporterBadge compact />
+                    </>
+                  )}
                   {date && updatedAt && (
                     <>
                       {" · "}

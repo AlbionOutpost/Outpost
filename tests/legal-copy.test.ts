@@ -23,7 +23,9 @@ const expectedIds = [
   "rights",
   "terms",
   "payments",
+  "supporter-terms",
   "withdrawal",
+  "withdrawal-form",
   "data-sources",
   "scene-artwork",
   "media",
@@ -58,7 +60,7 @@ describe("advertising text follows whether ads run", () => {
 });
 
 describe("faithful bilingual legal draft", () => {
-  it("retains all12 topics and complete section structure in both languages", () => {
+  it("retains all 14 topics and complete section structure in both languages", () => {
     expect(copy("en").sections.map((part) => part.id)).toEqual(expectedIds);
     expect(copy("de").sections.map((part) => part.id)).toEqual(expectedIds);
     for (const id of expectedIds) {
@@ -194,8 +196,9 @@ describe("faithful bilingual legal draft", () => {
     expect(copy("en").draftBody).toContain("does not confirm legal compliance");
     expect(copy("de").draftBody).toContain("bestätigt keine rechtliche Konformität");
     expect(text(section("en", "withdrawal").body)).toContain(
-      "not functioning cancellation or withdrawal buttons",
+      "Draft, to be reviewed before publication",
     );
+    expect(text(section("de", "supporter-terms").body)).toContain("Entwurf");
     expect(text(section("en", "scene-artwork").body)).toContain(
       "does not prove that all labelling or rights obligations have been met",
     );

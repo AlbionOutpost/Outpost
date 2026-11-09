@@ -14,7 +14,8 @@ export type PreviewBuild = {
   visibility: string;
   version: number;
   updatedAt: Date;
-  author: { name: string | null };
+  /** `supporter` is the server-derived badge flag (`publicSupporter`). */
+  author: { name: string | null; supporter?: boolean };
   equipment: { slot: string; itemId: string; quality: number; abilitySelections?: unknown }[];
 };
 
@@ -72,6 +73,7 @@ export function CommunityBuildCard({
       weaponName={main ? equipmentName(main.itemId) : ""}
       weaponItemId={main?.itemId}
       author={displayName(b.author.name)}
+      authorSupporter={b.author.supporter}
       updatedAt={b.updatedAt}
       pieces={pieces}
       spellNames={names}

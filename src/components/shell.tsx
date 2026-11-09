@@ -34,6 +34,7 @@ import { RegionContext, RegionNavigationContext } from "./region-context";
 import { AccountIdContext } from "./account-saves";
 import { RegionPicker } from "./region-picker";
 import { AvatarFrame } from "./avatar-frame";
+import { SupporterBadge } from "./supporter-badge";
 import { regionSchema } from "@/lib/albion/region-config";
 import { legalPublished } from "@/lib/legal";
 
@@ -89,7 +90,7 @@ const sectionEmblems: Record<string, string> = {
   "/guides": "strip-content",
   "/groups": "team-roles",
 };
-/** The footer directory: four labelled columns of real routes (no Supporter: everything is free). */
+/** The footer directory: four labelled columns of real routes (the Supporter plan is not one). */
 const footerColumns = [
   {
     label: "Tools",
@@ -176,6 +177,7 @@ export function Shell({
   authenticated = false,
   accountId = null,
   account = null,
+  billing = false,
 }: {
   children: React.ReactNode;
   initialLight?: boolean;
@@ -188,7 +190,11 @@ export function Shell({
     image: string | null;
     avatarFrame?: string | null;
     role?: string;
+    /** Server-derived Supporter badge (stored plan or gift). */
+    supporter?: boolean;
   } | null;
+  /** Billing is configured: the footer carries the § 312k BGB cancellation link. */
+  billing?: boolean;
 }) {
   const currentAccountLinks = [
     ...accountLinks,
@@ -623,7 +629,9 @@ export function Shell({
                             name={account.name}
                           />
                         ) : null}
-                        <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
+                        <span>{account?.name || "Your account"}</span>
+                        {account?.supporter && <SupporterBadge compact />}
+                        <ChevronDown size={13} />
                       </summary>
                       <div className="menu-panel">
                         <div className="menu-group" role="group" aria-label="Your account">
@@ -711,6 +719,12 @@ export function Shell({
                   <div className="site-footer-legal">
                     <span>© {new Date().getFullYear()} Outpost</span>
                     {legalPublished && <Link href="/legal">Privacy &amp; terms</Link>}
+                    {billing && (
+                      <Link href="/supporter/cancel" lang="de">
+                        Verträge hier kündigen
+                        <span lang="en"> · Cancel subscription</span>
+                      </Link>
+                    )}
                     <button
                       type="button"
                       className="site-footer-top"
