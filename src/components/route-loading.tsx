@@ -1,7 +1,12 @@
-import styles from "./loading.module.css";
+import styles from "./route-loading.module.css";
 
-/** Any route while it streams: an empty masthead in the real one's place, then three quiet wells. */
-export default function Loading() {
+/**
+ * Any route but the landing while it streams: an empty masthead in the real one's place, then
+ * three quiet wells. Each top-level route folder's loading.tsx re-exports it. The landing has no
+ * loading boundary, so its hero arrives with the first paint instead of replacing a skeleton
+ * (React reveals a streamed boundary at least 300 ms after the first paint).
+ */
+export default function RouteLoading() {
   return (
     <div role="status" className={styles.loading}>
       <div className="workspace-identity" data-scene="page" aria-hidden="true">

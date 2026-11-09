@@ -9,14 +9,14 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 
 ## Targets
 
-| Metric                 | Target                                                      | Last known (lab)                                                               |
-| ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| LCP                    | ≤ 2.5 s                                                     | mobile 4.3–5.2 s, desktop 1.0–1.1 s on the 7 main pages (local workerd, 9 Nov) |
-| INP                    | ≤ 200 ms                                                    | not measured in the field                                                      |
-| CLS                    | ≤ 0.1                                                       | ≤ 0.05 on the 7 main pages (9 Nov)                                             |
-| Lighthouse perf / a11y | ≥ 90 / ≥ 95                                                 | mobile 80–84, desktop 98–99 / 100 (9 Nov)                                      |
-| Web Worker bundle      | under 10 MiB gzip (Workers Paid); keep it lean for start-up | ≈ 3.13 MiB                                                                     |
-| Global CSS             | as small as possible                                        | homepage 308 KB inlined (7 Nov, Node build; was 405 KB)                        |
+| Metric                 | Target                                                      | Last known (lab)                                                                             |
+| ---------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| LCP                    | ≤ 2.5 s                                                     | home mobile 2.1 s; other main pages mobile 4.2–6.8 s, desktop ≤ 1.0 s (local workerd, 9 Nov) |
+| INP                    | ≤ 200 ms                                                    | not measured in the field                                                                    |
+| CLS                    | ≤ 0.1                                                       | ≤ 0.05 on the 7 main pages (9 Nov)                                                           |
+| Lighthouse perf / a11y | ≥ 90 / ≥ 95                                                 | home mobile 97, others 65–83; desktop 99–100 / 100 (9 Nov)                                   |
+| Web Worker bundle      | under 10 MiB gzip (Workers Paid); keep it lean for start-up | ≈ 3.18 MiB                                                                                   |
+| Global CSS             | as small as possible                                        | homepage 205 KB raw in 3 files, 39 KB transferred (9 Nov, Cloudflare build)                  |
 
 ## Measure
 
@@ -26,10 +26,11 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 
 ## Usual wins here
 
-- **Cut global CSS** — 16 stylesheets load on every route; move page styles to the route (the build/comp/guide sheets already load through `src/app/build-styles.ts`), delete dead passes and rules for classes no source file uses any more (coordinate with `outpost-frontend`). Webpack's default CSS chunking also merges other routes' CSS modules into the homepage's sheets (≈ 120 KB raw on 6 Nov); `experimental.cssChunking: "strict"` would split them but reorders the cascade everywhere, so measure every route before trying it. A moved sheet loads after every global one, so compare the rendered cascade before and after.
+- **Cut global CSS** — 16 stylesheets load on every route; move page styles to the route (the build/comp/guide sheets already load through `src/app/build-styles.ts`), delete dead passes and rules for classes no source file uses any more (coordinate with `outpost-frontend`). CSS chunking is off (`next.config.ts`): a shared module can land in its own file in any order, so two equal-specificity rules from different files must never fight over one property (DESIGN.md, Stylesheets). Compare computed styles before and after any CSS move (dump `getComputedStyle` for every element per route and diff).
 - Every route shares the header: keep its images tiny and lazy (closed menus, the drawer), and keep images out of trees every page carries (React preloads any eager `<img>` it renders, even inside the not-found boundary).
 - Preload only the fonts used above the fold; keep `display: swap`; size the hero image correctly with explicit dimensions.
 - Large local images get width variants from `node scripts/image-variants.mjs` and a `srcset` from `variantSrcSet()` ([DATA.md](../../../docs/DATA.md)); lazy-load below the fold, eager + `fetchPriority="high"` for the LCP image only.
+- A streamed `loading.tsx` boundary is revealed at least 300 ms after the first paint (React), so a page behind one has its LCP after the scripts. The landing has none for that reason.
 - Keep data fetching on the server and parallel; avoid per-item client fetches; batch market requests (`/api/market/batch`).
 - Lazy-load heavy, below-the-fold or interaction-only code (charts, PNG export, editors' secondary panels).
 - Every page view costs a Worker request and its CPU (pages render in the web Worker), plus data RPC; edge budgets are Rate Limiting bindings, not Durable Objects. Never render, poll or hold timers in a Durable Object: it bills wall-clock time while anything keeps it in memory. Keep every allowance in [OPERATIONS.md § Cost guardrails](../../../docs/OPERATIONS.md#cost-guardrails); avoid extra round trips, keep prefetch off unless measured safe.

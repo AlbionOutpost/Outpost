@@ -39,6 +39,7 @@ function Window({
           srcSet={variantSrcSet(`/albion/icons/${emblem}.webp`)}
           sizes="48px"
           alt=""
+          loading="lazy"
           width={48}
           height={48}
         />
@@ -159,6 +160,7 @@ export function LandingWindows({
                 srcSet={variantSrcSet(`/albion/icons/${icon}.webp`)}
                 sizes="40px"
                 alt=""
+                loading="lazy"
                 width={40}
                 height={40}
               />

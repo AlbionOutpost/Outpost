@@ -147,13 +147,6 @@
   grid-column: 1/-1;
 }
 /* Equipment and parties retain separate editing models and real item art. */
-.app.outpost .build-command-bar {
-  padding: 20px;
-  background: var(--panel-face);
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-}
 .app.outpost .gear-studio.build-gear-studio {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 0.9fr);
   gap: 16px;
@@ -194,9 +187,6 @@
 .app.outpost .item-browser-choice.selected {
   border-color: var(--accent);
   background: var(--accent-wash);
-}
-.app.outpost .build-settings {
-  margin-block: 16px;
 }
 @media (min-width: 1600px) {
   .app.outpost .site-header {

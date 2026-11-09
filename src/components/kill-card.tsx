@@ -8,6 +8,7 @@ import { LoadoutBoard } from "@/components/loadout-board";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceAge } from "@/lib/albion/source-age";
 import { compact } from "@/components/silver";
+import { variantSrcSet } from "@/lib/image-variants";
 import { Unavailable } from "@/components/status-line";
 import type { CombatEvent, TopKill } from "@/lib/albion/combat-events";
 import type { GearValue } from "@/lib/albion/kill-value";
@@ -139,6 +140,8 @@ export function KillCard({
         <img
           className="kill-trophy"
           src={`/albion/icons/trophy-${trophies[rank]}.webp`}
+          srcSet={variantSrcSet(`/albion/icons/trophy-${trophies[rank]}.webp`)}
+          sizes="34px"
           alt={`#${rank + 1}`}
           width={34}
           height={34}
@@ -148,18 +151,39 @@ export function KillCard({
         <Side p={ev.killer} />
         <div className="kill-mid">
           {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-          <img src="/albion/icons/fame.webp" alt="Kill fame" width={24} height={24} />
+          <img
+            src="/albion/icons/fame.webp"
+            srcSet={variantSrcSet("/albion/icons/fame.webp")}
+            sizes="24px"
+            alt="Kill fame"
+            width={24}
+            height={24}
+          />
           <strong>{fame(ev.fame)}</strong>
           <span className="kill-killed">
             {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-            <img src="/albion/icons/kill-skull.webp" alt="" width={30} height={30} />
+            <img
+              src="/albion/icons/kill-skull.webp"
+              srcSet={variantSrcSet("/albion/icons/kill-skull.webp")}
+              sizes="30px"
+              alt=""
+              width={30}
+              height={30}
+            />
             <em>Killed</em>
             <time className="kill-ago" dateTime={ev.occurredAt} title={utc(ev.occurredAt)}>
               {age.label}
             </time>
           </span>
           {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-          <img src="/albion/icons/silver.webp" alt="Estimated gear value" width={30} height={30} />
+          <img
+            src="/albion/icons/silver.webp"
+            srcSet={variantSrcSet("/albion/icons/silver.webp")}
+            sizes="30px"
+            alt="Estimated gear value"
+            width={30}
+            height={30}
+          />
           <strong
             className="is-silver"
             title={

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "@/components/link";
 import { ToolIcon } from "@/components/tool-icon";
+import { variantSrcSet } from "@/lib/image-variants";
 
 type Glyph = Parameters<typeof ToolIcon>[0]["name"];
 
@@ -39,7 +40,10 @@ export function PreviewShell({
         <img
           className="landing-card-emblem"
           src={`/albion/icons/${emblem}.webp`}
+          srcSet={variantSrcSet(`/albion/icons/${emblem}.webp`)}
+          sizes="56px"
           alt=""
+          loading="lazy"
           width={56}
           height={56}
         />

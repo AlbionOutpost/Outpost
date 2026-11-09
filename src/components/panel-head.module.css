@@ -3,6 +3,10 @@
   display: flex;
   align-items: center;
   gap: 14px;
+}
+/* One class lighter than the rest, so a panel that zeroes its children's margins (calculator
+   steps, editor panels) always wins, whatever order the stylesheets load in. */
+:global(.app.outpost) .head {
   margin: 0 0 var(--space-4);
 }
 :global(.app.outpost) .emblem.emblem {
