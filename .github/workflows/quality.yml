@@ -18,7 +18,7 @@ jobs:
   # flows in another. Sized for a private repository's included Actions minutes.
   checks:
     runs-on: ubuntu-22.04
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -48,6 +48,15 @@ jobs:
           QA_SKIP: ${{ inputs.skip || 'live-regions' }},browser
       - name: Browser bundle configured-secret scan
         run: node scripts/qa-secret-scan.mjs
+      # Cost budget: both Worker bundles under their gzip budgets and the prerendered routes still
+      # prerendered (scripts/cloudflare-cost-budget.json). The cache allowlists and Durable Object
+      # bindings are checked by tests/cost-budget.test.ts inside qa:phase. Main's deploy builds
+      # the same bundles in its verify job, so this runs on pull requests and manual runs only.
+      - name: Cost budget
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        run: |
+          node scripts/cloudflare-build.mjs
+          node scripts/cloudflare-cost-budget.mjs
       - name: Prepare sanitized failure evidence
         if: always()
         run: node scripts/qa-ci-evidence.mjs

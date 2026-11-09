@@ -11,5 +11,7 @@ it("detects configured secrets and key/token markers without returning credentia
   expect(scanText(token)).toEqual(["github-token"]);
   const key = "-----BEGIN " + "PRIVATE KEY-----";
   expect(scanText(key)).toEqual(["private-key"]);
+  const webhook = "https://discord.com/api/" + "webhooks/123456789012345678/" + "w".repeat(68);
+  expect(scanText(webhook)).toEqual(["discord-webhook"]);
   expect(scanText("NEXTAUTH_SECRET=\npublic documentation")).toEqual([]);
 });
