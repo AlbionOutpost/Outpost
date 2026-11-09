@@ -5,8 +5,9 @@ import styles from "./legal.module.css";
 /*
  * DRAFT — needs legal review before `legalPublished` is switched on (src/lib/legal.ts).
  * Terms of service (AGB) for the Supporter plan, the cancellation policy (Widerrufsbelehrung,
- * after the statutory model for services in Anlage 1 zu Art. 246a § 1 Abs. 2 EGBGB) and the
- * model withdrawal form (Anlage 2). Both languages come from one structure so they stay in step.
+ * after the statutory model for services in Anlage 1 zu Art. 246a § 1 Abs. 2 EGBGB, with the
+ * owner's full-refund rule in place of compensation and early expiry) and the model withdrawal
+ * form (Anlage 2). Both languages come from one structure so they stay in step.
  * Operator details come only from the OPERATOR_* settings; missing ones stay marked as missing.
  */
 
@@ -80,8 +81,8 @@ export function supporterTermsSection(
           {g ? "Die Darstellung auf der " : "The description on the "}
           {page(billing, "/supporter", g ? "Supporter-Seite" : "Supporter page")}
           {g
-            ? " ist kein bindendes Angebot. Sie bestellen, indem Sie die Bedingungen und den sofortigen Leistungsbeginn bestätigen, auf „Zahlungspflichtig bestellen“ klicken und die Zahlung auf der Seite von Stripe abschließen. Damit geben Sie ein verbindliches Angebot ab. Der Vertrag kommt zustande, wenn der Plan auf Ihrem Konto freigeschaltet wird; Stripe schickt Ihnen eine Bestätigung per E-Mail. Vertragssprachen sind Deutsch und Englisch. Diese Bedingungen bleiben auf dieser Seite abrufbar."
-            : " is not a binding offer. You order by accepting these terms and the immediate start, clicking “Subscribe and pay” and completing payment on Stripe’s page. This is your binding offer. The contract is made when the plan is activated on your account; Stripe emails you a confirmation. The contract languages are German and English. These terms stay available on this page."}
+            ? " ist kein bindendes Angebot. Sie bestellen, indem Sie diesen Bedingungen zustimmen, auf „Zahlungspflichtig bestellen“ klicken und die Zahlung auf der Seite von Stripe abschließen. Damit geben Sie ein verbindliches Angebot ab. Der Vertrag kommt zustande, wenn der Plan auf Ihrem Konto freigeschaltet wird; die Leistung beginnt sofort. Stripe schickt Ihnen eine Bestätigung per E-Mail. Vertragssprachen sind Deutsch und Englisch. Diese Bedingungen bleiben auf dieser Seite abrufbar."
+            : " is not a binding offer. You order by accepting these terms, clicking “Subscribe and pay” and completing payment on Stripe’s page. This is your binding offer. The contract is made when the plan is activated on your account, and the plan starts right away. Stripe emails you a confirmation. The contract languages are German and English. These terms stay available on this page."}
         </p>
         <h3>{g ? "4. Preis und Zahlung" : "4. Price and payment"}</h3>
         <p>
@@ -107,7 +108,22 @@ export function supporterTermsSection(
             ? ", im Stripe-Kundenportal oder in Textform (zum Beispiel per E-Mail) an den Anbieter. Das Recht zur außerordentlichen Kündigung aus wichtigem Grund bleibt unberührt. Nach dem Ende des Plans bleiben Ihr Konto und Ihre Inhalte bestehen; nur die Supporter-Vorteile enden."
             : ", in Stripe’s customer portal, or in text form (for example by email) to the provider. The right to cancel without notice for good cause is unaffected. When the plan ends, your account and content stay; only the Supporter benefits end."}
         </p>
-        <h3>{g ? "6. Haftung und anwendbares Recht" : "6. Liability and governing law"}</h3>
+        <h3>{g ? "6. Widerruf" : "6. Withdrawal"}</h3>
+        <p>
+          {g
+            ? "Als Verbraucher können Sie den Vertrag binnen 14 Tagen ab Vertragsschluss ohne Angabe von Gründen widerrufen, auch wenn der Plan schon läuft: über "
+            : "As a consumer you can withdraw from the contract within 14 days of its conclusion without giving a reason, even though the plan is already running: through "}
+          {page(
+            billing,
+            "/supporter/withdraw",
+            g ? "Vertrag widerrufen" : "Withdraw from contract",
+          )}
+          {g
+            ? ", per E-Mail oder per Brief. Der Plan endet dann sofort, und wir erstatten alle Zahlungen vollständig, ohne Abzug für die genutzte Zeit. Einzelheiten stehen in der "
+            : ", by email or by letter. The plan then ends at once and we refund every payment in full, with no deduction for the time used. Details are in the "}
+          <a href="#withdrawal">{g ? "Widerrufsbelehrung" : "cancellation policy"}</a>.
+        </p>
+        <h3>{g ? "7. Haftung und anwendbares Recht" : "7. Liability and governing law"}</h3>
         <p>
           {g
             ? "Die Haftung richtet sich nach den gesetzlichen Vorschriften. Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts; zwingende Verbraucherschutzvorschriften des Staates, in dem Sie Ihren gewöhnlichen Aufenthalt haben, bleiben unberührt."
@@ -142,8 +158,16 @@ export function withdrawalSection(locale: LegalLocale, operator: LegalOperator, 
             : "To exercise the right of withdrawal, you must inform us ("}
           <Provider locale={locale} operator={operator} />
           {g
-            ? ") mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das "
-            : ") of your decision to withdraw from this contract by an unequivocal statement (for example a letter sent by post or an email). You may use the "}
+            ? ") mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Am einfachsten widerrufen Sie über die Schaltfläche "
+            : ") of your decision to withdraw from this contract by an unequivocal statement (for example a letter sent by post or an email). The simplest way is the "}
+          {page(
+            billing,
+            "/supporter/withdraw",
+            g ? "„Vertrag widerrufen“" : "“Withdraw from contract”",
+          )}
+          {g
+            ? " im Fuß jeder Seite (elektronische Widerrufsfunktion nach § 356a BGB); wir bestätigen den Eingang sofort mit Datum und Uhrzeit. Sie können auch das "
+            : " link in the footer of every page (the electronic withdrawal function under section 356a BGB); we confirm receipt at once with the date and time. You may also use the "}
           <a href="#withdrawal-form">{g ? "Muster-Widerrufsformular" : "model withdrawal form"}</a>
           {g
             ? " verwenden, das jedoch nicht vorgeschrieben ist. Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden."
@@ -155,16 +179,11 @@ export function withdrawalSection(locale: LegalLocale, operator: LegalOperator, 
             ? "Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet."
             : "If you withdraw from this contract, we shall reimburse to you all payments received from you, including the costs of delivery (with the exception of the supplementary costs resulting from your choice of a type of delivery other than the least expensive type of standard delivery offered by us), without undue delay and in any event not later than fourteen days from the day on which we are informed about your decision to withdraw from this contract. We will carry out such reimbursement using the same means of payment as you used for the initial transaction, unless you have expressly agreed otherwise; in any event, you will not incur any fees as a result of such reimbursement."}
         </p>
+        <h3>{g ? "Volle Erstattung" : "Full refund"}</h3>
         <p>
           {g
-            ? "Haben Sie verlangt, dass die Dienstleistungen während der Widerrufsfrist beginnen soll, so haben Sie uns einen angemessenen Betrag zu zahlen, der dem Anteil der bis zu dem Zeitpunkt, zu dem Sie uns von der Ausübung des Widerrufsrechts hinsichtlich dieses Vertrags unterrichten, bereits erbrachten Dienstleistungen im Vergleich zum Gesamtumfang der im Vertrag vorgesehenen Dienstleistungen entspricht."
-            : "If you requested to begin the performance of services during the withdrawal period, you shall pay us an amount which is in proportion to what has been provided until you have communicated us your withdrawal from this contract, in comparison with the full coverage of the contract."}
-        </p>
-        <h3>{g ? "Vorzeitiges Erlöschen" : "Early expiry"}</h3>
-        <p>
-          {g
-            ? "Ihr Widerrufsrecht erlischt vorzeitig, wenn wir mit der Ausführung des Vertrags begonnen haben, nachdem Sie ausdrücklich zugestimmt haben, dass wir vor Ablauf der Widerrufsfrist mit der Ausführung beginnen, und Sie Ihre Kenntnis davon bestätigt haben, dass Sie durch Ihre Zustimmung mit Beginn der Ausführung Ihr Widerrufsrecht verlieren. Diese Zustimmung geben Sie mit dem zweiten Häkchen vor der Bestellung; ihr Zeitpunkt wird bei Stripe am Abonnement gespeichert."
-            : "Your right of withdrawal expires early if we have begun performing the contract after you expressly agreed that we start before the withdrawal period ends and confirmed that you know you lose your right of withdrawal once performance begins. You give this consent with the second box before ordering; its time is stored with the subscription at Stripe."}
+            ? "Der Plan beginnt sofort nach der Bestellung. Widerrufen Sie innerhalb der Frist, endet er mit dem Widerruf, und wir erstatten alle Zahlungen vollständig. Einen Wertersatz für die bis zum Widerruf genutzte Zeit verlangen wir nicht, und Ihr Widerrufsrecht erlischt nicht dadurch, dass der Plan schon läuft."
+            : "The plan starts right after you order. If you withdraw within the period, it ends when you withdraw and we refund every payment in full. We charge nothing for the time used before the withdrawal, and your right of withdrawal does not expire because the plan has already started."}
         </p>
         <h3>{g ? "Kündigen ist etwas anderes" : "Cancelling is different"}</h3>
         <p>
@@ -181,19 +200,19 @@ export function withdrawalSection(locale: LegalLocale, operator: LegalOperator, 
             {g ? "§ 312k BGB" : "section 312k BGB"}
           </a>
           {g
-            ? "). Eine Kündigung wirkt zum Ende des bezahlten Monats; ein Widerruf beendet den Vertrag rückwirkend nach den Regeln oben. Kontolöschung ist weder das eine noch das andere. Die elektronische Widerrufsfunktion nach "
-            : "). A cancellation takes effect at the end of the paid month; a withdrawal undoes the contract under the rules above. Deleting your account is neither. The electronic withdrawal function under "}
+            ? "). Eine Kündigung wirkt zum Ende des bezahlten Monats, ohne Erstattung; ein Widerruf beendet den Vertrag sofort und mit voller Erstattung nach den Regeln oben ("
+            : "). A cancellation takes effect at the end of the paid month, without a refund; a withdrawal ends the contract at once with a full refund under the rules above ("}
           <a href="https://www.gesetze-im-internet.de/bgb/__356a.html">
-            {g ? "§ 356a BGB" : "section 356a BGB"}
+            {g ? "Widerrufsbutton nach § 356a BGB" : "withdrawal button under section 356a BGB"}
           </a>
           {g
-            ? " ist noch nicht eingerichtet; bis dahin widerrufen Sie per E-Mail oder Brief an die oben genannte Adresse."
-            : " is not set up yet; until then, withdraw by email or letter to the address above."}
+            ? "). Kontolöschung ist weder das eine noch das andere."
+            : "). Deleting your account is neither."}
         </p>
         <p className={styles.open}>
           {g
-            ? "Entwurf, vor Veröffentlichung zu prüfen: ob für den Plan das Erlöschen nach § 356 Abs. 4 (Dienstleistung) oder Abs. 5 BGB (digitale Inhalte) gilt, die elektronische Widerrufsfunktion nach § 356a BGB und die Bestätigung auf einem dauerhaften Datenträger."
-            : "Draft, to be reviewed before publication: whether expiry under section 356(4) (services) or (5) BGB (digital content) applies to the plan, the electronic withdrawal function under section 356a BGB and confirmation on a durable medium."}
+            ? "Entwurf, vor Veröffentlichung zu prüfen: der Verzicht auf Wertersatz und vorzeitiges Erlöschen (Erstattung immer in voller Höhe), die Gestaltung der Widerrufsfunktion nach § 356a BGB und die Eingangsbestätigung auf einem dauerhaften Datenträger (die Erstattungs-E-Mail von Stripe)."
+            : "Draft, to be reviewed before publication: waiving compensation and early expiry (refunds are always in full), the design of the withdrawal function under section 356a BGB and the confirmation of receipt on a durable medium (Stripe's refund email)."}
         </p>
       </>
     ),

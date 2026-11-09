@@ -564,10 +564,10 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
             </p>
             <p className={styles.open}>
               Vor Verkaufsfreigabe offen: konkrete Anbieter-/Steuerdaten, rechtliche Prüfung der AGB
-              und der Widerrufsbelehrung unten, Vertragsbestätigung auf dauerhaftem Datenträger, die
-              elektronische Widerrufsfunktion sowie ein Verfahren für Erstattungen und Beschwerden.
-              Bestellseite (Pflichtangaben, Zustimmung, „Zahlungspflichtig bestellen“) und
-              Kündigungsbutton sind technisch vorbereitet. Die gesetzlichen Rechte bei digitalen
+              und der Widerrufsbelehrung unten, Vertragsbestätigung auf dauerhaftem Datenträger
+              sowie ein Verfahren für Beschwerden. Bestellseite (Pflichtangaben, Zustimmung,
+              „Zahlungspflichtig bestellen“), Kündigungsbutton und Widerrufsbutton (mit voller
+              Erstattung) sind technisch vorbereitet. Die gesetzlichen Rechte bei digitalen
               Produkten und Dienstleistungen bleiben unberührt.
             </p>
           </>
@@ -1162,10 +1162,10 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
             <p className={styles.open}>
               Before sales approval, the following remain unresolved: specific provider/tax details,
               legal review of the terms and cancellation policy below, contractual confirmation on a
-              durable medium, the electronic withdrawal function and a procedure for refunds and
-              complaints. The order page (required information, consent, “Subscribe and pay”) and
-              the cancellation button are technically prepared. Statutory rights for digital
-              products and services remain unaffected.
+              durable medium and a procedure for complaints. The order page (required information,
+              consent, “Subscribe and pay”), the cancellation button and the withdrawal button (with
+              a full refund) are technically prepared. Statutory rights for digital products and
+              services remain unaffected.
             </p>
           </>
         ),

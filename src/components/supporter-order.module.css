@@ -1,5 +1,5 @@
-/* The order box on /supporter: a raised panel with the order's facts in wells, two consent
-   boxes and the one button that orders. Also the frame of the cancellation page's form. */
+/* The order box on /supporter: a raised panel with the order's facts in wells, the terms box
+   and the one button that orders. Also the frame of the cancellation and withdrawal pages. */
 .order {
   display: grid;
   gap: 16px;
@@ -47,6 +47,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 0;
+}
+/* An odd last fact takes the full row instead of leaving a hole. */
+.summary > div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 .summary > div {
   display: grid;
@@ -199,4 +203,13 @@
   color: var(--accent-ink);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+.error a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.amount {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
 }

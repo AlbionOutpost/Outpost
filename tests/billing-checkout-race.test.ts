@@ -40,7 +40,7 @@ const open = {
 };
 const complete = { ...open, status: "complete", subscription: "sub_old", url: null };
 const subscription = (status: string) => ({ id: "sub_old", customer: "cus_owner", status });
-const consent = { terms: true, immediateStart: true };
+const consent = { terms: true };
 const request = (body: unknown = consent) =>
   new NextRequest("https://outpost.test/api/billing/checkout", {
     method: "POST",
@@ -156,19 +156,20 @@ it("expired checkout without live subscriptions can retire", async () => {
 
 it.each([
   {},
-  { terms: true },
+  { terms: false },
+  { terms: "yes" },
   { immediateStart: true },
-  { terms: true, immediateStart: false },
-  { terms: "yes", immediateStart: true },
+  // The old waiver of the right of withdrawal is no longer part of an order.
+  { terms: true, immediateStart: true },
   { ...consent, extra: 1 },
-])("an order without both ticked boxes is refused before any billing work: %j", async (body) => {
+])("an order without the ticked terms box is refused before any billing work: %j", async (body) => {
   const response = await POST(request(body));
   expect(response.status).toBe(400);
   expect(mocks.profile).not.toHaveBeenCalled();
   expect(mocks.begin).not.toHaveBeenCalled();
   expect(mocks.resolve).not.toHaveBeenCalled();
 });
-it("records when the boxes were ticked on the checkout operation", async () => {
+it("records when the box was ticked on the checkout operation", async () => {
   const before = Date.now();
   expect((await POST(request())).status).toBe(200);
   const consentAt = mocks.begin.mock.calls[0][1].consentAt;

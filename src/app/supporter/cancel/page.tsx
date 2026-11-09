@@ -43,6 +43,8 @@ const copy = {
     effectiveLine: "At the end of the paid month",
     confirmation: "Confirmation",
     confirmationLine: "Stripe emails it to the address on your billing account.",
+    withdraw: "Ordered in the last 14 days? You can withdraw instead and get every payment back:",
+    withdrawLink: "Withdraw from contract",
     language: "Language",
   },
   de: {
@@ -68,6 +70,9 @@ const copy = {
     effectiveLine: "Ende des bezahlten Monats",
     confirmation: "Bestätigung",
     confirmationLine: "Stripe schickt sie an die E-Mail-Adresse Ihres Rechnungskontos.",
+    withdraw:
+      "In den letzten 14 Tagen bestellt? Sie können stattdessen widerrufen und erhalten alle Zahlungen zurück:",
+    withdrawLink: "Vertrag widerrufen",
     language: "Sprache",
   },
 } as const;
@@ -208,6 +213,9 @@ export default async function CancelSubscription({
           </div>
         </dl>
         <SupporterCancel locale={locale} />
+        <p className={styles.vat}>
+          {t.withdraw} <Link href={`/supporter/withdraw?lang=${locale}`}>{t.withdrawLink}</Link>
+        </p>
       </>
     );
   return (
