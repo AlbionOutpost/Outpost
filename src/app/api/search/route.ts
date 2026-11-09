@@ -52,6 +52,9 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
               { id: contains(q.replace(/\s+/g, "_")) },
             ],
           },
+          // Id order: the order D1's table scan returned (rows are staged by id), now explicit so
+          // an index serves it and the first 120 stay the same.
+          orderBy: { id: "asc" },
           take: 120,
           select: { id: true, name: true, tier: true, slot: true },
         })

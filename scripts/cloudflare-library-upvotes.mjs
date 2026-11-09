@@ -1,5 +1,6 @@
-// Ensures the archive indexes exist, then carries the archive's like counts into the staged D1 library (rows staged before the
-// upvote import have none) and sets the builds manifest total to the listed count
+// Ensures the catalog read indexes (0017_catalog_reads.sql), then carries the archive's like counts
+// into the staged D1 library (rows staged before the upvote import have none) and sets the builds
+// manifest total to the listed count
 // (src/lib/library-scope.ts). Writes .qa/cloudflare-library/upvotes.json; with --apply it
 // updates the staging database through the API. Idempotent: json_set overwrites.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -46,12 +47,13 @@ const base = `/accounts/${accountId}/d1/database/${target.databaseId}`;
 if (!/^[a-f0-9-]{36}$/.test(target.databaseId || "")) throw new Error("Unexpected database id");
 if ((await api("GET", base)).result.name !== target.name)
   throw new Error("Library database identity mismatch");
-// Archive indexes from 0002_owned_library.sql (CREATE ... IF NOT EXISTS, so idempotent): the
-// expression indexes let archiveList's default and newest orders stop at LIMIT.
-for (const statement of readFileSync("cloudflare/d1/migrations/0002_owned_library.sql", "utf8")
+// Catalog read indexes from 0017_catalog_reads.sql (DROP/CREATE ... IF [NOT] EXISTS, so
+// idempotent): partial indexes over listed builds, comps and item search, then PRAGMA optimize.
+// They replace the 0002 order indexes, which are not recreated here.
+for (const statement of readFileSync("cloudflare/d1/migrations/0017_catalog_reads.sql", "utf8")
   .split(";")
   .map((part) => part.replace(/^\s*--.*$/gm, "").trim())
-  .filter((part) => part.startsWith("CREATE INDEX")))
+  .filter(Boolean))
   await api("POST", `${base}/query`, { sql: statement });
 // One statement per call, 30 rows each: D1 binds at most 100 parameters per statement.
 for (const kind of ["builds", "compositions"]) {
