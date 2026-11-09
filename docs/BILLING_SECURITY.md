@@ -63,7 +63,7 @@ Verification commands:
 - `node scripts/cloudflare-d1-schema.mjs --check`: generated schema candidate freshness.
 - Vitest billing reconciliation/webhook suites: signed old-subscription events, configured
   price binding, interrupted checkout recovery, bounded histories and provider failures.
-- `tests/billing-checkout-race.test.ts`: overlapping completed-intent retries, every concurrent
+- `tests/billing-checkout-race.test.ts` (retired with Checkout; see the payment form section): overlapping completed-intent retries, every concurrent
   reuser's provider check, provider failure, lagging or mismatched history, and verified terminal
   or expired operation retirement. The local PostgreSQL route replay and negative controls are
   recorded under `.qa/deep-fixes-2026-11-02/auth` (Stripe is mocked).
@@ -114,7 +114,64 @@ customers, foreign invoice, signed out, cross-site, missing origin, billing off;
 CET/CEST). The fixture does not prove Stripe's real refund email or its DELETE semantics; the
 go-live checklist covers a test-mode withdrawal.
 
+## On-site payment form — 9 November 2026
+
+The redirect to Stripe-hosted Checkout is replaced by Stripe's Payment Element on `/supporter`
+(owner decision, "option 3"). This replaces the Checkout-session operations described above. Card, Apple Pay, Google Pay and Link details are typed into Stripe's
+iframes and go straight to Stripe; Outpost's own button "Zahlungspflichtig bestellen" calls
+`stripe.confirmPayment`. Stripe.js is loaded from `js.stripe.com` only when the buyer presses
+"Continue to payment", never bundled or loaded on page view.
+
+`POST /api/billing/checkout` keeps its checks (origin, session, budget, `salesOpen()`, strict
+`{terms: true}`, current plan) and the durable operation on `User.billingCheckout`, which now holds
+`{key, customerId, userId, priceId, consentAt, subscriptionId?}`. Concurrent requests reuse the
+operation, so they send identical parameters under one idempotency key `subscription-<key>`.
+Each request lists the customer's subscriptions first: any live one other than `incomplete`
+returns 409. It then resolves the operation's subscription by its saved id, by its
+`metadata[outpostCheckoutId]` in the customer's history (recovery after a crash or after Stripe's
+24-hour key retention), or creates it with `payment_behavior=default_incomplete`,
+`payment_settings[save_default_payment_method]=on_subscription`, metadata `outpostUserId`,
+`outpostCheckoutId`, `outpostConsentAt`, and `expand[]=latest_invoice.payment_intent`. The reply
+must name the same customer, key and configured price. Only the PaymentIntent's client secret
+and the subscription id go back, and only while it waits for the buyer (`requires_*`); a
+processing or succeeded payment answers 409. An `incomplete_expired` subscription (Stripe expires
+unpaid ones after 23 hours) or a cancelled PaymentIntent retires the operation and the request
+starts a new one. Payment methods are not listed: the dashboard's default payment method
+configuration decides.
+
+Stripe API version stays `2024-06-20`, so the client secret is `latest_invoice.payment_intent.
+client_secret` (newer versions move it to `latest_invoice.confirmation_secret`) and paid invoices
+keep `charge`, which the withdrawal refunds. Entitlement still changes only in the webhook:
+`customer.subscription.created` (`incomplete`, Free) and `customer.subscription.updated`
+(`active` once the first invoice is paid). No invoice events are needed; a failed first payment
+leaves the subscription `incomplete`. `checkout.session.completed` is no longer handled.
+
+Cancellation and withdrawal skip `incomplete` subscriptions (no contract yet). Account deletion
+resolves the open operation, then voids each unpaid order's open first invoice (Stripe refuses
+once a payment is processing or done, so a paid order is never cancelled there) and ends the
+subscription; a processing payment blocks deletion with 409.
+
+The publishable key is a runtime setting (`STRIPE_PUBLISHABLE_KEY`, `pk_live_`/`pk_test_` only;
+the validator refuses a secret key there and any partial set of the four) read on the server and
+passed to the order component, so the Cloudflare build needs no `NEXT_PUBLIC_` value. The success
+return carries `payment_intent_client_secret`; `/supporter` redirects to drop it from the URL and
+shows only the outcome, which grants nothing.
+
+Tests: `tests/billing-checkout.test.ts` (stateful fake Stripe with idempotency replay: one
+subscription and secret, reuse, three concurrent orders, recovery without a second create,
+expired order starts over, Supporter / active subscription / processing payment refused, bad
+consent bodies, signed out, cross-site, missing origin, sales closed, publishable key missing,
+Stripe failure then replay, no foreign customer, deletion voids an unpaid order and waits for a
+processing one), `tests/billing-reconciliation.test.ts` (exact create parameters and key, recovery
+by metadata, forged customer/key/price, duplicates), `tests/billing-webhook-reconciliation.test.ts`
+(incomplete → active, Checkout and invoice events ignored), `tests/billing-withdraw.test.ts` and
+`tests/billing-cancel.test.ts` (paid on-site orders refunded and cancelled, unpaid ones left alone),
+`tests/proxy-stripe-csp.test.ts`, `tests/supporter-order.test.ts`, and the PostgreSQL fixture in
+`scripts/test-billing-security.ts`. Not verified here: real Stripe.js rendering, 3-D Secure,
+Apple Pay / Google Pay / Link in the live account, and Stripe's emails; the go-live checklist
+covers them with one real purchase and withdrawal.
+
 Provider references: [subscription listing](https://docs.stripe.com/api/subscriptions/list),
-[checkout session listing](https://docs.stripe.com/api/checkout/sessions/list),
-[checkout expiration](https://docs.stripe.com/api/checkout/sessions/expire),
+[subscriptions with the Payment Element](https://docs.stripe.com/billing/subscriptions/build-subscriptions?ui=elements),
+[CSP for Stripe.js](https://docs.stripe.com/security/guide#content-security-policy),
 [idempotent requests](https://docs.stripe.com/api/idempotent_requests).

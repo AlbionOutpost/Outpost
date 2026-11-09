@@ -138,6 +138,7 @@ beforeEach(() => {
   vi.stubEnv("STRIPE_SECRET_KEY", "sk_fixture");
   vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_fixture");
   vi.stubEnv("STRIPE_PRICE_SUPPORTER", "price_supporter");
+  vi.stubEnv("STRIPE_PUBLISHABLE_KEY", "pk_test_fixture");
   vi.stubGlobal("fetch", vi.fn(fakeStripe));
   m.session = { user: { id: "owner" } };
   m.profiles = new Map([
@@ -180,6 +181,27 @@ it("ends the caller's own contract now and refunds every payment in full", async
   const query = new URL(String(deletion[0])).searchParams;
   expect(query.get("prorate")).toBe("false");
   expect(query.get("invoice_now")).toBe("false");
+});
+
+it("refunds an on-site order paid through its first invoice's PaymentIntent", async () => {
+  // Created `incomplete` by the order form, then paid: the invoice names its PaymentIntent and
+  // the charge that PaymentIntent made.
+  Object.assign(m.invoices[0], { payment_intent: "pi_sub_owner", amount_paid: 499 });
+  Object.assign(m.charges.get("ch_sub_owner")!, { amount: 499 });
+  m.subscriptions[0].metadata = { outpostCheckoutId: "op", outpostConsentAt: "2026-11-09" };
+  expect((await POST(request())).status).toBe(200);
+  expect(m.refunds).toEqual([
+    { charge: "ch_sub_owner", amount: 499, key: "withdraw-refund-ch_sub_owner" },
+  ]);
+  expect(m.subscriptions[0].status).toBe("canceled");
+});
+
+it("leaves an unpaid order alone: it is no contract yet and expires by itself", async () => {
+  m.subscriptions[0].status = "incomplete";
+  m.invoices = [];
+  expect((await POST(request())).status).toBe(404);
+  expect(m.calls).toEqual(["GET /v1/subscriptions"]);
+  expect(m.subscriptions[0].status).toBe("incomplete");
 });
 
 it("refunds a remainder after a partial refund, never more", async () => {

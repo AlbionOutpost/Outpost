@@ -17,6 +17,12 @@ export const environmentSchema = z
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),
     STRIPE_PRICE_SUPPORTER: z.string().optional(),
+    // Public by design (Stripe.js needs it in the browser); never a secret `sk_` key.
+    STRIPE_PUBLISHABLE_KEY: z
+      .string()
+      .regex(/^pk_(live|test)_[A-Za-z0-9]+$/)
+      .or(z.literal(""))
+      .optional(),
     NODE_ENV: z.string().optional(),
   })
   .superRefine((e, ctx) => {
@@ -31,13 +37,18 @@ export const environmentSchema = z
         path: ["DISCORD_CLIENT_ID"],
         message: "Discord credentials must be configured together",
       });
-    const stripe = [e.STRIPE_SECRET_KEY, e.STRIPE_WEBHOOK_SECRET, e.STRIPE_PRICE_SUPPORTER];
+    const stripe = [
+      e.STRIPE_SECRET_KEY,
+      e.STRIPE_WEBHOOK_SECRET,
+      e.STRIPE_PRICE_SUPPORTER,
+      e.STRIPE_PUBLISHABLE_KEY,
+    ];
     if (stripe.some(Boolean) && !stripe.every(Boolean))
       ctx.addIssue({
         code: "custom",
         path: ["STRIPE_SECRET_KEY"],
         message:
-          "Stripe secret key, webhook secret and Supporter price must be configured together",
+          "Stripe secret key, webhook secret, Supporter price and publishable key must be configured together",
       });
     const target = new URL(e.NEXTAUTH_URL);
     if (

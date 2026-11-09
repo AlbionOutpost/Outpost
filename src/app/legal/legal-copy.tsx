@@ -350,13 +350,17 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
                 Verbindungen führen.
               </li>
               <li>
-                <strong>Stripe, falls Zahlungen eingerichtet werden:</strong> gehosteter Checkout
-                und Kundenportal, Name/E-Mail und eine interne Kundenreferenz, Zahlungs- und
+                <strong>Stripe, falls Zahlungen eingerichtet werden:</strong> das in die
+                Supporter-Seite eingebettete Zahlungsformular von Stripe (Stripe.js) und das
+                Kundenportal, Name/E-Mail und eine interne Kundenreferenz, Zahlungs- und
                 Abonnementvorgänge. Outpost verarbeitet Zuordnungskennungen, Status,
                 Ablauf-/Verlängerungsangaben und Webhook-Ereignisse, keine Eingabefelder für
-                vollständige Karten- oder Bankdaten. Stripe verarbeitet Zahlungsdaten auf seinen
-                eigenen Oberflächen; je Vorgang als Auftragsverarbeiter und/oder eigener
-                Verantwortlicher. <a href="https://stripe.com/privacy">Stripe-Datenschutz</a>,{" "}
+                vollständige Karten- oder Bankdaten. Stripe verarbeitet Zahlungsdaten in seinen
+                eigenen Eingabefeldern (iframes von Stripe) und Oberflächen; Stripe.js wird erst
+                geladen, wenn Sie mit der Bestellung beginnen, und erfasst dann zur
+                Betrugsprävention Geräte- und Interaktionsdaten und setzt eigene Cookies; je Vorgang
+                als Auftragsverarbeiter und/oder eigener Verantwortlicher.{" "}
+                <a href="https://stripe.com/privacy">Stripe-Datenschutz</a>,{" "}
                 <a href="https://stripe.com/legal/dpa">DPA</a>.
               </li>
               <li>
@@ -415,12 +419,13 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
             <p>
               Die <Link href="/settings#account-delete">Kontolöschung</Link> verlangt eine
               Bestätigung. Zuvor müssen eigene Teams übertragen oder geschlossen und vorhandene
-              Abonnements beendet beziehungsweise ausstehende Zahlungen und Checkout-Verknüpfungen
-              geklärt sein. Die Prüfung kann bei nicht erreichbarem Zahlungsanbieter blockieren. Die
-              Kontolöschung kündigt kein Abonnement automatisch und löscht keine eigenständigen
-              Datenbestände bei Discord, Stripe oder Empfängern veröffentlichter Inhalte. Ein
-              gesetzlicher Löschungsantrag kann unabhängig von diesen Bedienoberflächen gestellt
-              werden; die gesetzlichen Voraussetzungen und Ausnahmen sind individuell zu prüfen.
+              Abonnements beendet beziehungsweise ausstehende Zahlungen geklärt sein; eine
+              unbezahlte Bestellung wird dabei storniert. Die Prüfung kann bei nicht erreichbarem
+              Zahlungsanbieter blockieren. Die Kontolöschung kündigt kein Abonnement automatisch und
+              löscht keine eigenständigen Datenbestände bei Discord, Stripe oder Empfängern
+              veröffentlichter Inhalte. Ein gesetzlicher Löschungsantrag kann unabhängig von diesen
+              Bedienoberflächen gestellt werden; die gesetzlichen Voraussetzungen und Ausnahmen sind
+              individuell zu prüfen.
             </p>
           </>
         ),
@@ -537,12 +542,13 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               sehen keine Werbung (siehe Abschnitt zu Cookies und Werbung).
             </p>
             <p>
-              Bei aktivierter Abrechnung werden Sie zum gehosteten Stripe Checkout weitergeleitet.
+              Bei aktivierter Abrechnung geben Sie Ihre Zahlungsdaten in ein Formular von Stripe
+              ein, das auf der Supporter-Seite eingebettet ist; die Eingaben gehen direkt an Stripe.
               Outpost übermittelt dazu die Kundenzuordnung und, soweit vorhanden, Name/E-Mail.
               Stripe meldet Zahlungen und Abonnementstatus serverseitig zurück. Ein Rücksprung mit
               einer Erfolgsmeldung allein schaltet keine bezahlte Berechtigung frei. Zahlungsdaten
-              geben Sie auf der Stripe-Oberfläche ein. Welche Zahlungsmittel tatsächlich angeboten
-              werden, hängt von der dortigen Konfiguration ab.
+              erreichen Outpost nicht. Welche Zahlungsmittel tatsächlich angeboten werden, hängt von
+              der dortigen Konfiguration ab.
             </p>
             <p>
               Preis, Währung und Abrechnungsintervall werden technisch aus der hinterlegten
@@ -959,12 +965,15 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
                 connections.
               </li>
               <li>
-                <strong>Stripe, if payments are established:</strong> hosted Checkout and customer
-                portal, name/email and an internal customer reference, payment and subscription
-                transactions. Outpost processes association IDs, status, expiry/renewal information
-                and webhook events, not input fields for complete card or bank details. Stripe
-                processes payment data on its own interfaces, acting as a processor and/or an
-                independent controller depending on the transaction.{" "}
+                <strong>Stripe, if payments are established:</strong> Stripe’s payment form embedded
+                in the Supporter page (Stripe.js) and the customer portal, name/email and an
+                internal customer reference, payment and subscription transactions. Outpost
+                processes association IDs, status, expiry/renewal information and webhook events,
+                not input fields for complete card or bank details. Stripe processes payment data in
+                its own input fields (Stripe iframes) and interfaces; Stripe.js loads only once you
+                start an order and then collects device and interaction data and sets its own
+                cookies for fraud prevention. Stripe acts as a processor and/or an independent
+                controller depending on the transaction.{" "}
                 <a href="https://stripe.com/privacy">Stripe privacy policy</a>,{" "}
                 <a href="https://stripe.com/legal/dpa">DPA</a>.
               </li>
@@ -1021,11 +1030,11 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
             <p>
               <Link href="/settings#account-delete">Account deletion</Link> requires confirmation.
               Beforehand, Teams you own must be transferred or closed, and existing subscriptions
-              must be ended or outstanding payments and Checkout associations resolved. The check
-              may block deletion if the payment provider cannot be reached. Deleting an account does
-              not automatically cancel a subscription or delete independent data held by Discord,
-              Stripe or recipients of published content. A statutory erasure request can be made
-              independently of these interfaces; the legal conditions and exceptions must be
+              must be ended or outstanding payments resolved; an unpaid order is cancelled. The
+              check may block deletion if the payment provider cannot be reached. Deleting an
+              account does not automatically cancel a subscription or delete independent data held
+              by Discord, Stripe or recipients of published content. A statutory erasure request can
+              be made independently of these interfaces; the legal conditions and exceptions must be
               assessed individually.
             </p>
           </>
@@ -1137,11 +1146,12 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               section on cookies and advertising).
             </p>
             <p>
-              When billing is activated, you are redirected to hosted Stripe Checkout. Outpost sends
-              the customer association and, where available, name/email. Stripe reports payments and
-              subscription status back to the server. Returning with a success message alone does
-              not activate paid entitlement. Payment details are entered on Stripe’s interface. The
-              payment methods actually offered depend on its configuration.
+              When billing is activated, you enter payment details in a Stripe form embedded in the
+              Supporter page; what you type goes straight to Stripe. Outpost sends the customer
+              association and, where available, name/email. Stripe reports payments and subscription
+              status back to the server. Returning with a success message alone does not activate
+              paid entitlement. Payment details never reach Outpost. The payment methods actually
+              offered depend on its configuration.
             </p>
             <p>
               Price, currency and billing interval are technically read from the configured Stripe

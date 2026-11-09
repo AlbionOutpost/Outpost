@@ -21,12 +21,12 @@ const subscription = (id: string, status: string, price = "price_expected") => (
   items: { data: [{ price: { id: price } }] },
 });
 const response = (data: unknown) => new Response(JSON.stringify(data));
-const request = (signatureValid = true) => {
-  const body = JSON.stringify({
-    id: "evt_fixture",
-    type: "customer.subscription.deleted",
-    data: { object: { id: "sub_old" } },
-  });
+const request = (
+  signatureValid = true,
+  type = "customer.subscription.deleted",
+  object: Record<string, unknown> = { id: "sub_old" },
+) => {
+  const body = JSON.stringify({ id: "evt_fixture", type, data: { object } });
   const time = Math.floor(Date.now() / 1000);
   const signature = createHmac("sha256", signatureValid ? "fixture-secret" : "invalid")
     .update(`${time}.${body}`)
@@ -41,6 +41,7 @@ beforeEach(() => {
   vi.stubEnv("STRIPE_SECRET_KEY", "fixture");
   vi.stubEnv("STRIPE_WEBHOOK_SECRET", "fixture-secret");
   vi.stubEnv("STRIPE_PRICE_SUPPORTER", "price_expected");
+  vi.stubEnv("STRIPE_PUBLISHABLE_KEY", "pk_test_fixture");
   mocks.find.mockReset().mockResolvedValue({ updatedAt: revision });
   mocks.apply.mockReset().mockResolvedValue("matched-user");
 });
@@ -74,6 +75,35 @@ it("a signed old-subscription cancellation reconciles the active replacement for
     periodEnd: null,
     expectedUpdatedAt: revision.toISOString(),
   });
+});
+it.each([
+  ["customer.subscription.created", "incomplete", "FREE until paid"],
+  ["customer.subscription.updated", "active", "Supporter once the first invoice is paid"],
+])("an on-site order reconciles from %s (%s: %s)", async (type, status) => {
+  const fetcher = vi
+    .fn()
+    .mockResolvedValueOnce(response(subscription("sub_new", status)))
+    .mockResolvedValueOnce(response({ data: [subscription("sub_new", status)], has_more: false }));
+  vi.stubGlobal("fetch", fetcher);
+  expect((await POST(request(true, type, { id: "sub_new", status: "forged" }))).status).toBe(200);
+  // The event body is never trusted: the status comes from Stripe's own record.
+  expect(mocks.apply).toHaveBeenCalledWith(
+    expect.objectContaining({ subscriptionId: "sub_new", status }),
+  );
+});
+it("ignores events that are not subscription changes, Checkout included", async () => {
+  const fetcher = vi.fn();
+  vi.stubGlobal("fetch", fetcher);
+  for (const [type, object] of [
+    ["checkout.session.completed", { mode: "subscription", subscription: "sub_new" }],
+    ["invoice.payment_failed", { id: "in_1", subscription: "sub_new" }],
+  ] as const) {
+    const res = await POST(request(true, type, object));
+    expect(res.status).toBe(200);
+    expect((await res.json()).ignored).toBe(type);
+  }
+  expect(fetcher).not.toHaveBeenCalled();
+  expect(mocks.apply).not.toHaveBeenCalled();
 });
 it("a different configured price never grants Supporter access", async () => {
   vi.stubGlobal(

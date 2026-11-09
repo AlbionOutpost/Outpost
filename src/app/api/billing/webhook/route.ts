@@ -22,7 +22,7 @@ const subscriptionEvents = new Set([
 ]);
 
 /**
- * Stripe → the account record. Only a request that carries a valid signature changes anything;
+ * Stripe → the account record. Only a request that carries a valid signature changes anything.
  * Reconcile all of the customer's subscriptions for the configured price. The event's
  * subscription may be an old canceled one; it is not the entitlement authority.
  */
@@ -35,12 +35,11 @@ export const POST = apiHandler("billing.webhook", async (req: NextRequest) => {
     req.headers.get("stripe-signature"),
     config.webhookSecret,
   );
-  let subscriptionId: string | null = null;
+  // An on-site order is a subscription that Stripe creates `incomplete` and moves to `active`
+  // once the first invoice is paid: both are `customer.subscription.*` events.
   const object = event.data.object;
-  if (event.type === "checkout.session.completed" && object.mode === "subscription")
-    subscriptionId = typeof object.subscription === "string" ? object.subscription : null;
-  else if (subscriptionEvents.has(event.type))
-    subscriptionId = typeof object.id === "string" ? object.id : null;
+  const subscriptionId =
+    subscriptionEvents.has(event.type) && typeof object.id === "string" ? object.id : null;
   if (!subscriptionId) return NextResponse.json({ received: true, ignored: event.type });
   const triggering = await getSubscription(config, subscriptionId);
   const account = await db.user.findUnique({

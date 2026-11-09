@@ -66,6 +66,7 @@ beforeEach(() => {
   vi.stubEnv("STRIPE_SECRET_KEY", "sk_fixture");
   vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_fixture");
   vi.stubEnv("STRIPE_PRICE_SUPPORTER", "price_supporter");
+  vi.stubEnv("STRIPE_PUBLISHABLE_KEY", "pk_test_fixture");
   vi.stubGlobal("fetch", vi.fn(fakeStripe));
   m.session = { user: { id: "owner" } };
   m.profiles = new Map([
@@ -145,6 +146,21 @@ it("answers 404 without a billing record or a live Supporter subscription", asyn
   m.subscriptions.set("cus_owner", [
     sub("sub_owner", "cus_owner", { items: { data: [{ price: { id: "price_other" } }] } }),
   ]);
+  expect((await POST(request({ kind: "ordinary" }))).status).toBe(404);
+  expect(m.posts).toEqual([]);
+});
+
+it("cancels the paid plan and leaves an unpaid order from the payment form alone", async () => {
+  m.subscriptions.set("cus_owner", [
+    sub("sub_owner", "cus_owner"),
+    sub("sub_unpaid", "cus_owner", { status: "incomplete", current_period_end: end + 99 }),
+  ]);
+  const response = await POST(request({ kind: "ordinary" }));
+  expect(response.status).toBe(200);
+  expect((await response.json()).endsAt).toBe(new Date(end * 1000).toISOString());
+  expect(m.posts.map((post) => post.path)).toEqual(["/v1/subscriptions/sub_owner"]);
+  m.posts = [];
+  m.subscriptions.set("cus_owner", [sub("sub_unpaid", "cus_owner", { status: "incomplete" })]);
   expect((await POST(request({ kind: "ordinary" }))).status).toBe(404);
   expect(m.posts).toEqual([]);
 });

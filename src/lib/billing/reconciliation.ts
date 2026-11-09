@@ -1,23 +1,9 @@
 import { HttpError } from "@/lib/http-error";
 import { planForStatus } from "./plan";
-import type { StripeCheckout, StripeSubscription } from "./stripe";
+import type { StripeSubscription } from "./stripe";
 
 export const terminalSubscription = (status: string) =>
   status === "canceled" || status === "incomplete_expired";
-
-/** A completed subscription checkout is not settled merely because a possibly
- * lagging history is empty. Its exact subscription must be present and terminal. */
-export function requireSettledCheckout(
-  session: StripeCheckout,
-  subscriptions: StripeSubscription[],
-) {
-  if (session.mode !== "subscription" || session.status !== "complete") return;
-  const subscription = subscriptions.find(
-    (record) => record.id === session.subscription && record.customer === session.customer,
-  );
-  if (!subscription || !terminalSubscription(subscription.status))
-    throw new HttpError(409, "Completed checkout is awaiting billing reconciliation. Retry later.");
-}
 
 /** Any live matching subscription keeps entitlement. A terminal older subscription
  * cannot displace an active replacement, regardless of the event that triggered this read. */

@@ -2,18 +2,26 @@ import { HttpError } from "@/lib/http-error";
 import { readBoundedText } from "@/lib/request-body";
 
 /**
- * A small Stripe REST client. The SDK is not used: these four calls are all Outpost needs,
+ * A small Stripe REST client. The SDK is not used: these few calls are all Outpost needs,
  * `fetch` works the same on Node and Cloudflare, and the web bundle stays small. Secrets are
  * read at call time so a missing key degrades to "billing not configured", never to a crash.
+ * Every call uses API version 2024-06-20, whose invoices carry `payment_intent` and `charge`.
  */
-export type StripeConfig = { secretKey: string; webhookSecret: string; priceId: string };
+export type StripeConfig = {
+  secretKey: string;
+  webhookSecret: string;
+  priceId: string;
+  /** Not a secret: Stripe.js in the browser needs it to show the payment form. */
+  publishableKey: string;
+};
 
 export function stripeConfig(): StripeConfig | null {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   const priceId = process.env.STRIPE_PRICE_SUPPORTER;
-  if (!secretKey || !webhookSecret || !priceId) return null;
-  return { secretKey, webhookSecret, priceId };
+  const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+  if (!secretKey || !webhookSecret || !priceId || !publishableKey) return null;
+  return { secretKey, webhookSecret, priceId, publishableKey };
 }
 export const billingEnabled = () => stripeConfig() !== null;
 
@@ -94,44 +102,60 @@ export async function createCustomer(
   return customer.id;
 }
 
-export async function createCheckoutSession(
+/**
+ * Starts the Supporter subscription for the on-site payment form: Stripe creates it
+ * `incomplete` with an open first invoice whose PaymentIntent the browser confirms. Nothing is
+ * charged here, and an unpaid subscription expires on Stripe's side after 23 hours. The key and
+ * the parameters come from the saved order operation, so a retry replays the same request.
+ */
+export const createSubscription = (
   config: StripeConfig,
-  input: {
-    customerId: string;
-    userId: string;
-    successUrl: string;
-    cancelUrl: string;
-    priceId: string;
-    /** When the buyer ticked the terms box (ISO), kept on the subscription. */
-    consentAt?: string;
-  },
-  operationId: string,
-) {
-  const session = await call<StripeCheckout>(
+  input: { customerId: string; userId: string; priceId: string; key: string; consentAt: string },
+) =>
+  call<StripeSubscription>(
     config,
     "POST",
-    "/checkout/sessions",
+    "/subscriptions",
     {
-      mode: "subscription",
       customer: input.customerId,
-      "line_items[0][price]": input.priceId,
-      "line_items[0][quantity]": 1,
-      success_url: input.successUrl,
-      cancel_url: input.cancelUrl,
-      client_reference_id: input.userId,
-      "subscription_data[metadata][outpostUserId]": input.userId,
-      "metadata[outpostCheckoutId]": operationId,
-      // Proof of the order-page consent to the terms lives in Stripe: on the session and,
-      // durably, on the subscription it creates.
+      "items[0][price]": input.priceId,
+      "items[0][quantity]": 1,
+      payment_behavior: "default_incomplete",
+      "payment_settings[save_default_payment_method]": "on_subscription",
+      "expand[0]": "latest_invoice.payment_intent",
+      "metadata[outpostUserId]": input.userId,
+      "metadata[outpostCheckoutId]": input.key,
+      // Proof of the order-page consent to the terms, kept on the subscription.
       "metadata[outpostConsentAt]": input.consentAt,
-      "subscription_data[metadata][outpostConsentAt]": input.consentAt,
-      allow_promotion_codes: "true",
-      billing_address_collection: "auto",
     },
-    `checkout-${operationId}`,
+    `subscription-${input.key}`,
   );
-  return session;
-}
+
+/** One subscription with its first open invoice and that invoice's PaymentIntent. */
+export const getOrderSubscription = (config: StripeConfig, id: string) =>
+  call<StripeSubscription>(config, "GET", `/subscriptions/${encodeURIComponent(id)}`, {
+    "expand[]": "latest_invoice.payment_intent",
+  });
+
+/** Voids an unpaid invoice so it can never be paid; Stripe refuses once a payment is under way. */
+export const voidInvoice = (config: StripeConfig, id: string) =>
+  call<{ id: string; status: string }>(
+    config,
+    "POST",
+    `/invoices/${encodeURIComponent(id)}/void`,
+    undefined,
+    `void-${id}`,
+  );
+
+/** Ends an unpaid subscription whose invoice is already void. */
+export const cancelUnpaidSubscription = (config: StripeConfig, id: string) =>
+  call<StripeSubscription>(
+    config,
+    "DELETE",
+    `/subscriptions/${encodeURIComponent(id)}`,
+    undefined,
+    `order-cancel-${id}`,
+  );
 
 export async function createPortalSession(
   config: StripeConfig,
@@ -155,6 +179,15 @@ export type StripeSubscription = {
   cancel_at_period_end?: boolean;
   metadata?: Record<string, string>;
   items?: { data: { price: { id: string } }[] };
+  /** Expanded by `createSubscription` and `getOrderSubscription`, an id otherwise. */
+  latest_invoice?: StripeOrderInvoice | string | null;
+};
+export type StripePaymentIntent = { id: string; status: string; client_secret: string | null };
+export type StripeOrderInvoice = {
+  id: string;
+  status: string;
+  customer: string;
+  payment_intent: StripePaymentIntent | string | null;
 };
 export const getSubscription = (config: StripeConfig, id: string) =>
   call<StripeSubscription>(config, "GET", `/subscriptions/${encodeURIComponent(id)}`);
@@ -259,16 +292,6 @@ export const refundCharge = (config: StripeConfig, chargeId: string, subscriptio
     `withdraw-refund-${chargeId}`,
   );
 
-export type StripeCheckout = {
-  id: string;
-  customer: string;
-  mode: string;
-  status: "open" | "complete" | "expired";
-  url: string | null;
-  metadata?: Record<string, string>;
-  subscription?: string | null;
-};
-
 /** Fetch complete customer histories, or fail without changing local entitlements. */
 async function customerList<T extends { id: string; customer: string }>(
   config: StripeConfig,
@@ -303,22 +326,6 @@ async function customerList<T extends { id: string; customer: string }>(
 
 export const listSubscriptions = (config: StripeConfig, customerId: string) =>
   customerList<StripeSubscription>(config, "/subscriptions", customerId, { status: "all" });
-export const listCheckoutSessions = (config: StripeConfig, customerId: string) =>
-  customerList<StripeCheckout>(config, "/checkout/sessions", customerId);
-export const getCheckoutSession = (config: StripeConfig, id: string) =>
-  call<StripeCheckout>(config, "GET", `/checkout/sessions/${encodeURIComponent(id)}`);
-export async function expireCheckoutSession(config: StripeConfig, id: string) {
-  try {
-    return await call<StripeCheckout>(
-      config,
-      "POST",
-      `/checkout/sessions/${encodeURIComponent(id)}/expire`,
-    );
-  } catch {
-    // Another request may have expired or completed it while this call was in flight.
-    return getCheckoutSession(config, id);
-  }
-}
 
 const encoder = new TextEncoder();
 const hex = (bytes: ArrayBuffer) =>
