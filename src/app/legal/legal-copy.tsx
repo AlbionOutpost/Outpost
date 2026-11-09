@@ -206,11 +206,6 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
                     </td>
                   </tr>
                   <tr>
-                    <td>outpost-route: technische Zuordnung von Seitenaufrufen</td>
-                    <td>30 Minuten</td>
-                    <td>Signiert; keine Anmeldeberechtigung</td>
-                  </tr>
-                  <tr>
                     <td>atlas-theme und atlas-region: gewählte Darstellung / Spielregion</td>
                     <td>Bis zu 365 Tage</td>
                     <td>Durch entsprechende Nutzerauswahl gesetzt; im Browser löschbar</td>
@@ -874,11 +869,6 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
                       Only for the sign-in flow; further CSRF/callback cookies follow session or
                       library settings
                     </td>
-                  </tr>
-                  <tr>
-                    <td>outpost-route: technical assignment of page requests</td>
-                    <td>30 minutes</td>
-                    <td>Signed; does not grant sign-in authorisation</td>
                   </tr>
                   <tr>
                     <td>atlas-theme and atlas-region: selected appearance / game region</td>

@@ -1,4 +1,3 @@
-import type { OutpostDatabaseBinding } from "../database/web-driver";
 import { addressBucket } from "../../src/lib/client-address";
 
 const marketRoutes = new Set([
@@ -17,6 +16,13 @@ const marketRoutes = new Set([
   "/api/combat-events/top",
 ]);
 
+/** The Workers Rate Limiting bindings in `wrangler.jsonc` (each owns its limit and 60 s window).
+ * They are counted at the Cloudflare location and cost no Durable Object request. */
+export type EdgeLimits = Record<
+  "requests" | "search" | "itemPrices" | "market",
+  { limit(options: { key: string }): Promise<{ success: boolean }> }
+>;
+
 /** API callers must receive their JSON error contract even when denied before Next runs. */
 function denied(request: Request, message: string, status: number, retry = false) {
   const headers = { "Cache-Control": "no-store", ...(retry ? { "Retry-After": "60" } : {}) };
@@ -25,18 +31,21 @@ function denied(request: Request, message: string, status: number, retry = false
     : new Response(message, { status, headers });
 }
 
-/** Cloudflare overwrites this address header. Routing cookies and forwarded headers are not identity.
+/** Cloudflare overwrites this address header. Cookies and forwarded headers are not identity.
  * IPv6 clients are counted per /64 so rotating through one allocation does not reset the budget. */
 export async function requestBudget(
   request: Request,
-  binding: Pick<OutpostDatabaseBinding, "rateLimit">,
+  limits: EdgeLimits,
 ): Promise<Response | null> {
   const address = request.headers.get("cf-connecting-ip");
   if (!address || !/^[0-9a-f:.]{3,45}$/i.test(address))
     return denied(request, "Trusted client address unavailable", 503);
   const client = addressBucket(address);
+  const allowed = async (limit: keyof EdgeLimits, key: string) =>
+    (await limits[limit].limit({ key })).success;
   try {
-    if (!(await binding.rateLimit(`edge:requests:${client}`, 240, 60)))
+    // 240 requests a minute per caller.
+    if (!(await allowed("requests", client)))
       return denied(request, "Too many requests. Please wait a minute, then retry.", 429, true);
     const url = new URL(request.url);
     if (url.searchParams.getAll("region").length > 1)
@@ -49,24 +58,23 @@ export async function requestBudget(
     }
     // Uncached search scans builds, comps and Teams in the one private store: a caller who
     // varies the query (or sends a session cookie) misses the edge cache on every request.
-    if (pathname === "/api/search" && !(await binding.rateLimit(`edge:search:${client}`, 30, 60)))
+    // 30 a minute.
+    if (pathname === "/api/search" && !(await allowed("search", client)))
       return denied(request, "Too many searches. Please wait a minute, then retry.", 429, true);
     const asked = url.searchParams.get("region") || "europe";
     const region = /^(europe|americas|asia)$/.test(asked) ? asked : "invalid";
-    // Paging through the item database has its own allowance, so browsing it never spends the
-    // market budget a player needs for Market Explorer and the calculators.
-    if (
-      pathname === "/api/items/prices" &&
-      !(await binding.rateLimit(`edge:item-prices:${region}:${client}`, 20, 60))
-    )
+    // Paging through the item database has its own allowance (20 a minute per server), so
+    // browsing it never spends the market budget a player needs for Market Explorer.
+    if (pathname === "/api/items/prices" && !(await allowed("itemPrices", `${region}:${client}`)))
       return denied(
         request,
         "Too many price requests. Please wait a minute, then retry.",
         429,
         true,
       );
+    // 20 market reads a minute per server across every price endpoint.
     if (marketRoutes.has(pathname) || /^\/api\/builds\/[^/]+\/cost$/.test(pathname)) {
-      if (!(await binding.rateLimit(`edge:market:${region}:${client}`, 20, 60)))
+      if (!(await allowed("market", `${region}:${client}`)))
         return denied(
           request,
           "Too many market requests. Please wait a minute, then refresh.",

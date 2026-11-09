@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Pages render in the Worker, not a Durable Object — 9 November 2026
+
+- The bill had reached about $12 over the $5 base and was growing by $7–8 a day: the per-session `OutpostSession` Durable Object that ran the app billed wall-clock time (6.7 M s in 31 days, 43–250 s per request against 0.6 s of CPU) while timers, `waitUntil` work and pending data-Worker calls kept it in memory.
+- The app now runs in the web Worker itself, which bills CPU time only. Render and background deadlines stay, and their timers are cleared as soon as the work settles. `limits.cpu_ms` caps a request at 10 s of CPU.
+- The edge budgets (240 requests/min, searches, item prices, market reads) moved from `AbuseBudget` Durable Objects to Workers Rate Limiting bindings, so a signed-out page view makes no Durable Object request. The `outpost-route` cookie is gone.
+- The kill feed's "Update every minute" is edge-cached (30 s), so every viewer of a server's feed shares one answer.
+- Next: delete the inert `OutpostSession` class in its own release ([OPERATIONS.md](OPERATIONS.md#retiring-the-session-object)); watch Worker CPU, now the allowance closest to its limit ([Cost guardrails](OPERATIONS.md#cost-guardrails)).
+
 ## One page width and one masthead — 8 November 2026
 
 - Every inner page shares one content width (`--page-width`, now 1376px) and one left edge, set once on the shell frame; the 1392px workspace width is gone. 1376px (a 1440 window less its gutters) is what the Market Explorer needs to keep every City orders column in view.

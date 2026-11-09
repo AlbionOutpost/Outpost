@@ -48,7 +48,7 @@ describe("advertising text follows whether ads run", () => {
     (locale) => {
       const cookies = legalCopy(locale, {}, false, true).sections.find((s) => s.id === "cookies")!;
       const flat = nodes(cookies.body);
-      expect(flat.filter((node) => node.type === "tr")).toHaveLength(7);
+      expect(flat.filter((node) => node.type === "tr")).toHaveLength(6);
       const body = text(cookies.body);
       expect(body).toContain("FCCDCF");
       expect(body).toContain("Google Ireland");
@@ -107,7 +107,7 @@ describe("faithful bilingual legal draft", () => {
       const body = section(locale, "cookies").body;
       const flat = nodes(body);
       expect(flat.filter((node) => node.type === "tbody")).toHaveLength(1);
-      expect(flat.filter((node) => node.type === "tr")).toHaveLength(6);
+      expect(flat.filter((node) => node.type === "tr")).toHaveLength(5);
       expect(flat.some((node) => node.props.role === "region" && node.props.tabIndex === 0)).toBe(
         true,
       );
@@ -115,16 +115,16 @@ describe("faithful bilingual legal draft", () => {
       for (const value of [
         "NextAuth",
         "PKCE",
-        "outpost-route",
         "atlas-theme",
         "atlas-region",
         "localStorage",
         "14",
         "15",
-        "30",
         "365",
       ])
         expect(content).toContain(value);
+      // Pages render without a routing cookie since 9 Nov 2026.
+      expect(content).not.toContain("outpost-route");
     },
   );
   it.each(["en", "de"] as const)(

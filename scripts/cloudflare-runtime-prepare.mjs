@@ -29,8 +29,6 @@ if (
 )
   throw new Error("Owned Turnstile widget verification failed");
 const values = {
-  OUTPOST_RENDER_SESSION_SECRET:
-    previous.OUTPOST_RENDER_SESSION_SECRET || randomBytes(48).toString("hex"),
   NEXTAUTH_SECRET: previous.NEXTAUTH_SECRET || randomBytes(48).toString("hex"),
   DISCORD_CLIENT_ID: local.DISCORD_CLIENT_ID,
   DISCORD_CLIENT_SECRET: local.DISCORD_CLIENT_SECRET,
