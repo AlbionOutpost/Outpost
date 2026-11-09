@@ -1,9 +1,10 @@
-/** RFC 9116 security contact: reports go to the repository's private advisory form. */
+/** RFC 9116 security contact: the security@ mailbox first, then the repository's private advisory form. */
 export const dynamic = "force-static";
 export function GET() {
   const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 300).toISOString();
   return new Response(
     [
+      "Contact: mailto:security@albionoutpost.com",
       "Contact: https://github.com/AlbionOutpost/Outpost/security/advisories/new",
       `Expires: ${expires}`,
       "Preferred-Languages: en, de",

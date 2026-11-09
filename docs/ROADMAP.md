@@ -8,6 +8,11 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 - Owner decision: everyone sees ads except Supporters with a plan or an admin gift. The launch grant keeps every Supporter feature but no longer hides ads; the Supporter page and both privacy texts say so. Ads still switch on only once the Impressum is complete.
 
+## Domain email — 9 November 2026
+
+- **Zoho Mail (EU):** albionoutpost.com now receives and sends mail. One mailbox (admin@) with contact@, support@, security@ and privacy@ aliases, plus postmaster@ and abuse@ groups. SPF, DKIM and DMARC are set ([OPERATIONS.md](OPERATIONS.md)).
+- **security.txt** lists security@ first, then the private GitHub advisory form. The old no-mail DNS script is removed.
+
 ## Faster first load and a wider accessibility check — 9 November 2026
 
 - Lab Lighthouse on the local Cloudflare build (median of 3) on the home, build list, Market Explorer, Crafting, guide, item database and comps pages: mobile LCP 5.6–7.1 s → 4.3–5.2 s and performance 70–78 → 80–84; desktop LCP 1.2–2.0 s → 1.0–1.1 s and performance 78–97 → 98–99. The journal guide's desktop CLS 0.16 → 0. Accessibility 100 on all seven.
