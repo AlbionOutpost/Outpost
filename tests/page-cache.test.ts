@@ -40,10 +40,10 @@ describe("page cache allowlist", () => {
     expect(ttl("/builds")).toBe(60);
     expect(ttl("/compositions")).toBe(60);
     expect(ttl("/groups")).toBe(60);
-    expect(ttl("/builds/library/claymore-zvz")).toBe(300);
-    expect(ttl("/compositions/library/brawl-5")).toBe(300);
-    expect(ttl("/guides")).toBe(300);
-    expect(ttl("/guides/refining")).toBe(300);
+    expect(ttl("/builds/library/claymore-zvz")).toBe(86_400);
+    expect(ttl("/compositions/library/brawl-5")).toBe(86_400);
+    expect(ttl("/guides")).toBe(86_400);
+    expect(ttl("/guides/refining")).toBe(86_400);
     expect(ttl("/tools")).toBe(300);
     expect(ttl("/tools/crafting")).toBe(300);
     expect(ttl("/items")).toBe(300);

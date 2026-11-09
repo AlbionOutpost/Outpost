@@ -27,9 +27,13 @@
  * every `nonce=` with HTMLRewriter would bless an injected one) never becomes valid. */
 
 /** Live-ish pages and pages that list players' public content: a build made private drops out
- * within a minute. Reference pages (library, guides, tools, items): five minutes. */
+ * within a minute. Reference pages (tools, items): five minutes. The archive (library builds and
+ * comps, guides) only changes with a deploy, which starts a new cache, or with a manual like-count
+ * push that reorders "related builds": a day. Crawlers fetch these pages most, from one or two
+ * locations, so a second crawler reading the same page within the day costs no render. */
 const LIVE = 60;
 const REFERENCE = 300;
+const ARCHIVE = 86_400;
 /** Item pages list three community builds for the weapon; two minutes, as signed-out search. */
 const ITEM = 120;
 const slug = "[A-Za-z0-9_-]{1,120}";
@@ -64,11 +68,11 @@ export const pageRoutes: ReadonlyArray<readonly [RegExp, number]> = [
   [new RegExp(`^/tools/(?:${tools.join("|")})$`), REFERENCE],
   [/^\/builds$/, LIVE],
   [/^\/builds\/activities$/, REFERENCE],
-  [new RegExp(`^/builds/library/${slug}$`), REFERENCE],
+  [new RegExp(`^/builds/library/${slug}$`), ARCHIVE],
   [/^\/compositions$/, LIVE],
-  [new RegExp(`^/compositions/library/${slug}$`), REFERENCE],
-  [/^\/guides$/, REFERENCE],
-  [new RegExp(`^/guides/${slug}$`), REFERENCE],
+  [new RegExp(`^/compositions/library/${slug}$`), ARCHIVE],
+  [/^\/guides$/, ARCHIVE],
+  [new RegExp(`^/guides/${slug}$`), ARCHIVE],
   [/^\/items$/, REFERENCE],
   [/^\/items\/(?:[A-Za-z0-9_@]|%40){3,120}$/, ITEM],
   [/^\/groups$/, LIVE],

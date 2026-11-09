@@ -38,11 +38,11 @@
       "/tools/transporting": 300,
       "/builds": 60,
       "/builds/activities": 300,
-      "/builds/library/sample-build": 300,
+      "/builds/library/sample-build": 86400,
       "/compositions": 60,
-      "/compositions/library/sample-comp": 300,
-      "/guides": 300,
-      "/guides/sample-guide": 300,
+      "/compositions/library/sample-comp": 86400,
+      "/guides": 86400,
+      "/guides/sample-guide": 86400,
       "/items": 300,
       "/items/T4_MAIN_SWORD": 120,
       "/groups": 60
@@ -60,14 +60,7 @@
     "/api/combat-events": 30,
     "/api/combat-events/top": 120
   },
-  "staticRoutes": [
-    "/.well-known/security.txt",
-    "/apple-icon.png",
-    "/favicon.ico",
-    "/icon.png",
-    "/manifest.webmanifest",
-    "/robots.txt"
-  ],
+  "staticRoutes": ["/.well-known/security.txt", "/apple-icon.png", "/favicon.ico", "/icon.png"],
   "workers": {
     "albionoutpost-web": {
       "config": "wrangler.jsonc",
