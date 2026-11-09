@@ -148,6 +148,17 @@ export default async function Settings({
               }
             />
           )}
+          {billingEnabled() && user.stripeCustomerId && (
+            <Line
+              title="Withdrawal"
+              line="Within 14 days of ordering you can withdraw instead and get every payment back."
+              action={
+                <Link className="button secondary" href="/supporter/withdraw">
+                  Withdraw from contract
+                </Link>
+              }
+            />
+          )}
           <Line
             title="Export your data"
             line="One JSON file with your profile, builds, comps, timers and saved plans."

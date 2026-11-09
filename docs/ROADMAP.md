@@ -9,7 +9,8 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Owner decision: Supporter is €2.99 a month (price from Stripe) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys, `/legal` stays unpublished and the launch grant stays open. Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
 - Supporter badge beside names on builds, comps, comments, Team rosters, the player profile and the account menu (plan or gift only, derived on the server).
 - German consumer-law pieces: the order box on `/supporter` (required facts, two unticked consents, "Zahlungspflichtig bestellen"), consent time stored in Stripe metadata, the § 312k cancellation page `/supporter/cancel` linked from every footer and Settings, `POST /api/billing/cancel`, and draft terms, cancellation policy and model withdrawal form in `/legal`.
-- Next: legal review; the electronic withdrawal function (§ 356a BGB); confirm Stripe sends cancellation emails for API cancellations.
+- Electronic withdrawal function (§ 356a BGB): "Vertrag widerrufen" beside the cancellation link in every footer and in Settings, the page `/supporter/withdraw` and `POST /api/billing/withdraw`. Owner decision: a withdrawal within 14 days ends the plan at once and refunds every payment in full, so checkout no longer asks for the immediate-start waiver; terms and cancellation policy say so.
+- Next: legal review; confirm Stripe sends cancellation and refund emails for API calls.
 
 ## Ads for everyone but Supporters — 9 November 2026
 

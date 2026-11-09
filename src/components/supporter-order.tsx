@@ -15,6 +15,9 @@ const copy = {
     cancel: "Cancelling",
     cancelLine: "Any time, to the end of the paid month.",
     cancelLink: "Cancel subscription",
+    withdraw: "Withdrawal",
+    withdrawLine: "Within 14 days of ordering, with a full refund.",
+    withdrawLink: "Withdraw from contract",
     vat: "The total, with any VAT that applies, is shown again on Stripe before you pay.",
     vatSmall: "No VAT is charged (small business, § 19 UStG).",
     terms: (
@@ -23,8 +26,6 @@ const copy = {
         <Link href="/legal?lang=en#withdrawal">cancellation policy</Link>.
       </>
     ),
-    immediate:
-      "Start my Supporter plan right away, before the 14-day withdrawal period ends. I know that my right of withdrawal expires once the plan has started.",
     submit: "Subscribe and pay",
     busy: "Opening checkout…",
     note: "You pay on Stripe. Outpost never sees your card.",
@@ -42,6 +43,9 @@ const copy = {
     cancel: "Kündigung",
     cancelLine: "Jederzeit zum Ende des bezahlten Monats.",
     cancelLink: "Verträge hier kündigen",
+    withdraw: "Widerruf",
+    withdrawLine: "Innerhalb von 14 Tagen nach der Bestellung, mit voller Erstattung.",
+    withdrawLink: "Vertrag widerrufen",
     vat: "Den Gesamtpreis mit etwaiger Umsatzsteuer zeigt Stripe vor dem Bezahlen noch einmal an.",
     vatSmall: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.",
     terms: (
@@ -50,8 +54,6 @@ const copy = {
         <Link href="/legal?lang=de#withdrawal">Widerrufsbelehrung</Link> gelesen.
       </>
     ),
-    immediate:
-      "Ich verlange, dass mein Supporter-Plan sofort und vor Ablauf der 14-tägigen Widerrufsfrist beginnt. Mir ist bekannt, dass mein Widerrufsrecht mit Beginn der Leistung erlischt.",
     submit: "Zahlungspflichtig bestellen",
     busy: "Checkout wird geöffnet…",
     note: "Sie bezahlen bei Stripe. Outpost sieht Ihre Karte nie.",
@@ -62,9 +64,10 @@ const copy = {
 } as const;
 
 /**
- * The order box (§ 312j BGB): what is bought, for how much and how long, two unticked boxes
- * (terms; immediate start with the withdrawal acknowledgment) and the one button that orders.
- * The server checks both boxes again and records when they were ticked.
+ * The order box (§ 312j BGB): what is bought, for how much and how long, how to cancel and
+ * withdraw, one unticked box for the terms and the one button that orders. The server checks
+ * the box again and records when it was ticked. No waiver of the right of withdrawal is asked
+ * for: a withdrawal within 14 days is always refunded in full.
  */
 export function SupporterOrder({
   region,
@@ -80,7 +83,6 @@ export function SupporterOrder({
 }) {
   const t = copy[locale];
   const [terms, setTerms] = useState(false);
-  const [immediate, setImmediate] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   async function order(event: React.FormEvent) {
@@ -91,7 +93,7 @@ export function SupporterOrder({
       const r = await fetch(`/api/billing/checkout?region=${region}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ terms, immediateStart: immediate }),
+        body: JSON.stringify({ terms }),
       });
       const body = await r.json();
       if (!r.ok || !body.url) throw new Error(body.error || t.failed);
@@ -154,6 +156,13 @@ export function SupporterOrder({
             {t.cancelLine} <Link href={`/supporter/cancel?lang=${locale}`}>{t.cancelLink}</Link>
           </dd>
         </div>
+        <div className="well">
+          <dt>{t.withdraw}</dt>
+          <dd>
+            {t.withdrawLine}{" "}
+            <Link href={`/supporter/withdraw?lang=${locale}`}>{t.withdrawLink}</Link>
+          </dd>
+        </div>
       </dl>
       <p className={styles.vat}>{smallBusiness ? t.vatSmall : t.vat}</p>
       <form className={styles.form} onSubmit={order}>
@@ -167,22 +176,8 @@ export function SupporterOrder({
           />
           <span>{t.terms}</span>
         </label>
-        <label className={styles.check}>
-          <input
-            type="checkbox"
-            name="immediateStart"
-            checked={immediate}
-            onChange={(e) => setImmediate(e.target.checked)}
-            required
-          />
-          <span>{t.immediate}</span>
-        </label>
         <div className={styles.submit}>
-          <button
-            type="submit"
-            className="button primary"
-            disabled={busy || !price || !terms || !immediate}
-          >
+          <button type="submit" className="button primary" disabled={busy || !price || !terms}>
             {busy ? t.busy : t.submit} <ArrowRight size={17} aria-hidden="true" />
           </button>
           <span className={styles.note}>

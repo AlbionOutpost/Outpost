@@ -84,10 +84,35 @@ existing reconciliation stays the only entitlement writer. Tests: `tests/billing
 (another account's subscription, forged ids, signed out, cross-origin and missing origin,
 already scheduled, other price, provider mismatch; denied cases make no Stripe call).
 
-Checkout now requires `{terms: true, immediateStart: true}` and `salesOpen()`. The consent time
+Checkout now requires `{terms: true}` and `salesOpen()` (the immediate-start waiver was retired with the withdrawal function below). The consent time
 is part of the durable checkout operation (optional field, older operations replay unchanged)
 and is sent as `metadata[outpostConsentAt]` and `subscription_data[metadata][outpostConsentAt]`,
 so idempotent recovery replays the same request. No schema change.
+
+## Withdrawal — 9 November 2026
+
+`POST /api/billing/withdraw` (§ 356a BGB) takes `{confirm: true}` only (strict). After the origin,
+session and budget checks it reads the account's stored Stripe customer, lists that customer's
+complete subscription history and keeps the configured-price subscriptions whose `start_date`
+(falling back to `created`) is within the period: until the end of the 14th day after the order
+day, Europe/Berlin. For each it deletes a live subscription with `prorate=false` and
+`invoice_now=false` (fixed parameters under the key `withdraw-cancel-<id>`, so a concurrent or
+repeated call replays), checks the reply names the same customer and is `canceled`, then lists
+the subscription's paid invoices with expanded charges (customer and subscription must match;
+`has_more` fails closed) and refunds each charge not yet fully refunded, without an amount (the
+remainder) and under the key `withdraw-refund-<charge>`. After Stripe's 24-hour key retention the
+charge's `refunded` flag prevents a second refund. A paid invoice without a charge stops with 502
+for a manual refund. Any failure returns 502 telling the user to retry or write to contact@ (an
+email withdrawal also counts); steps already done stay done and a retry completes the rest; an
+already withdrawn and refunded contract answers 409. Entitlement is not written by the route: the
+signed `customer.subscription.deleted` webhook reconciles it. Owner decision: refunds are always
+in full (no compensation for days used), so checkout no longer records an immediate-start waiver.
+Tests: `tests/billing-withdraw.test.ts` (stateful fake Stripe with idempotency replay: own
+contract, partial prior refund, cancelled-to-period-end, second submission, Stripe failure then
+retry, outside 14 days, start date versus creation time, other price, forged ids and other
+customers, foreign invoice, signed out, cross-site, missing origin, billing off; deadline across
+CET/CEST). The fixture does not prove Stripe's real refund email or its DELETE semantics; the
+go-live checklist covers a test-mode withdrawal.
 
 Provider references: [subscription listing](https://docs.stripe.com/api/subscriptions/list),
 [checkout session listing](https://docs.stripe.com/api/checkout/sessions/list),

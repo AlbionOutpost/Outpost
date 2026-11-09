@@ -193,7 +193,7 @@ export function Shell({
     /** Server-derived Supporter badge (stored plan or gift). */
     supporter?: boolean;
   } | null;
-  /** Billing is configured: the footer carries the § 312k BGB cancellation link. */
+  /** Billing is configured: the footer carries the § 312k cancellation and § 356a withdrawal links. */
   billing?: boolean;
 }) {
   const currentAccountLinks = [
@@ -723,6 +723,12 @@ export function Shell({
                       <Link href="/supporter/cancel" lang="de">
                         Verträge hier kündigen
                         <span lang="en"> · Cancel subscription</span>
+                      </Link>
+                    )}
+                    {billing && (
+                      <Link href="/supporter/withdraw" lang="de">
+                        Vertrag widerrufen
+                        <span lang="en"> · Withdraw from contract</span>
                       </Link>
                     )}
                     <button
