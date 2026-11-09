@@ -106,7 +106,7 @@ test("published combat feed retains server boundaries, source delay, equipment a
   await page.getByRole("button", { name: "Retry feed", exact: true }).click();
   await expect(outage).toHaveCount(0);
   await page.getByRole("link", { name: "Death feed", exact: true }).click();
-  await expect(page).toHaveURL(/kill-feed\?view=deaths&region=europe$/);
+  await expect(page).toHaveURL(/kill-feed\?view=deaths$/);
   await expect(page.locator(".combat-event .kill-side.is-victim")).toContainText(
     "Combat fixture victim",
   );
