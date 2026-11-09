@@ -3,41 +3,45 @@ import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, X, Pin } from "lucide-react";
-import { tools, toolGroups, toolPaintings, toolSections } from "@/lib/tool-directory";
+import { tools, toolGroups, toolPaintings } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
-import { SectionHeading } from "./section-heading";
 import { SearchInput } from "./field";
 
 type Tool = (typeof tools)[number];
-// Each tool crops one of the five paintings so the directory reads as places, not a list.
-const scenes: Record<string, { scene: string; at: string }> = {
-  "/tools/market": { scene: "market", at: "30% 40%" },
-  "/shopping-list": { scene: "city", at: "88% 60%" },
-  "/tools/flipping": { scene: "economy", at: "70% 60%" },
-  "/tools/crafting": { scene: "economy", at: "25% 50%" },
-  "/tools/cooking": { scene: "market", at: "75% 70%" },
-  "/tools/alchemy": { scene: "composition", at: "60% 40%" },
-  "/tools/fishing": { scene: "city", at: "20% 72%" },
-  "/tools/refining": { scene: "build", at: "30% 35%" },
-  "/tools/enchanting": { scene: "economy", at: "88% 30%" },
-  "/tools/farming": { scene: "city", at: "55% 85%" },
-  "/tools/transporting": { scene: "market", at: "10% 75%" },
-  "/tools/laborers": { scene: "composition", at: "15% 65%" },
-  "/tools/mastery": { scene: "build", at: "75% 55%" },
-  "/tools/reference": { scene: "city", at: "40% 40%" },
-  "/tools/avalon-mapper": { scene: "city", at: "50% 12%" },
-  "/tools/gold": { scene: "market", at: "55% 25%" },
-  "/builds/new": { scene: "build", at: "50% 40%" },
-  "/builds": { scene: "economy", at: "50% 75%" },
-  "/items": { scene: "market", at: "90% 50%" },
-  "/compositions/new": { scene: "composition", at: "50% 40%" },
-  "/groups": { scene: "city", at: "80% 55%" },
-  "/timers": { scene: "economy", at: "10% 30%" },
-  "/tools/kill-feed": { scene: "build", at: "15% 70%" },
+/** The four tools most players come for, large at the top, with what each one answers. */
+const featured: Record<string, string> = {
+  "/tools/market": "Every city's buy and sell orders for one item, with how old each price is.",
+  "/tools/crafting": "Price a batch before you craft it: materials, returns, fees and profit.",
+  "/tools/flipping": "Find items that sell for more in another city, after tax and fees.",
+  "/tools/black-market": "Gear the Black Market pays more for than any city sells it, after tax.",
 };
+/** Everything else, by category; the order inside each is the order players reach for them. */
+const order = [
+  "/tools/profitable-crafts",
+  "/shopping-list",
+  "/tools/refining",
+  "/tools/enchanting",
+  "/tools/cooking",
+  "/tools/alchemy",
+  "/tools/transporting",
+  "/tools/farming",
+  "/tools/fishing",
+  "/tools/laborers",
+  "/tools/mastery",
+  "/tools/gold",
+  "/tools/avalon-mapper",
+  "/tools/reference",
+  "/builds/new",
+  "/compositions/new",
+  "/items",
+  "/builds",
+  "/tools/kill-feed",
+  "/groups",
+  "/timers",
+];
 function subscribeToolShortcuts(callback: () => void) {
   window.addEventListener("storage", callback);
   window.addEventListener("outpost:tool-shortcuts", callback);
@@ -94,8 +98,40 @@ export function ToolDirectory() {
   const matches = tools.filter(
     (t) =>
       (category === "All tools" || t.group === category) &&
-      `${t.title} ${t.description} ${t.state}`.toLowerCase().includes(query.trim().toLowerCase()),
+      `${t.title} ${t.description} ${t.state} ${featured[t.href] ?? ""}`
+        .toLowerCase()
+        .includes(query.trim().toLowerCase()),
   );
+  /** One tool: a large card with its pitch when featured, else a compact row. */
+  function entry(tool: Tool, pitch?: string) {
+    const pinned = pins.includes(tool.href);
+    return (
+      <article
+        key={tool.href}
+        className={`raised is-link directory-entry${pitch ? " is-featured" : ""}`}
+      >
+        <Link className="directory-entry-link" href={`${tool.href}?region=${region}`}>
+          <span className="tool-symbol" aria-hidden="true">
+            <ToolMark tool={tool} size={pitch ? 56 : 32} />
+          </span>
+          <span className="directory-entry-copy">
+            <h3>{tool.title}</h3>
+            <p>{pitch ?? tool.description}</p>
+          </span>
+          {pitch && <ArrowUpRight className="directory-arrow" size={18} aria-hidden="true" />}
+        </Link>
+        <button
+          type="button"
+          className="directory-pin"
+          aria-pressed={pinned}
+          aria-label={`${pinned ? "Unpin" : "Pin"} ${tool.title} on this device`}
+          onClick={() => togglePin(tool.href)}
+        >
+          <Pin size={pitch ? 16 : 14} aria-hidden="true" />
+        </button>
+      </article>
+    );
+  }
   return (
     <div className="directory-page support-tools-directory">
       <WorkspaceHeading
@@ -164,64 +200,32 @@ export function ToolDirectory() {
           {pinMessage}
         </p>
       )}
+      {matches.some((t) => featured[t.href]) && (
+        <section className="directory-featured" aria-label="Most used tools">
+          {Object.keys(featured).map((href) => {
+            const tool = matches.find((t) => t.href === href);
+            return tool ? entry(tool, featured[href]) : null;
+          })}
+        </section>
+      )}
       <div className="directory-groups">
-        {toolSections.map((section) => {
-          const rows = section.hrefs
-            .map((href) => matches.find((t) => t.href === href))
+        {toolGroups.map((group) => {
+          const rows = order
+            .map((href) => matches.find((t) => t.href === href && t.group === group))
             .filter((t): t is Tool => !!t);
+          const id = `tools-${group.toLowerCase().replace(/[^a-z]+/g, "-")}`;
           return rows.length ? (
             <section
               className="directory-group"
-              key={section.id}
-              aria-labelledby={`${section.id}-title`}
+              key={group}
+              data-wide={rows.length > 4 || undefined}
+              aria-labelledby={id}
             >
-              <SectionHeading
-                id={`${section.id}-title`}
-                title={
-                  <>
-                    {section.title.slice(0, -section.accent.length)}
-                    <em>{section.accent}</em>
-                  </>
-                }
-                line={
-                  <>
-                    <span className="directory-chip">
-                      {rows.length} {rows.length === 1 ? "tool" : "tools"}
-                    </span>
-                    {section.line}
-                  </>
-                }
-                link={section.link}
-              />
-              <div className="directory-entries">
-                {rows.map((t) => (
-                  <article
-                    className="raised has-scene directory-entry"
-                    key={t.href}
-                    data-scene={scenes[t.href]?.scene ?? "economy"}
-                  >
-                    <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
-                      <span className="tool-symbol" aria-hidden="true">
-                        <ToolMark tool={t} size={56} />
-                      </span>
-                      <span className="directory-entry-copy">
-                        <h3>{t.title}</h3>
-                        <p>{t.description}</p>
-                      </span>
-                      <ArrowUpRight className="directory-arrow" size={18} aria-hidden="true" />
-                    </Link>
-                    <button
-                      type="button"
-                      className="directory-pin"
-                      aria-pressed={pins.includes(t.href)}
-                      aria-label={`${pins.includes(t.href) ? "Unpin" : "Pin"} ${t.title} on this device`}
-                      onClick={() => togglePin(t.href)}
-                    >
-                      <Pin size={16} aria-hidden="true" />
-                    </button>
-                  </article>
-                ))}
-              </div>
+              <h2 id={id}>
+                {group}
+                <span className="directory-chip">{rows.length}</span>
+              </h2>
+              <div className="directory-entries">{rows.map((t) => entry(t))}</div>
             </section>
           ) : null;
         })}

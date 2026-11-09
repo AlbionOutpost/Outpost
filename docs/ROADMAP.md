@@ -4,6 +4,11 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## One box style and a tools page with a lead — 9 November 2026
+
+- The ornate copper frame with its diamond gems now stays on the landing's teaser windows and tool showcase only. Tool cards, build and comp windows, comp members, kill cards, next-step cards, the market desk and the slot picker use the plain surface, and cards that lead somewhere light their edge and lift on hover and focus.
+- `/tools` leads with Market Explorer, Crafting, Market flipping and the Black Market board as large cards with a one-line pitch, then the other 21 tools as compact cards under Economy, Builds & comps and Teams & community. Search, category pills and pins work as before; it still fits 1440×900.
+
 ## Worker CPU back toward the allowance — 9 November 2026
 
 - Worker CPU was the only allowance over its limit (≈ 430 M CPU-ms a month against 30 M). Crawlers made ≈ 90 % of it, mostly archived builds, `?region=` copies and the build list's search and layout variants, and nearly every request woke a cold isolate (≈ 0.9 s each).

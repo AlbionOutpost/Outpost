@@ -1,8 +1,7 @@
-/* Market is a working surface: the selected gear and its orders share one framed desk. Layout
-   and spacing live in market-explorer.css; this module owns only the desk's frame. */
+/* Market is a working surface: the selected gear and its orders share one desk (a plain
+   `.raised` surface). Layout and spacing live in market-explorer.css. */
 .marketDesk {
   min-width: 0;
-  border-image: var(--frame) 25 / 25px / 10px stretch;
   isolation: isolate;
 }
 :global(.app.outpost) .marketDesk :global(.mx-hero),
