@@ -135,7 +135,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   });
   expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
   const actions = page.locator(".landing-hero .landing-actions a");
-  await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
+  await expect(actions.nth(0)).toHaveAttribute("href", "/tools");
   await expect(actions.nth(1)).toHaveAttribute(
     "href",
     "/signin?callbackUrl=%2Fdashboard&region=europe",
@@ -185,7 +185,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(roster.nth(0)).toHaveAttribute("data-role", /Tank|Healer|DPS|Support/);
   await expect(roster.nth(0).getByRole("link")).toHaveAttribute(
     "href",
-    /\/builds\/library\/[a-z0-9-]+\?region=europe/,
+    /^\/builds\/library\/[a-z0-9-]+$/,
   );
   await expect(windows.nth(2).locator(".landing-window-foot")).toHaveAttribute(
     "href",
@@ -228,7 +228,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(market.getByRole("tab", { name: "7D" })).toHaveAttribute("aria-selected", "true");
   await expect(market.getByRole("link", { name: /Open Market Explorer/ })).toHaveAttribute(
     "href",
-    "/tools/market?item=T6_METALBAR&quality=1&region=europe",
+    "/tools/market?item=T6_METALBAR&quality=1",
   );
 
   const crafting = cards.nth(1);
@@ -252,7 +252,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expectResultText(crafting.locator(".tool-table tbody tr").first(), /28,752/);
   await expect(crafting.getByRole("link", { name: /Open Crafting calculator/ })).toHaveAttribute(
     "href",
-    "/tools/crafting?region=europe",
+    "/tools/crafting",
   );
 
   const planner = cards.nth(2);
@@ -274,7 +274,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(planner.locator(".tool-cities li em")).toHaveCount(0);
   await expect(planner.getByRole("link", { name: /Open Crafting Planner/ })).toHaveAttribute(
     "href",
-    "/shopping-list?region=europe",
+    "/shopping-list",
   );
 
   await page.mouse.move(0, 0);
@@ -301,10 +301,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   const guides = page.locator(".landing-guides article");
   await expect(guides).toHaveCount(3);
   await expect(guides.first().getByText(/\d+ min read/)).toBeVisible();
-  await expect(guides.first().getByRole("link")).toHaveAttribute(
-    "href",
-    /\/guides\/[a-z0-9-]+\?region=europe/,
-  );
+  await expect(guides.first().getByRole("link")).toHaveAttribute("href", /^\/guides\/[a-z0-9-]+$/);
   const storyBoxes = await guides.evaluateAll((nodes) =>
     nodes.map((node) => {
       const { x, y, width, height } = node.getBoundingClientRect();
@@ -392,7 +389,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(kills.getByRole("button", { name: "Item details" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Open the kill feed/ })).toHaveAttribute(
     "href",
-    "/tools/kill-feed?region=europe",
+    "/tools/kill-feed",
   );
 
   // Activities: supplied cutout scenes and listed counts, without the removed ranking rows.
@@ -400,7 +397,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(activities).toHaveCount(6);
   await expect(activities.first().locator(".activity-artwork-link")).toHaveAttribute(
     "href",
-    "/builds?source=library&category=CRYSTAL_CREATURES&region=europe",
+    "/builds?source=library&category=CRYSTAL_CREATURES",
   );
   await expect(activities.first().locator(".activity-artwork-link")).toContainText(
     /Crystal Creatures\s*1 build/i,
@@ -424,10 +421,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(cta).not.toContainText(/\$|€|per month/);
   // Everything is free while billing is off: the band sells nothing and names no plan.
   await expect(cta).not.toContainText("Supporter");
-  await expect(cta.getByRole("link", { name: /Explore tools/ })).toHaveAttribute(
-    "href",
-    "/tools?region=europe",
-  );
+  await expect(cta.getByRole("link", { name: /Explore tools/ })).toHaveAttribute("href", "/tools");
   const footer = page.locator("footer.site-footer");
   await expect(footer.getByRole("navigation", { name: "Footer" })).toBeVisible();
   await expect(footer).toContainText("Albion Online Data Project");

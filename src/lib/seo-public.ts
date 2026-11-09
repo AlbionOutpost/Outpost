@@ -2,7 +2,10 @@ import "server-only";
 import type { Metadata } from "next";
 import { db } from "./db";
 import { findLibraryBuild, findLibraryComposition, findLibraryGuide } from "./grind-library";
-import { activityName } from "./grind-library-types";
+import { activityName, type LibraryBuild } from "./grind-library-types";
+import { indexedBuild } from "./library-scope";
+import { brandCopy } from "./brand-copy";
+import { equipmentName } from "./albion/equipment-catalog";
 import { privateMetadata, publicMetadata, seoText, type SeoQuery } from "./seo";
 
 /** Metadata never borrows the viewer's permissions. No cookies, sessions or shared private cache. */
@@ -72,20 +75,30 @@ export async function archiveShareMetadata(
   if (kind === "build") {
     const build = await findLibraryBuild(slug);
     if (!build) return privateMetadata("Build not found");
-    return publicMetadata(
-      build.title,
-      seoText(build.description) ||
-        `${build.weaponName || "Equipment"} build for ${activityName(build.category)} in Albion Online. Inspect the archived equipment, skills and alternatives.`,
+    const metadata = publicMetadata(
+      libraryBuildTitle(build),
+      libraryBuildSummary(build),
       `/builds/library/${encodeURIComponent(build.slug)}`,
       query,
     );
+    // Unliked builds stay reachable for the comps that link them, out of the index and sitemap.
+    if (!indexedBuild(build)) {
+      metadata.robots = { index: false, follow: true };
+      metadata.alternates = { canonical: null };
+    }
+    return metadata;
   }
   if (kind === "composition") {
     const composition = await findLibraryComposition(slug);
     if (!composition) return privateMetadata("Composition not found");
+    const activity = activityName(composition.category);
     return publicMetadata(
-      composition.title,
-      `${activityName(composition.category)} group build with ${composition.members.length} recorded member loadouts. Inspect equipment and roles in the Albion Online archive.`,
+      activity && !composition.title.toLowerCase().includes(activity.toLowerCase())
+        ? `${composition.title} — ${activity} comp`
+        : composition.title,
+      seoText(
+        `${activity || "Albion Online"} comp with ${composition.members.length} recorded member loadouts${composition.author ? ` by ${composition.author}` : ""}. ${seoText(brandCopy(composition.description), 400) || "Inspect each member's equipment and role in the Albion Online archive."}`,
+      ),
       `/compositions/library/${encodeURIComponent(composition.slug)}`,
       query,
     );
@@ -123,4 +136,29 @@ export async function itemShareMetadata(
     `/items/${encodeURIComponent(item.id)}`,
     query,
   );
+}
+
+/** "Title — Weapon build for Activity", unless the author's title already names the weapon. */
+function libraryBuildTitle(build: Pick<LibraryBuild, "title" | "weaponName" | "category">) {
+  const activity = activityName(build.category);
+  const weapon = build.weaponName;
+  if (!weapon || build.title.toLowerCase().includes(weapon.toLowerCase())) return build.title;
+  return `${build.title} — ${weapon} build${activity ? ` for ${activity}` : ""}`;
+}
+
+/** The build's real fields as one sentence: weapon, activity, author and the gear it records. */
+export function libraryBuildFacts(
+  build: Pick<LibraryBuild, "weaponName" | "category" | "author" | "equipment">,
+) {
+  const activity = activityName(build.category);
+  const gear = build.equipment
+    .filter((row) => row.itemId && row.slot !== "Main hand")
+    .map((row) => equipmentName(row.itemId).split(" · ")[0])
+    .filter((name, index, names) => name && names.indexOf(name) === index);
+  return `${build.weaponName || "Equipment"} build${activity ? ` for ${activity}` : ""}${build.author ? ` by ${build.author}` : ""}${gear.length ? `: ${gear.join(", ")}` : ""}.`;
+}
+
+function libraryBuildSummary(build: LibraryBuild) {
+  const notes = seoText(brandCopy(build.description), 400);
+  return seoText(`${libraryBuildFacts(build)} ${notes}`);
 }

@@ -1,4 +1,5 @@
 "use client";
+import { regionSuffix } from "@/lib/build-region";
 import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
@@ -150,7 +151,7 @@ export function ToolDirectory() {
             {tools
               .filter((tool) => pins.includes(tool.href))
               .map((tool) => (
-                <Link key={tool.href} href={`${tool.href}?region=${region}`}>
+                <Link key={tool.href} href={`${tool.href}${regionSuffix(region)}`}>
                   <ToolMark tool={tool} size={28} />
                   <strong>{tool.title}</strong>
                   <ArrowUpRight size={15} aria-hidden="true" />
@@ -200,7 +201,10 @@ export function ToolDirectory() {
                     key={t.href}
                     data-scene={scenes[t.href]?.scene ?? "economy"}
                   >
-                    <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
+                    <Link
+                      className="directory-entry-link"
+                      href={`${t.href}${regionSuffix(region)}`}
+                    >
                       <span className="tool-symbol" aria-hidden="true">
                         <ToolMark tool={t} size={56} />
                       </span>

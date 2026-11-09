@@ -13,11 +13,11 @@ test("public metadata has route-specific canonical/social heads and a real stati
   await expect(page).toHaveTitle("Albion Online market prices | Outpost");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://albionoutpost.com/tools/market?region=asia&item=T4_MAIN_AXE%401&quality=3",
+    "https://albionoutpost.com/tools/market",
   );
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
     "content",
-    "https://albionoutpost.com/tools/market?region=asia&item=T4_MAIN_AXE%401&quality=3",
+    "https://albionoutpost.com/tools/market",
   );
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
     "content",
@@ -33,7 +33,7 @@ test("public metadata has route-specific canonical/social heads and a real stati
     'property="og:image" content="https://albionoutpost.com/brand/outpost-social.png"',
   );
   expect(markup).toContain(
-    'rel="canonical" href="https://albionoutpost.com/builds/library/battleaxe-mist-build?region=asia"',
+    'rel="canonical" href="https://albionoutpost.com/builds/library/battleaxe-mist-build"',
   );
   const image = await request.get("/brand/outpost-social.png");
   expect(image.status()).toBe(200);

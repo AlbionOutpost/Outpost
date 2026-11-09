@@ -170,7 +170,7 @@ for (const width of [320, 390, 768, 1440]) {
       await expect(trigger).toBeFocused();
       await trigger.click();
       await drawer.getByRole("link", { name: "Crafting", exact: true }).click();
-      await expect(page).toHaveURL(/\/tools\/crafting\?region=europe$/);
+      await expect(page).toHaveURL(/\/tools\/crafting$/);
       await expect(drawer).toHaveCount(0);
     }
   });

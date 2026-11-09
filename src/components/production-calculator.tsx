@@ -1,4 +1,5 @@
 "use client";
+import { withBuildRegion } from "@/lib/build-region";
 import { AnimatedNumber } from "./animated-number";
 import { Silver } from "@/components/silver";
 import { ProductionSensitivity } from "./production-sensitivity";
@@ -230,7 +231,7 @@ export function ProductionCalculator({
               </p>
               <Link
                 className="button secondary"
-                href={`/tools/${category || kind}?region=${region}`}
+                href={withBuildRegion(`/tools/${category || kind}`, region)}
                 onClick={() => {
                   setDraft(defaultDraft());
                   setRecipeMissing(false);
@@ -1319,7 +1320,7 @@ export function ProductionModes({ current }: { current: ProductionMode }) {
       {productionModes.map((mode) => (
         <Link
           key={mode}
-          href={`/tools/${mode}?region=${region}`}
+          href={withBuildRegion(`/tools/${mode}`, region)}
           aria-current={current === mode ? "page" : undefined}
         >
           {mode.charAt(0).toUpperCase() + mode.slice(1)}

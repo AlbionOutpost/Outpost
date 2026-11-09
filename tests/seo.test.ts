@@ -80,7 +80,7 @@ describe("public metadata identity and social previews", () => {
     vi.stubEnv("OUTPOST_PUBLIC_URL", value);
     expect(publicOrigin()).toBe("https://albionoutpost.com");
   });
-  it("preserves market region, item and quality while discarding tracking/private inputs", () => {
+  it("names the Market itself: region, item, quality, tracking and private inputs are dropped", () => {
     const a = canonicalUrl("/tools/market", {
       region: "asia",
       item: "T4_MAIN_AXE@1",
@@ -94,10 +94,8 @@ describe("public metadata identity and social previews", () => {
       item: "T4_MAIN_AXE@1",
       quality: "3",
     });
-    expect(a).toBe(
-      "https://albionoutpost.com/tools/market?region=asia&item=T4_MAIN_AXE%401&quality=3",
-    );
-    expect(a).not.toBe(b);
+    expect(a).toBe("https://albionoutpost.com/tools/market");
+    expect(a).toBe(b);
     expect(a).not.toContain("PRIVATE_VALUE");
   });
   it("rejects invalid identity and ambiguous repeated query values", () => {
@@ -121,16 +119,23 @@ describe("public metadata identity and social previews", () => {
   ])("rejects nonlocal/decorated canonical paths: %s", (path) =>
     expect(() => canonicalUrl(path)).toThrow(),
   );
-  it("retains actual category and pagination identity", () => {
+  it("retains source, category and pagination identity and drops narrowing filters", () => {
     expect(
       canonicalUrl("/builds", {
         source: "library",
         category: "MISTS_SOLO",
         region: "americas",
         page: "2",
+        weapon: "Battleaxe",
+        family: "axe",
+        tag: "solo",
+        view: "list",
+        sort: "recent",
+        utm_campaign: "x",
       }),
-    ).toBe(
-      "https://albionoutpost.com/builds?region=americas&source=library&category=MISTS_SOLO&page=2",
+    ).toBe("https://albionoutpost.com/builds?source=library&category=MISTS_SOLO&page=2");
+    expect(canonicalUrl("/builds", { weapon: "Battleaxe" })).toBe(
+      "https://albionoutpost.com/builds",
     );
     expect(metadataForPage("/builds", { category: "MISTS_SOLO" }).title).toBe(
       "Solo Mists builds — Albion Online",
@@ -139,8 +144,8 @@ describe("public metadata identity and social previews", () => {
   it.each(Object.keys(publicPages))(
     "has a distinct route canonical and complete share metadata for %s",
     (path) => {
-      const metadata = metadataForPage(path, { region: "europe" });
-      expect(metadata.alternates?.canonical).toBe(`https://albionoutpost.com${path}?region=europe`);
+      const metadata = metadataForPage(path, { region: "asia", utm_source: "x" });
+      expect(metadata.alternates?.canonical).toBe(`https://albionoutpost.com${path}`);
       expect(metadata.description?.length).toBeGreaterThan(40);
       expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
     },
@@ -149,9 +154,7 @@ describe("public metadata identity and social previews", () => {
     expect(metadataForPage("/compositions").title).toBe("Albion Online comps by activity");
     const list = metadataForPage("/compositions", { view: "all", region: "asia" });
     expect(list.title).toBe("Albion Online team compositions");
-    expect(list.alternates?.canonical).toBe(
-      "https://albionoutpost.com/compositions?region=asia&view=all",
-    );
+    expect(list.alternates?.canonical).toBe("https://albionoutpost.com/compositions?view=all");
     expect(metadataForPage("/compositions", { category: "ZVZ" }).title).toBe(
       "ZvZ comps — Albion Online",
     );
@@ -196,9 +199,7 @@ describe("anonymous authored share metadata privacy", () => {
       },
     });
     expect(metadata.title).toBe(record.title);
-    expect(metadata.alternates?.canonical).toBe(
-      "https://albionoutpost.com/builds/published-build?region=asia",
-    );
+    expect(metadata.alternates?.canonical).toBe("https://albionoutpost.com/builds/published-build");
     expect(metadata.robots).toMatchObject({ index: true });
     expect(JSON.stringify(metadata)).not.toContain("authorId");
   });
@@ -272,20 +273,40 @@ describe("anonymous authored share metadata privacy", () => {
 });
 
 describe("public archive and active catalog metadata", () => {
+  const archived = {
+    slug: "public-archive",
+    title: "Archived build",
+    author: "Dog",
+    description: "<p>Recorded notes</p>",
+    weaponName: "Battleaxe",
+    category: "MISTS_SOLO",
+    updatedAt: "2026-03-01",
+    upvotes: 2,
+    equipment: [
+      { slot: "Main hand", itemId: "T8_MAIN_AXE" },
+      { slot: "Helmet", itemId: "T8_HEAD_PLATE_SET1" },
+      { slot: "Potion", itemId: "" },
+    ],
+  };
   it("uses only the public archive resolver for a recorded build", async () => {
-    mocks.archiveBuild.mockResolvedValue({
-      slug: "public-archive",
-      title: "Archived build",
-      description: "<p>Recorded notes</p>",
-      weaponName: "Battleaxe",
-      category: "MISTS_SOLO",
-    });
+    mocks.archiveBuild.mockResolvedValue(archived);
     const metadata = await archiveShareMetadata("build", "public-archive", { region: "europe" });
-    expect(metadata.description).toBe("Recorded notes");
+    expect(metadata.title).toBe("Archived build — Battleaxe build for Solo Mists");
+    expect(metadata.description).toMatch(
+      /^Battleaxe build for Solo Mists by Dog: [^,.]+\. Recorded notes$/,
+    );
     expect(mocks.build).not.toHaveBeenCalled();
     expect(metadata.alternates?.canonical).toBe(
-      "https://albionoutpost.com/builds/library/public-archive?region=europe",
+      "https://albionoutpost.com/builds/library/public-archive",
     );
+    expect(metadata.robots).toMatchObject({ index: true });
+  });
+  it("keeps a build the library does not list out of the index, links still followed", async () => {
+    mocks.archiveBuild.mockResolvedValue({ ...archived, title: "Battleaxe clap", upvotes: 0 });
+    const metadata = await archiveShareMetadata("build", "public-archive");
+    expect(metadata.title).toBe("Battleaxe clap");
+    expect(metadata.robots).toEqual({ index: false, follow: true });
+    expect(metadata.alternates?.canonical).toBeNull();
   });
   it("does not fall back from missing archive entries to authored/private records", async () => {
     mocks.archiveBuild.mockResolvedValue(undefined);
@@ -308,7 +329,7 @@ describe("public archive and active catalog metadata", () => {
     mocks.item.mockResolvedValue({ id: "T4_MAIN_AXE@1", name: "Adept's Battleaxe", active: true });
     expect(
       (await itemShareMetadata("T4_MAIN_AXE%401", { region: "asia" })).alternates?.canonical,
-    ).toBe("https://albionoutpost.com/items/T4_MAIN_AXE%401?region=asia");
+    ).toBe("https://albionoutpost.com/items/T4_MAIN_AXE%401");
     expect(mocks.item.mock.calls[0][0].where).toEqual({ id: "T4_MAIN_AXE@1", active: true });
   });
 });
@@ -325,7 +346,16 @@ describe("public discovery output", () => {
       for (const kind of ["builds", "compositions", "guides"])
         writeFileSync(
           join(directory, `public/library/grind-${kind}.json`),
-          JSON.stringify([{ slug: `public-${kind}`, updatedAt: "2026-11-04T00:00:00Z" }]),
+          JSON.stringify([
+            {
+              slug: `public-${kind}`,
+              updatedAt: "2026-11-04T00:00:00Z",
+              upvotes: 1,
+              category: "MISTS_SOLO",
+            },
+            // Not listed by the library (no likes): its page is noindex, so it stays out.
+            { slug: `unliked-${kind}`, updatedAt: "2026-11-04T00:00:00Z", category: "ZVZ" },
+          ]),
         );
       const result = spawnSync(
         process.execPath,
@@ -341,7 +371,7 @@ describe("public discovery output", () => {
       const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(
         (entry) => new URL(entry[1].replaceAll("&amp;", "&")),
       );
-      expect(urls.length).toBeGreaterThan(50);
+      expect(urls.length).toBeGreaterThan(30);
       expect(new Set(urls.map(String)).size).toBe(urls.length);
       for (const url of urls) {
         expect(url.origin).toBe("https://albionoutpost.com");
@@ -358,6 +388,12 @@ describe("public discovery output", () => {
       expect(urls.some((url) => url.pathname === "/supporter")).toBe(false);
       expect(urls.some((url) => url.searchParams.get("category") === "MISTS_SOLO")).toBe(true);
       expect(urls.some((url) => url.pathname === "/builds/library/public-builds")).toBe(true);
+      expect(urls.some((url) => url.pathname === "/builds/library/unliked-builds")).toBe(false);
+      // An activity without a listed build is an empty list.
+      expect(urls.some((url) => url.searchParams.get("category") === "ZVZ")).toBe(false);
+      expect(
+        urls.some((url) => url.pathname === "/compositions/library/unliked-compositions"),
+      ).toBe(true);
       // robots.txt is a static file too; nothing the sitemap lists may be disallowed in it.
       const robots = readFileSync(join(directory, "public/robots.txt"), "utf8");
       expect(robots).toContain("Sitemap: https://albionoutpost.com/sitemap.xml");
@@ -365,7 +401,12 @@ describe("public discovery output", () => {
       // The rules for every crawler (the first group; later groups name single bots).
       const blocked = [...robots.split("\n\n")[0].matchAll(/^Disallow: (.+)$/gm)].map(
         ([, rule]) =>
-          new RegExp(`^${rule.replace(/[.+^${}()|[\]\\?]/g, "\\$&").replaceAll("*", ".*")}`),
+          new RegExp(
+            `^${rule
+              .replace(/[.+^${}()|[\]\\?]/g, "\\$&")
+              .replaceAll("*", ".*")
+              .replace(/\\\$$/, "$")}`,
+          ),
       );
       const crawlable = (path: string) => !blocked.some((rule) => rule.test(path));
       for (const url of urls) expect(crawlable(url.pathname + url.search)).toBe(true);
@@ -374,6 +415,10 @@ describe("public discovery output", () => {
       expect(crawlable("/builds/library/public-builds?region=europe")).toBe(false);
       expect(crawlable("/items/T4_BAG?region=asia")).toBe(false);
       expect(crawlable("/compositions?view=all")).toBe(true);
+      expect(crawlable("/builds/abc/edit")).toBe(false);
+      expect(crawlable("/compositions/abc/edit?region=asia")).toBe(false);
+      // A library slug that starts with "edit" is a public page, not an editor.
+      expect(crawlable("/builds/library/edit-7-man-roads")).toBe(true);
       expect(robots).toMatch(/User-agent: AhrefsBot\n(User-agent: .+\n)*Disallow: \/\n/);
     } finally {
       rmSync(directory, { recursive: true, force: true });

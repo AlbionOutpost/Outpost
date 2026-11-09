@@ -1,4 +1,4 @@
-import { archiveShareMetadata } from "@/lib/seo-public";
+import { archiveShareMetadata, libraryBuildFacts } from "@/lib/seo-public";
 import type { SeoQuery } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import Link from "@/components/build-region-link";
@@ -91,7 +91,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       />
       <BuildDetailHeader
         title={build.title}
-        description={brandCopy(build.description)}
+        description={brandCopy(build.description) || libraryBuildFacts(build)}
         author={build.author}
         activity={activityName(build.category)}
         tags={build.tags}
@@ -189,7 +189,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             }
             line="Other loadouts in the library built around the same weapon."
             link={{
-              href: `/builds?${new URLSearchParams({ source: "library", q: build.weaponName })}`,
+              href: `/builds?${new URLSearchParams({ source: "library", weapon: build.weaponName })}`,
               label: "All of them",
             }}
           />

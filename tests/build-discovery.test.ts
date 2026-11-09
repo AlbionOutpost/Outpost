@@ -92,6 +92,10 @@ describe("bounded device build collections", () => {
     expect(href).toContain("weapon=Battleaxe");
     expect(href).toContain("view=list");
     expect(href.endsWith("#results")).toBe(true);
+    // Europe is the default server: its links keep the plain, canonical address.
+    expect(withBuildRegion("/builds/library/x?region=asia&page=2", "europe")).toBe(
+      "/builds/library/x?page=2",
+    );
     expect(withBuildRegion("https://external.example/path", "asia")).toBe(
       "https://external.example/path",
     );

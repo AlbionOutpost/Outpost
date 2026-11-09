@@ -1,4 +1,5 @@
 "use client";
+import { withBuildRegion } from "@/lib/build-region";
 import Link from "@/components/link";
 import { Suspense, useState, useRef, useEffect, useTransition } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
@@ -211,7 +212,7 @@ export function Shell({
     "/shopping-list": "/tools",
   };
   const href = (url: string) =>
-    `${url === "/builds" ? "/builds/activities" : url}${url.includes("?") ? "&" : "?"}region=${region}`;
+    withBuildRegion(url === "/builds" ? "/builds/activities" : url, region);
   const productShell = true;
   const workspace = !["/", "/signin", "/legal"].includes(path) && !path.startsWith("/guides");
   useEffect(() => {
