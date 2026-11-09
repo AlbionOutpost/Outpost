@@ -17,7 +17,7 @@ import { plural } from "@/components/group-parts";
 import { AvatarFrame } from "@/components/avatar-frame";
 import styles from "@/components/account.module.css";
 import { displayName } from "@/lib/display-name";
-import { badgeSelect, storedSupporter } from "@/lib/billing/plan";
+import { badgeSelect, showsBadge } from "@/lib/billing/plan";
 import { SupporterBadge } from "@/components/supporter-badge";
 export const metadata = privateMetadata("Player profile");
 
@@ -90,7 +90,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
   if (!u || (!u.builds.length && !u.compositions.length && !u.comments.length && viewer !== id))
     notFound();
   const name = displayName(u.name);
-  const supporter = storedSupporter(u);
+  const supporter = showsBadge(u);
   return (
     <div className={styles.page}>
       <WorkspaceHeading

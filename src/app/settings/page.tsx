@@ -6,7 +6,13 @@ import { ArrowRight, Download } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { resolveAvatarFrame } from "@/lib/avatar-frames";
-import { isSupporter, launchOpen, supporterLabel, supporterSource } from "@/lib/billing/plan";
+import {
+  isSupporter,
+  launchOpen,
+  storedSupporter,
+  supporterLabel,
+  supporterSource,
+} from "@/lib/billing/plan";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
@@ -106,8 +112,10 @@ export default async function Settings({
               region: user.region,
               characterName: user.characterName || "",
               avatarFrame: resolveAvatarFrame(user.avatarFrame) ?? "none",
+              showSupporterBadge: user.showSupporterBadge,
             }}
             image={user.image}
+            badge={storedSupporter(user)}
           />
         </Group>
         <Group

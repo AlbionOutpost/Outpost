@@ -1,5 +1,5 @@
 import { authoredShareMetadata } from "@/lib/seo-public";
-import { badgeSelect, storedSupporter } from "@/lib/billing/plan";
+import { badgeSelect, showsBadge } from "@/lib/billing/plan";
 import type { SeoQuery } from "@/lib/seo";
 import { CommunityPanel } from "@/components/community-panel";
 import { SavedEquipmentSets } from "@/components/saved-equipment-sets";
@@ -56,7 +56,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         description={build.description}
         author={displayName(build.author.name)}
         authorHref={`/players/${build.author.id}`}
-        authorSupporter={storedSupporter(build.author)}
+        authorSupporter={showsBadge(build.author)}
         activity={build.contentType}
         updatedAt={build.updatedAt.toISOString()}
         revision={build.version}

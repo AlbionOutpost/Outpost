@@ -4,15 +4,25 @@ import { saveSettings, deleteAccount } from "@/app/settings/actions";
 import { WellSelect } from "./well-select";
 import { Field } from "./group-parts";
 import { AvatarFramePicker } from "./avatar-frame";
+import { SupporterBadge } from "./supporter-badge";
 import styles from "./account.module.css";
 
 export function PreferencesForm({
   initial,
   image,
+  badge,
 }: {
-  initial: { name: string; region: string; characterName: string; avatarFrame: string };
+  initial: {
+    name: string;
+    region: string;
+    characterName: string;
+    avatarFrame: string;
+    showSupporterBadge: boolean;
+  };
   /** The player's own Discord picture, drawn inside each frame option. */
   image: string | null;
+  /** The account holds the public badge (plan or gift), so it gets the show/hide choice. */
+  badge: boolean;
 }) {
   const [state, action, pending] = useActionState(saveSettings, { error: "" }),
     [values, setValues] = useState(initial);
@@ -20,7 +30,8 @@ export function PreferencesForm({
     values.name !== initial.name ||
     values.region !== initial.region ||
     values.characterName !== initial.characterName ||
-    values.avatarFrame !== initial.avatarFrame;
+    values.avatarFrame !== initial.avatarFrame ||
+    (badge && values.showSupporterBadge !== initial.showSupporterBadge);
   return (
     <form action={action} className={styles.form}>
       <div className={styles.formGrid}>
@@ -63,6 +74,32 @@ export function PreferencesForm({
             onChange={(e) => setValues({ ...values, characterName: e.target.value })}
           />
         </Field>
+        {badge && (
+          <label className={styles.badgeToggle}>
+            <input
+              type="checkbox"
+              checked={values.showSupporterBadge}
+              onChange={(e) => setValues({ ...values, showSupporterBadge: e.target.checked })}
+            />
+            <span>
+              <strong>
+                Show Supporter badge
+                <span aria-hidden="true">
+                  <SupporterBadge compact />
+                </span>
+              </strong>
+              <small>
+                Shows a small Supporter badge next to your name on builds, comps, comments and
+                Teams.
+              </small>
+            </span>
+            <input
+              type="hidden"
+              name="supporterBadge"
+              value={values.showSupporterBadge ? "shown" : "hidden"}
+            />
+          </label>
+        )}
       </div>
       {state.error && (
         <p role="alert" className={styles.alert}>

@@ -8,7 +8,13 @@ vi.mock("@/lib/legal", () => ({
 }));
 vi.mock("@/lib/db", () => ({ db: {}, databaseService: () => undefined }));
 vi.mock("server-only", () => ({}));
-import { launchGrant, publicSupporter, salesOpen, storedSupporter } from "@/lib/billing/plan";
+import {
+  launchGrant,
+  publicSupporter,
+  salesOpen,
+  showsBadge,
+  storedSupporter,
+} from "@/lib/billing/plan";
 
 const late = new Date("2026-12-01T00:00:00Z");
 describe("the public Supporter badge", () => {
@@ -29,17 +35,44 @@ describe("the public Supporter badge", () => {
     launchGrant.closedAt = new Date("2027-01-01T00:00:00Z");
     expect(storedSupporter({ plan: "FREE", createdAt: late })).toBe(false);
   });
-  it("hands on only the flag, never the plan or gift dates", () => {
+  it("hands on only the flag, never the plan, gift dates or preference", () => {
     const author = publicSupporter({
       name: "Ada",
       avatarFrame: null,
       plan: "FREE",
       supporterGiftUntil: new Date(Date.now() + 86400000),
       supporterGiftPermanent: false,
+      showSupporterBadge: true,
     });
     expect(author).toEqual({ name: "Ada", avatarFrame: null, supporter: true });
-    expect(JSON.stringify(author)).not.toMatch(/plan|Gift/);
-    expect(publicSupporter({ name: "Bo", plan: "FREE" })).toEqual({ name: "Bo", supporter: false });
+    expect(JSON.stringify(author)).not.toMatch(/plan|Gift|show/i);
+    expect(publicSupporter({ name: "Bo", plan: "FREE", showSupporterBadge: true })).toEqual({
+      name: "Bo",
+      supporter: false,
+    });
+  });
+  it("shows only while the Supporter keeps it on", () => {
+    expect(showsBadge({ plan: "SUPPORTER", showSupporterBadge: true })).toBe(true);
+    expect(showsBadge({ supporterGiftPermanent: true, showSupporterBadge: true })).toBe(true);
+    // Turned off in Settings: hidden everywhere, plan or gift alike.
+    expect(showsBadge({ plan: "SUPPORTER", showSupporterBadge: false })).toBe(false);
+    expect(showsBadge({ supporterGiftPermanent: true, showSupporterBadge: false })).toBe(false);
+    expect(publicSupporter({ name: "Cy", plan: "SUPPORTER", showSupporterBadge: false })).toEqual({
+      name: "Cy",
+      supporter: false,
+    });
+    // A query that forgets the preference column never shows a badge the player hid.
+    expect(showsBadge({ plan: "SUPPORTER" })).toBe(false);
+    // A free account never shows one, whatever the preference; nor does the launch grant.
+    expect(showsBadge({ plan: "FREE", showSupporterBadge: true })).toBe(false);
+    expect(
+      showsBadge({
+        plan: "FREE",
+        supporterGiftUntil: new Date(Date.now() - 1),
+        showSupporterBadge: true,
+      }),
+    ).toBe(false);
+    expect(showsBadge(null)).toBe(false);
   });
 });
 

@@ -42,25 +42,33 @@ export const launchSupporter = (user: Entitlement) =>
 export const storedSupporter = (user: Entitlement) =>
   user?.plan === "SUPPORTER" || giftedSupporter(user);
 
-/** The columns `storedSupporter` reads. Select them for an author or member, then hand on only
- * `publicSupporter(row)`: gift dates and plan state never leave the server. */
+/** The columns `showsBadge` reads. Select them for an author or member, then hand on only
+ * `publicSupporter(row)`: gift dates, plan state and the preference never leave the server. */
 export const badgeSelect = {
   plan: true,
   supporterGiftUntil: true,
   supporterGiftPermanent: true,
+  showSupporterBadge: true,
 } as const;
 type BadgeRow = {
   plan?: string | null;
   supporterGiftUntil?: Date | string | null;
   supporterGiftPermanent?: boolean;
+  showSupporterBadge?: boolean;
 };
-/** Swaps the entitlement columns for the public badge flag. The badge marks a stored plan or a
- * gift; the launch grant shows none (owner, 9 Nov 2026: the badge is a paid benefit). */
+/** The public badge shows: a stored plan or a gift, and the player has not hidden it. The launch
+ * grant shows none (owner, 9 Nov 2026: the badge is a paid benefit, optional and on by default).
+ * A row without the preference column reads as hidden, so a query that forgets it never shows a
+ * badge the player turned off. */
+export const showsBadge = (row: BadgeRow | null | undefined) =>
+  !!row?.showSupporterBadge && storedSupporter(row);
+
+/** Swaps the badge columns for the public badge flag. */
 export function publicSupporter<T extends BadgeRow>(row: T) {
-  const { plan, supporterGiftUntil, supporterGiftPermanent, ...rest } = row;
+  const { plan, supporterGiftUntil, supporterGiftPermanent, showSupporterBadge, ...rest } = row;
   return {
     ...rest,
-    supporter: storedSupporter({ plan, supporterGiftUntil, supporterGiftPermanent }),
+    supporter: showsBadge({ plan, supporterGiftUntil, supporterGiftPermanent, showSupporterBadge }),
   };
 }
 

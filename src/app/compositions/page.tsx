@@ -31,7 +31,7 @@ import {
 } from "@/lib/source-filter";
 import styles from "@/components/comps.module.css";
 import { displayName } from "@/lib/display-name";
-import { badgeSelect, storedSupporter } from "@/lib/billing/plan";
+import { badgeSelect, showsBadge } from "@/lib/billing/plan";
 import { SupporterBadge } from "@/components/supporter-badge";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions", await searchParams);
@@ -176,7 +176,7 @@ export default async function Compositions({
               byline={
                 <>
                   By {displayName(r.author.name)}
-                  {storedSupporter(r.author) && (
+                  {showsBadge(r.author) && (
                     <>
                       {" "}
                       <SupporterBadge compact />

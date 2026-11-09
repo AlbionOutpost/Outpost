@@ -1,6 +1,6 @@
 import { rootMetadata } from "@/lib/seo";
 import { AdsenseLoader } from "@/components/adsense-loader";
-import { storedSupporter } from "@/lib/billing/plan";
+import { showsBadge, storedSupporter } from "@/lib/billing/plan";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
@@ -48,6 +48,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           plan: true,
           supporterGiftUntil: true,
           supporterGiftPermanent: true,
+          showSupporterBadge: true,
           createdAt: true,
         },
       })
@@ -84,7 +85,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                   image: user.image,
                   avatarFrame: user.avatarFrame,
                   role: user.role,
-                  supporter: storedSupporter(user),
+                  supporter: showsBadge(user),
                 }
               : null
           }

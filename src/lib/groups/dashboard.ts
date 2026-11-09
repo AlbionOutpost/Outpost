@@ -4,7 +4,7 @@ import { can, fromMask, ownerRank, rankOf, resolveAccess } from "./permissions";
 import { buildInput } from "../builds/validation";
 import { memberSlot } from "../compositions/validation";
 import { displayName } from "../display-name";
-import { badgeSelect, storedSupporter } from "../billing/plan";
+import { badgeSelect, showsBadge } from "../billing/plan";
 export async function groupDashboard(id: string, userId?: string) {
   const group = await db.group.findUnique({
     where: { id },
@@ -166,7 +166,7 @@ export async function groupDashboard(id: string, userId?: string) {
         name: displayName(m.user.name),
         avatarFrame: m.user.avatarFrame,
         image: m.user.image,
-        supporter: storedSupporter(m.user),
+        supporter: showsBadge(m.user),
         joinedAt: m.joinedAt.toISOString(),
         owner: m.userId === group.ownerId,
         rank: m.userId === group.ownerId ? ownerRank : rankOf(m.roles.map((r) => r.role)),
