@@ -82,7 +82,7 @@ export function BuildWindow({
     // The landing's window module, so a build card is sized exactly like the landing's window
     <div className={`${windows.windows} build-window-slot`}>
       <article
-        className={`raised has-scene landing-window ${windows.window} build-window ${className}`}
+        className={`raised${href ? " is-link" : ""} landing-window ${windows.window} build-window ${className}`}
         data-scene="build"
         data-activity={category}
         data-activity-background={art?.src}

@@ -1,8 +1,8 @@
-/* Tools directory, in the landing's language: a search and category pills under the masthead,
-   then one section per kind of task with a mixed-case heading, its tools as framed cards
-   (emblem or glyph mark in the same slot, Barlow title, its whole description) four across.
-   Wide screens set every section in one five-column grid, each heading in the cell before its
-   tools, so the hub fits one screen at 1440x900. Phones list the same tools as compact rows.
+/* Tools directory: a search and category pills under the masthead, pinned tools, then the four
+   tools most players come for as large cards, then everything else as compact rows grouped by
+   category (Economy, Builds & comps, Teams & community). Every card is the plain surface
+   (`.raised.is-link`): the edge turns ember and the card lifts on hover and focus. At 1440 the
+   whole hub fits one screen: Economy takes three of five columns, the other two one each.
    Ends on the source note; no closing band. */
 .app.outpost .support-tools-directory {
   display: grid;
@@ -134,78 +134,45 @@
   color: var(--accent-ink);
 }
 
-/* Sections */
-.app.outpost .support-tools-directory .directory-groups {
-  display: grid;
-  gap: 32px;
-  margin-top: var(--space-4);
-}
-.app.outpost .support-tools-directory .directory-group .section-heading {
-  margin-bottom: 14px;
-}
-.app.outpost .support-tools-directory .directory-group .section-heading p {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-}
-.app.outpost .directory-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 9px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.5;
-}
-.app.outpost .support-tools-directory .directory-entries {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: 1fr;
-  gap: 16px;
-}
+/* Shared by both sizes of card: the link fills the card, the pin sits in its top corner */
 .app.outpost .support-tools-directory .directory-entry {
   position: relative;
-  display: block;
   min-width: 0;
 }
 .app.outpost .support-tools-directory .directory-entry-link {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
   height: 100%;
-  min-height: 96px;
-  padding: 16px 16px 14px;
+  padding: 12px 40px 12px 12px;
+  border-radius: inherit;
   color: var(--text);
   text-decoration: none;
 }
 .app.outpost .support-tools-directory .directory-entry-link:focus-visible {
   outline: 2px solid var(--focus);
-  outline-offset: 6px;
+  outline-offset: 3px;
 }
-.app.outpost .support-tools-directory .tool-symbol {
+.app.outpost .support-tools-directory .tool-symbol,
+.app.outpost .support-tools-directory .tool-symbol img {
   display: block;
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
 }
 .app.outpost .support-tools-directory .tool-symbol img {
-  width: 44px;
-  height: 44px;
   object-fit: contain;
   filter: drop-shadow(0 3px 6px #0009);
 }
 /* A tool without a painting of its own: its line glyph in a well of the emblem's size, so every
-   title in a section starts at the same x */
+   title starts at the same x */
 .app.outpost .tool-mark {
   display: grid;
   place-items: center;
   width: 100%;
   height: 100%;
   aspect-ratio: 1;
-  border-radius: 12px;
+  border-radius: 10px;
   color: var(--accent-ink);
 }
 .app.outpost .support-tools-directory .tool-shortcuts .tool-mark {
@@ -213,39 +180,37 @@
   border-radius: 8px;
 }
 .app.outpost .support-tools-directory .directory-entry-copy {
-  grid-column: -2;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 3px;
   min-width: 0;
-  padding-right: 36px;
 }
 .app.outpost .support-tools-directory .directory-entry h3 {
-  margin: 0 0 4px;
-  font: 800 19px/1.1 var(--font-display);
+  margin: 0;
+  overflow: hidden;
+  font: 800 15px/1.2 var(--font-display);
   letter-spacing: 0;
-  text-shadow: 0 1px 2px #000c;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .app.outpost .support-tools-directory .directory-entry p {
+  display: -webkit-box;
   margin: 0;
-  color: var(--secondary);
-  font-size: 13px;
-  line-height: 1.45;
-}
-.app.outpost .support-tools-directory .directory-arrow {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  color: var(--accent-ink);
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 .app.outpost .support-tools-directory .directory-pin {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   z-index: 4;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border: 1px solid var(--well-border);
   border-radius: 50%;
   background: var(--well);
@@ -263,6 +228,87 @@
 .app.outpost .support-tools-directory .directory-pin:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* Featured: four large cards, the painted emblem beside a display title and the pitch */
+.app.outpost .support-tools-directory .directory-featured {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 28px;
+}
+.app.outpost .support-tools-directory .is-featured .directory-entry-link {
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 116px;
+  padding: 18px 48px 18px 18px;
+}
+.app.outpost .support-tools-directory .is-featured :is(.tool-symbol, .tool-symbol img) {
+  width: 56px;
+  height: 56px;
+}
+.app.outpost .support-tools-directory .is-featured .directory-entry-copy {
+  gap: 6px;
+}
+.app.outpost .support-tools-directory .is-featured h3 {
+  font-size: 21px;
+  line-height: 1.1;
+  white-space: normal;
+}
+.app.outpost .support-tools-directory .is-featured p {
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-line-clamp: 3;
+}
+.app.outpost .support-tools-directory .is-featured .directory-pin {
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+}
+.app.outpost .support-tools-directory .directory-arrow {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  color: var(--accent-ink);
+}
+
+/* Everything else: one block per category, a small heading with its count over compact rows */
+.app.outpost .support-tools-directory .directory-groups {
+  display: grid;
+  gap: 24px;
+}
+.app.outpost .support-tools-directory .directory-group {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+.app.outpost .support-tools-directory .directory-group h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--secondary);
+  font: 800 17px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
+}
+.app.outpost .directory-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 700 12px/1.5 var(--font-ui);
+}
+.app.outpost .support-tools-directory .directory-entries {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 10px 12px;
 }
 .app.outpost .support-tools-directory .directory-empty {
   display: grid;
@@ -291,61 +337,66 @@
   line-height: 1.5;
 }
 
-/* One screen at 1440: every tool in one five-column grid, in section order, each description
-   running the card's full width under its emblem and name. The section headings stay for
-   assistive tech and the category pills group the tools; phones and tablets show them. */
+/* One screen at 1440: the three categories side by side in five columns, Economy across three */
 @media (min-width: 1281px) {
   .app.outpost .support-tools-directory .directory-groups {
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px 12px;
-    margin-top: 0;
+    gap: 16px 12px;
   }
-  .app.outpost .support-tools-directory :is(.directory-group, .directory-entries) {
-    display: contents;
+  .app.outpost .support-tools-directory .directory-group[data-wide] {
+    grid-column: span 3;
   }
-  .app.outpost .support-tools-directory .directory-group .section-heading {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+  .app.outpost .support-tools-directory .directory-group:only-child {
+    grid-column: 1 / -1;
   }
-  .app.outpost .support-tools-directory .directory-entry-link {
-    grid-template-columns: 32px minmax(0, 1fr);
-    align-content: start;
+  .app.outpost .support-tools-directory .directory-entries {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .support-tools-directory [data-wide] > .directory-entries {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .app.outpost .support-tools-directory .directory-group:only-child > .directory-entries {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  /* Compact rows: emblem and name on one line, the description across the card's width */
+  .app.outpost .support-tools-directory .directory-entry:not(.is-featured) .directory-entry-link {
+    grid-template-columns: 24px minmax(0, 1fr);
     align-items: center;
-    gap: 6px 10px;
-    min-height: 0;
-    padding: 12px;
+    gap: 4px 10px;
+    padding: 10px 12px 12px;
   }
-  .app.outpost .support-tools-directory .directory-entry-copy {
+  .app.outpost .support-tools-directory .directory-entry:not(.is-featured) .directory-entry-copy {
     display: contents;
   }
-  .app.outpost .support-tools-directory :is(.tool-symbol, .tool-symbol img) {
-    width: 32px;
-    height: 32px;
+  .app.outpost
+    .support-tools-directory
+    .directory-entry:not(.is-featured)
+    :is(.tool-symbol, .tool-symbol img) {
+    width: 24px;
+    height: 24px;
   }
-  .app.outpost .support-tools-directory .directory-entry h3 {
-    grid-column: 2;
-    margin: 0;
+  .app.outpost .support-tools-directory .directory-entry:not(.is-featured) h3 {
     padding-right: 30px;
-    font-size: 17px;
   }
-  .app.outpost .support-tools-directory .directory-entry p {
+  .app.outpost .support-tools-directory .directory-entry:not(.is-featured) p {
     grid-column: 1 / -1;
     align-self: start;
-    line-height: 1.35;
   }
-  .app.outpost .support-tools-directory .directory-arrow {
-    display: none;
+  .app.outpost .support-tools-directory .is-featured .directory-entry-link {
+    min-height: 0;
+    padding-block: 16px;
   }
-  .app.outpost .support-tools-directory .directory-pin {
-    top: 10px;
-    right: 8px;
-    width: 32px;
-    height: 32px;
+  .app.outpost .support-tools-directory .directory-featured {
+    margin-bottom: 20px;
+  }
+  .app.outpost .support-tools-directory .directory-group {
+    gap: 10px;
+  }
+  .app.outpost .support-tools-directory .directory-entries {
+    gap: 8px 12px;
+  }
+  .app.outpost .support-tools-directory .directory-footnote {
+    margin-top: var(--space-4);
   }
 }
 
@@ -357,12 +408,12 @@
     grid-column: 1 / -1;
     grid-row: 2;
   }
-  .app.outpost .support-tools-directory .directory-entries {
+  .app.outpost .support-tools-directory .directory-featured {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Phones: one framed card per row, tighter inside, like the landing's tool cards */
+/* Phones: featured cards one per row, then one compact row per tool */
 @media (max-width: 700px) {
   .app.outpost .support-tools-directory .directory-toolbar {
     grid-template-columns: minmax(0, 1fr);
@@ -376,28 +427,35 @@
     grid-auto-flow: column;
     justify-content: space-between;
   }
-  .app.outpost .support-tools-directory .directory-groups {
-    gap: 28px;
+  .app.outpost .support-tools-directory .directory-featured {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .app.outpost .support-tools-directory .is-featured .directory-entry-link {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 14px;
+    min-height: 0;
+    padding: 14px 48px 14px 14px;
+  }
+  .app.outpost .support-tools-directory .is-featured :is(.tool-symbol, .tool-symbol img) {
+    width: 44px;
+    height: 44px;
+  }
+  .app.outpost .support-tools-directory .is-featured h3 {
+    font-size: 19px;
+  }
+  .app.outpost .support-tools-directory .is-featured p {
+    font-size: 13px;
+  }
+  .app.outpost .support-tools-directory .is-featured .directory-arrow {
+    display: none;
   }
   .app.outpost .support-tools-directory .directory-entries {
     grid-template-columns: minmax(0, 1fr);
     grid-auto-rows: auto;
-    gap: 12px;
   }
-  .app.outpost .support-tools-directory .directory-entry-link {
-    gap: 12px;
-    min-height: 0;
-    padding: 12px 14px;
-  }
-  .app.outpost .support-tools-directory .directory-entry-link {
-    grid-template-columns: 40px minmax(0, 1fr);
-  }
-  .app.outpost .support-tools-directory .tool-symbol,
-  .app.outpost .support-tools-directory .tool-symbol img {
-    width: 40px;
-    height: 40px;
-  }
-  .app.outpost .support-tools-directory .directory-entry h3 {
-    font-size: 18px;
+  .app.outpost .support-tools-directory .directory-entry p {
+    -webkit-line-clamp: 4;
   }
 }

@@ -220,7 +220,7 @@ function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: R
   const main = build.equipment.find((e) => e.slot === "Main hand");
   return (
     <article
-      className={`raised has-scene landing-window ${windows.window} ${styles.buildWindow}`}
+      className={`raised landing-window ${windows.window} ${styles.buildWindow}`}
       data-scene="build"
       data-team-build=""
     >
