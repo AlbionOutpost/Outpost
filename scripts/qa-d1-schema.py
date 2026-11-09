@@ -456,6 +456,16 @@ def giveaways_upgrade():
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
 check("giveaways upgrade gives Manage giveaways to Manage team holders, keeps one entry each and freezes the draw", giveaways_upgrade)
 
+def supporter_badge_upgrade():
+    db.execute('INSERT INTO "User"(id,name,plan,updatedAt) VALUES(?,?,?,CURRENT_TIMESTAMP)', ("qa-badge-user", "Badge", "SUPPORTER"))
+    db.executescript((root / "cloudflare/d1/migrations/0018_supporter_badge.sql").read_text())
+    # Existing accounts keep the badge on; the player can turn it off.
+    assert db.execute('SELECT name, plan, showSupporterBadge FROM "User" WHERE id=?', ("qa-badge-user",)).fetchone() == ("Badge", "SUPPORTER", 1)
+    db.execute('UPDATE "User" SET showSupporterBadge=? WHERE id=?', (0, "qa-badge-user"))
+    assert db.execute('SELECT showSupporterBadge FROM "User" WHERE id=?', ("qa-badge-user",)).fetchone() == (0,)
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-badge-user",))
+check("supporter badge upgrade keeps every account's badge on and lets it be turned off", supporter_badge_upgrade)
+
 def catalog_read_indexes():
     # Public D1 catalog only: 0001 + 0002 as staged, then 0017 twice (the workflow re-runs it).
     catalog = sqlite3.connect(":memory:")

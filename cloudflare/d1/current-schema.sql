@@ -20,6 +20,7 @@ CREATE TABLE "User" (
     "billingCheckout" TEXT CHECK ("billingCheckout" IS NULL OR json_valid("billingCheckout")),
     "supporterGiftUntil" DATETIME,
     "supporterGiftPermanent" BOOLEAN NOT NULL DEFAULT false,
+    "showSupporterBadge" BOOLEAN NOT NULL DEFAULT true,
     "bannedAt" DATETIME,
     "bannedUntil" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

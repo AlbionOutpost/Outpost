@@ -114,7 +114,7 @@ Bodies are strict JSON (8 KiB): `create` takes `title` (3–100), `prize` (1–5
 | `GET /api/health`                                          | pub                   | Health check                                                                |
 | `GET /ads.txt`                                             | pub                   | Authorised-seller line for the configured AdSense publisher, else a comment |
 
-Settings changes and account deletion are Server Actions in `src/app/settings/actions.ts` (20/min and 3/h). Preferences take `name`, `region`, `characterName` and `avatarFrame` (`none` or one id from `src/lib/avatar-frames.ts`; anything else is rejected and nothing is written), always on the signed-in player's own row; signed out, the action redirects to sign-in. The account export includes `avatarFrame`, and community comments return each author's `avatarFrame` beside their name.
+Settings changes and account deletion are Server Actions in `src/app/settings/actions.ts` (20/min and 3/h). Preferences take `name`, `region`, `characterName`, `avatarFrame` (`none` or one id from `src/lib/avatar-frames.ts`; anything else is rejected and nothing is written) and an optional `supporterBadge` (`shown` or `hidden`, sent only by the form of an account that holds the badge; absent leaves the stored choice, anything else is rejected), always on the signed-in player's own row; signed out, the action redirects to sign-in. The account export includes `avatarFrame` and `showSupporterBadge`, and community comments return each author's `avatarFrame` beside their name.
 
 ## Older personal records
 

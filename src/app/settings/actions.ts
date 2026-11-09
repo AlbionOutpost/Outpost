@@ -27,6 +27,8 @@ const settings = z.object({
     .enum(["none", ...avatarFrameIds])
     .transform((v) => (v === "none" ? null : v))
     .optional(),
+  /** Sent only by accounts shown the Supporter badge toggle; absent leaves the stored choice. */
+  supporterBadge: z.enum(["shown", "hidden"]).optional(),
 });
 export type SettingsActionState = { error: string };
 export async function saveSettings(
@@ -57,7 +59,10 @@ export async function saveSettings(
       where: { id: session.user.id },
       select: { name: true },
     });
-    const { name, ...data } = parsed.data;
+    const { name, supporterBadge, ...fields } = parsed.data;
+    const data = supporterBadge
+      ? { ...fields, showSupporterBadge: supporterBadge === "shown" }
+      : fields;
     // Unchanged: the stored name is left exactly as it is.
     const unchanged = name === current?.name?.trim();
     const clean = cleanDisplayName(name);

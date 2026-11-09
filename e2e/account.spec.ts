@@ -191,3 +191,61 @@ test("account export excludes revoked team ledgers and deletion preserves shared
   }
 });
 test.afterAll(() => db.$disconnect());
+test("a Supporter can hide the public badge; a free account gets no toggle", async ({
+  page,
+  context,
+}) => {
+  const id = `atlas-test-${randomUUID()}`,
+    freeId = `atlas-test-${randomUUID()}`,
+    token = randomUUID(),
+    freeToken = randomUUID();
+  const session = (value: string) => ({
+    name: "next-auth.session-token",
+    value,
+    domain: "localhost",
+    path: "/",
+    httpOnly: true,
+    sameSite: "Lax" as const,
+  });
+  try {
+    await db.user.create({
+      data: {
+        id,
+        name: "Badge fixture",
+        supporterGiftPermanent: true,
+        sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+      },
+    });
+    await db.user.create({
+      data: {
+        id: freeId,
+        name: "Free fixture",
+        sessions: { create: { sessionToken: freeToken, expires: new Date(Date.now() + 600000) } },
+      },
+    });
+    const badge = page.locator("main").getByTitle("Supporter: helps keep Outpost running");
+    await context.addCookies([session(token)]);
+    await page.goto(`/players/${id}`);
+    await expect(badge).toBeVisible();
+    await page.goto("/settings");
+    const toggle = page.getByRole("checkbox", { name: "Show Supporter badge" });
+    await expect(toggle).toBeChecked();
+    await toggle.uncheck();
+    await page.getByRole("button", { name: "Save preferences" }).click();
+    await expect(page.getByRole("status")).toContainText("Preferences saved");
+    expect((await db.user.findUniqueOrThrow({ where: { id } })).showSupporterBadge).toBe(false);
+    await expect(toggle).not.toBeChecked();
+    const exported = await (await context.request.get("/api/account/export")).json();
+    expect(exported.profile.showSupporterBadge).toBe(false);
+    await page.goto(`/players/${id}`);
+    await expect(page.getByRole("heading", { name: /Badge fixture/ })).toBeVisible();
+    await expect(badge).toHaveCount(0);
+    await context.clearCookies();
+    await context.addCookies([session(freeToken)]);
+    await page.goto("/settings");
+    await expect(page.getByRole("heading", { name: "Profile & preferences" })).toBeVisible();
+    await expect(page.getByRole("checkbox", { name: "Show Supporter badge" })).toHaveCount(0);
+  } finally {
+    await db.user.deleteMany({ where: { id: { in: [id, freeId] } } });
+  }
+});

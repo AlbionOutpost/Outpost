@@ -67,6 +67,39 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
 }
+/* The Supporter badge choice: a full-width well row, checkbox beside its name and line. */
+:global(.app.outpost) .badgeToggle.badgeToggle {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  cursor: pointer;
+}
+:global(.app.outpost) .badgeToggle.badgeToggle > input {
+  margin-top: 2px;
+}
+:global(.app.outpost) .badgeToggle.badgeToggle > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+:global(.app.outpost) .badgeToggle.badgeToggle strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text);
+  font: 600 14px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .badgeToggle.badgeToggle small {
+  color: var(--muted);
+  font: 500 13px/1.5 var(--font-ui);
+}
 :global(.app.outpost) .saveBar.saveBar {
   display: flex;
   flex-wrap: wrap;
