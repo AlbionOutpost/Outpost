@@ -210,10 +210,7 @@ export default async function Supporter({
           }
         />
         <div className="supporter-grid">
-          <article
-            className={`raised has-scene landing-window ${windows.window}`}
-            data-scene="market"
-          >
+          <article className={`raised landing-window ${windows.window}`} data-scene="market">
             <div className={`landing-window-bar ${windows.bar}`}>
               <h3 className="landing-window-title">Run your Team</h3>
               <span className="landing-chips">

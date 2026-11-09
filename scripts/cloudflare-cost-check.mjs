@@ -418,9 +418,10 @@ export function boundServices(configs) {
   };
 }
 
-class ApiError extends Error {}
+export class ApiError extends Error {}
 
-async function graphql(text, variables, token, fetcher) {
+/** One account-scoped GraphQL Analytics query; throws ApiError on any HTTP or GraphQL error. */
+export async function graphql(text, variables, token, fetcher) {
   const response = await fetcher("https://api.cloudflare.com/client/v4/graphql", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },

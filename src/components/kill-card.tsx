@@ -133,10 +133,7 @@ export function KillCard({
   const age = sourceAge(ev.occurredAt, at);
   const crew = ev.crew;
   return (
-    <article
-      className={`raised has-scene kill-card${className ? ` ${className}` : ""}`}
-      data-scene={scene}
-    >
+    <article className={`raised kill-card${className ? ` ${className}` : ""}`} data-scene={scene}>
       {rank !== undefined && (
         // eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem
         <img
@@ -286,7 +283,7 @@ export function KillCard({
 /** A killboard waiting for its fight: the same frame, empty boards and wells, no names. */
 export function KillCardSkeleton({ scene = "composition" }: { scene?: string }) {
   return (
-    <div className="raised has-scene kill-card is-skeleton" data-scene={scene} aria-hidden="true">
+    <div className="raised kill-card is-skeleton" data-scene={scene} aria-hidden="true">
       <div className="kill-boards">
         <LoadoutBoard pieces={[]} size="mini" abilities={false} />
         <div className="kill-mid" />

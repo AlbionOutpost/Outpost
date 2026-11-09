@@ -935,9 +935,10 @@
   overflow: clip;
   overflow-clip-margin: 14px;
 }
-/* Framed cards. The card itself paints nothing: its dark gradient and pointer light are one
-   layer (::before) cut to the frame's shape (corners clipped by --cut), so no square corner
-   shows past the frame; the frame is the other layer (::after). The layer overhangs by 16px and
+/* Framed cards: the landing's teaser windows and tool showcase only (DESIGN.md "Shapes"). The
+   card itself paints nothing: its dark gradient and pointer light are one layer (::before) cut
+   to the frame's shape (corners clipped by --cut), so no square corner shows past the frame;
+   the frame is the other layer (::after). The layer overhangs by 16px and
    is clipped back (no mask: masked layers drop out under a transformed parent in Chromium). */
 .app.outpost .raised.has-scene {
   --cut: 12px;

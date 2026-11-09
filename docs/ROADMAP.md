@@ -4,6 +4,11 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## One box style and a tools page with a lead — 9 November 2026
+
+- The ornate copper frame with its diamond gems now stays on the landing's teaser windows and tool showcase only. Tool cards, build and comp windows, comp members, kill cards, next-step cards, the market desk and the slot picker use the plain surface, and cards that lead somewhere light their edge and lift on hover and focus.
+- `/tools` leads with Market Explorer, Crafting, Market flipping and the Black Market board as large cards with a one-line pitch, then the other 21 tools as compact cards under Economy, Builds & comps and Teams & community. Search, category pills and pins work as before; it still fits 1440×900.
+
 ## Worker CPU back toward the allowance — 9 November 2026
 
 - Worker CPU was the only allowance over its limit (≈ 430 M CPU-ms a month against 30 M). Crawlers made ≈ 90 % of it, mostly archived builds, `?region=` copies and the build list's search and layout variants, and nearly every request woke a cold isolate (≈ 0.9 s each).
@@ -16,6 +21,12 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - New D1-only migration `0017_catalog_reads.sql`: partial indexes over the 1.4 k listed builds and the comps, covering item indexes, `PRAGMA optimize`. Lookups by id or slug use two index searches; item variants and links look up by id only; slots are ten one-row reads; an empty item search adds no filter; a short first page of library results needs no separate count; the data Worker keeps public catalog and archive reads 5 min.
 - Measured locally on the real data: ≈ 2,700 → ≈ 530 rows per query on average, with every result identical (tests compare old and new queries on the staged archive). Numbers in [OPERATIONS.md § Cost guardrails](OPERATIONS.md#cost-guardrails).
 - Next: deploy, then apply `0017` (`node scripts/cloudflare-library-upvotes.mjs --apply`; the Library data workflow still needs a token with D1 Edit) and compare a week of D1 rows read. Then the item database's tier-band counts (precompute at import) and Market Explorer's grouped search.
+
+## Error alerts and restore runbook — 9 November 2026
+
+- **Discord error alerts:** every 15 minutes a workflow reads Cloudflare's Workers analytics and posts once when pages fail (≥ 5 % of at least 20 requests), the data Worker or a Durable Object errors, the kill collector stops or fails (a stale Albion feed now fails its cron run), or traffic drops to zero in an hour that always has visitors, and once when it is over ([OPERATIONS.md § Error alerts](OPERATIONS.md#error-alerts)).
+- **Backups:** the private store's 30-day point-in-time recovery and D1's 30-day Time Travel are the backups. The restore script now needs the owner typing a confirmation at a terminal (never CI or an agent), keeps the helper's token as a secret, checks times and bookmarks before deploying, and is tested ([OPERATIONS.md § Backups and recovery](OPERATIONS.md#backups-and-recovery)).
+- Next: the owner runs `cloudflare-recovery.mjs bookmark` once (Now #4) and optionally adds the alerts webhook (OA-13).
 
 ## Cost guard — 9 November 2026
 
@@ -292,7 +303,7 @@ Open items found on the way:
 | 1   | ~~Fix CI on `main`.~~ Done 30 Oct: the SQLite staging scripts no longer depend on `quote()` typing, the deploy token was replaced, and both workflows annotate the failing command.                                                                                                                                                                                                             | Green and deploying                                   |
 | 2   | **Design system reset.** Replace the 16 layered global stylesheets (~350 KB on every route, plus route sheets) with one token file, one component layer (button, input, card, item well, table, tabs, chip, dialog) and per-archetype route styles. Move to the navy + ember palette and illustrated mastheads chosen on 30 Oct (DESIGN.md), enforce the 12px text floor and the spacing scale. | Biggest single lever on polish, consistency and speed |
 | 3   | **Mobile speed.** Lab mobile LCP is 3.6–5.3 s on home, library, detail, market and crafting (target ≤2.5 s). Cut global CSS, check font and hero image loading, re-measure with a repeatable protocol.                                                                                                                                                                                          | Phones are first-class users                          |
-| 4   | **Verify recovery.** After the next deploy, run `node scripts/cloudflare-recovery.mjs bookmark` once to confirm point-in-time recovery works on the Free plan. Email alerts for Worker errors, DDoS, SSL and abuse reports are on.                                                                                                                                                              | Backups only count once a restore path is proven      |
+| 4   | **Verify recovery.** Run `node scripts/cloudflare-recovery.mjs bookmark` once (read-only) to confirm point-in-time recovery answers on production ([OPERATIONS.md § Restoring private data](OPERATIONS.md#restoring-private-data)). Email alerts for Worker errors, DDoS, SSL and abuse reports are on; Discord error alerts run every 15 minutes.                                              | Backups only count once a restore path is proven      |
 | 5   | **Legal page.** Operator name/contact and a privacy policy; then real Terms/Privacy URLs in the Discord portal.                                                                                                                                                                                                                                                                                 | Required for an account-holding site                  |
 
 ## Shipped — launch pass (30 Oct)
@@ -495,6 +506,8 @@ Only the owner can do these.
 | OA-10 | Write down homepage acceptance criteria before the next homepage pass (four iterations were rejected in three days)                                                                                                                                                  |
 | OA-11 | Delete leftover merged branches on GitHub                                                                                                                                                                                                                            |
 | OA-12 | Add `CLOUDFLARE_ANALYTICS_TOKEN` (Account Analytics Read) and `DISCORD_COST_WEBHOOK_URL` to the `cloudflare-production` environment, set `OUTPOST_BILLING_DAY`, and a $1 Cloudflare budget alert ([OPERATIONS.md § Cost guardrails](OPERATIONS.md#daily-cost-check)) |
+| OA-13 | Optional: add `DISCORD_ALERTS_WEBHOOK_URL` (a separate channel for outages), then run the Cloudflare health check workflow once by hand ([OPERATIONS.md § Error alerts](OPERATIONS.md#error-alerts))                                                                 |
+| OA-14 | Decide on an off-Cloudflare weekly copy of the private data (proposal: an encrypted export to the owner's own storage; nothing is built)                                                                                                                             |
 
 ## Tech debt
 
@@ -514,7 +527,7 @@ A release is "done" when all of these hold:
 2. Real Discord login lifecycle verified on production HTTPS.
 3. Legal page with real operator details and privacy policy.
 4. Private data recoverable (30-day point-in-time recovery) with a verified restore path.
-5. Error alerting reaches the owner (done: email); uptime probe still missing.
+5. Error alerting reaches the owner (done: email, and Discord every 15 minutes from Cloudflare analytics); an outside HTTP probe is still missing.
 6. All data labelled with source and date; patch drift tracked.
 7. Every shipped calculator mode has sourced coefficients and hand-checked fixtures; unsupported modes are absent, not faked.
 8. Mobile LCP ≤2.5 s on home, market and builds.

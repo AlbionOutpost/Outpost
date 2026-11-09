@@ -3,6 +3,7 @@ import {
   KILL_WINDOW_MS,
   SHORTLIST_SIZE,
   candidatesFrom,
+  collectKillFeeds,
   combatHosts,
   fetchKillCandidates,
   mergeShortlist,
@@ -152,5 +153,37 @@ describe("ranking by estimated gear value", () => {
     ] as never[];
     const ranked = rankByGearValue([a], prices, ["Martlock"], now);
     expect(ranked[0].gearValue).toEqual({ total: 400, priced: 1, missing: 1 });
+  });
+});
+
+describe("cron pass", () => {
+  const kill = { id: 1, occurredAt: Date.now(), fame: 10, raw: {} };
+  const event = { id: 1 } as never;
+
+  it("records every server and succeeds when each live feed answered", async () => {
+    const recorded: string[] = [];
+    await collectKillFeeds(
+      ["europe", "americas", "asia"],
+      async (region) => recorded.push(region),
+      async () => ({ candidates: [kill], recent: [event] }),
+    );
+    expect(recorded).toEqual(["europe", "americas", "asia"]);
+  });
+
+  it("still records the healthy servers, then fails naming the stale or failing ones", async () => {
+    const recorded: string[] = [];
+    const run = collectKillFeeds(
+      ["europe", "americas", "asia"],
+      async (region) => {
+        if (region === "asia") throw new Error("write failed");
+        recorded.push(region);
+      },
+      async (region) =>
+        region === "americas"
+          ? { candidates: [kill], recent: [] } // only the weekly ranking answered
+          : { candidates: [kill], recent: [event] },
+    );
+    await expect(run).rejects.toThrow("Kill collector: no fresh kills from americas, asia");
+    expect(recorded).toEqual(["europe", "americas"]);
   });
 });

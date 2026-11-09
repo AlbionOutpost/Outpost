@@ -1,0 +1,195 @@
+{
+  "data": {
+    "viewer": {
+      "accounts": [
+        {
+          "workers": [
+            {
+              "dimensions": {
+                "eventType": "fetch",
+                "httpResponseStatus": 200,
+                "scriptName": "albionoutpost-web",
+                "status": "success"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 185
+              }
+            },
+            {
+              "dimensions": {
+                "eventType": "fetch",
+                "httpResponseStatus": 404,
+                "scriptName": "albionoutpost-web",
+                "status": "success"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 5
+              }
+            },
+            {
+              "dimensions": {
+                "eventType": "fetch",
+                "httpResponseStatus": 308,
+                "scriptName": "albionoutpost-web",
+                "status": "success"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 4
+              }
+            },
+            {
+              "dimensions": {
+                "eventType": "fetch",
+                "httpResponseStatus": 200,
+                "scriptName": "albionoutpost-web",
+                "status": "clientDisconnected"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 1
+              }
+            },
+            {
+              "dimensions": {
+                "eventType": "rpc",
+                "httpResponseStatus": 0,
+                "scriptName": "albionoutpost-data",
+                "status": "success"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 341
+              }
+            },
+            {
+              "dimensions": {
+                "eventType": "rpc",
+                "httpResponseStatus": 0,
+                "scriptName": "albionoutpost-data",
+                "status": "clientDisconnected"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 4
+              }
+            },
+            {
+              "dimensions": {
+                "eventType": "cron",
+                "httpResponseStatus": 0,
+                "scriptName": "albionoutpost-data",
+                "status": "success"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 24
+              }
+            }
+          ],
+          "objects": [
+            {
+              "dimensions": {
+                "namespaceId": "649b5d4b121c46078fbd4d6e5c888e70",
+                "scriptName": "albionoutpost-data"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 7
+              }
+            },
+            {
+              "dimensions": {
+                "namespaceId": "a898d41cbe2848038da7a04cec324b0f",
+                "scriptName": "albionoutpost-data"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 4
+              }
+            },
+            {
+              "dimensions": {
+                "namespaceId": "c8c1e14d6e7c48728cd6cd3d21d1a542",
+                "scriptName": "albionoutpost-data"
+              },
+              "sum": {
+                "errors": 0,
+                "requests": 81
+              }
+            }
+          ],
+          "history": [
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-02T16:00:00Z"
+              },
+              "sum": {
+                "requests": 230
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-03T16:00:00Z"
+              },
+              "sum": {
+                "requests": 260
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-04T16:00:00Z"
+              },
+              "sum": {
+                "requests": 210
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-05T16:00:00Z"
+              },
+              "sum": {
+                "requests": 144
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-06T16:00:00Z"
+              },
+              "sum": {
+                "requests": 444
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-07T16:00:00Z"
+              },
+              "sum": {
+                "requests": 901
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-08T16:00:00Z"
+              },
+              "sum": {
+                "requests": 802
+              }
+            },
+            {
+              "dimensions": {
+                "datetimeHour": "2026-11-08T15:00:00Z"
+              },
+              "sum": {
+                "requests": 889
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "errors": null
+}

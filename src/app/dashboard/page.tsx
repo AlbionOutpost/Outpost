@@ -180,7 +180,7 @@ export default async function Dashboard() {
         }
       />
       {fresh ? (
-        <section className={`raised has-scene ${styles.first}`} data-scene="build">
+        <section className={`raised ${styles.first}`} data-scene="build">
           {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
           <img src="/albion/icons/strip-builds.webp" alt="" width={96} height={96} />
           <div className={styles.firstCopy}>
