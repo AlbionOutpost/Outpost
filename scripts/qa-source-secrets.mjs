@@ -14,6 +14,8 @@ export function scanText(text, configured = {}) {
   if (/\bcf(?:at|ut|k)_[A-Za-z0-9_-]{40,}\b/.test(text)) matches.push("cloudflare-token");
   if (/\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{20,}\b/.test(text)) matches.push("stripe-key");
   if (/\bwhsec_[A-Za-z0-9]{24,}\b/.test(text)) matches.push("stripe-webhook");
+  if (/discord(?:app)?\.com\/api\/webhooks\/\d{5,25}\/[A-Za-z0-9_-]{60,}/.test(text))
+    matches.push("discord-webhook");
   return matches;
 }
 

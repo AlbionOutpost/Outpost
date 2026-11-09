@@ -57,11 +57,11 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 ## Runtime configuration
 
-| Kind          | Values                                                                                                                                                                                                                                                                                                                                  | Where set                                                                                   |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Vars (web)    | `OUTPOST_RUNTIME`, `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`, optional `NEXT_PUBLIC_ADSENSE_CLIENT` (AdSense `ca-pub-…`; unset = no ad units, strict CSP) with `NEXT_PUBLIC_ADSENSE_SLOT_HUB` / `NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE` (the two ad unit ids) | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
-| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`; Supporter billing: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_SUPPORTER` (all three or none)                                                                                                                                                           | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
-| GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`                                                                                                                                                           | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
+| Kind          | Values                                                                                                                                                                                                                                                                                                                                                                                            | Where set                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Vars (web)    | `OUTPOST_RUNTIME`, optional `OUTPOST_SAVE_MODE=1` ([Save mode](#save-mode)), `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`, optional `NEXT_PUBLIC_ADSENSE_CLIENT` (AdSense `ca-pub-…`; unset = no ad units, strict CSP) with `NEXT_PUBLIC_ADSENSE_SLOT_HUB` / `NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE` (the two ad unit ids) | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
+| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`; Supporter billing: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_SUPPORTER` (all three or none)                                                                                                                                                                                                                     | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
+| GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`; cost check: secrets `CLOUDFLARE_ANALYTICS_TOKEN` (Account Analytics Read), `DISCORD_COST_WEBHOOK_URL`, var `OUTPOST_BILLING_DAY`; optional var `OUTPOST_SAVE_MODE` ([Save mode](#save-mode))                       | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
 
 ### Local credential files (git-ignored, mode 0600, never print or commit)
 
@@ -140,6 +140,59 @@ Overage is billed per started unit: Durable Object duration costs $12.50 per mil
 
 **Expected after 9 Nov 2026:** Durable Object duration falls from ≈ 840 k GB-s to roughly 15–20 k GB-s a month (the data Worker's objects); Durable Object requests drop by the 157 k session requests plus the edge-budget `AbuseBudget` calls; Worker CPU rises as above.
 
+### Daily cost check
+
+`.github/workflows/cost-check.yml` ("Cloudflare cost check") runs `scripts/cloudflare-cost-check.mjs` every day at 06:23 UTC (and on demand: Actions → Cloudflare cost check → Run workflow). It reads the GraphQL Analytics API for the billing period so far and the last full UTC day, projects each line to the end of the period and prints a table (also in the run's summary):
+
+| Line                    | Dataset                                                             | Included (Workers Paid)                                                                              |
+| ----------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Worker requests, CPU    | `workersInvocationsAdaptive` (`requests`, `cpuTimeUs`), per script  | 10 M requests, 30 M CPU-ms ([pricing](https://developers.cloudflare.com/workers/platform/pricing/))  |
+| DO requests             | `durableObjectsInvocationsAdaptiveGroups`                           | 1 M ([DO pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/))              |
+| DO duration             | `durableObjectsPeriodicGroups.activeTime` × 0.125 GB, per namespace | 400 k GB-s                                                                                           |
+| DO SQLite rows, storage | `durableObjectsPeriodicGroups` rows, `durableObjectsStorageGroups`  | 25 B read, 50 M written, 5 GB                                                                        |
+| D1 rows, storage        | `d1AnalyticsAdaptiveGroups`, `d1StorageAdaptiveGroups`              | 25 B read, 50 M written, 5 GB ([D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/)) |
+| KV, R2                  | `kvOperationsAdaptiveGroups`, `r2OperationsAdaptiveGroups`          | Only when a Worker binds them (none does today)                                                      |
+
+Allowances were checked against Cloudflare's pricing pages on 9 Nov 2026; they live in `ALLOWANCES` in the script. It **alerts** when a period projection reaches 80 % of an allowance, when the last day's rate would pass 100 % over a whole period, or when storage passes 80 %. The alert goes to Discord when the webhook secret is set, and always shows as a warning on the run. An alert never fails the run; a Cloudflare or Discord API error does (GitHub then emails the owner). The DO SQLite row and storage lines are best effort: if the API does not answer them they show "Unavailable", never zero. Worker requests include service-binding calls, which are not billed, so that line runs high. Early in a period the projection counts at least one elapsed day.
+
+**What the owner adds** (repository → Settings → Environments → `cloudflare-production`; the job runs in that environment to read `CLOUDFLARE_ACCOUNT_ID`, so each run is listed there as a deployment):
+
+1. **Secret `CLOUDFLARE_ANALYTICS_TOKEN`.** Cloudflare dashboard → My Profile → API Tokens → Create Token → Custom token: permission **Account → Account Analytics → Read**, account resources: the Outpost account only, an expiry (set a reminder). Nothing else. The deploy token (`CLOUDFLARE_API_TOKEN`) is Workers Scripts Write only and is not used here.
+2. **Secret `DISCORD_COST_WEBHOOK_URL`** (optional but recommended). In the Discord server: channel → Edit Channel → Integrations → Webhooks → New Webhook → Copy Webhook URL. Outpost's bot cannot post messages by design, so the alert uses a webhook. The message mentions nobody.
+3. **Variable `OUTPOST_BILLING_DAY`** (optional): the day of the month the Workers Paid subscription renews (Manage Account → Billing → Subscriptions). Monthly allowances reset on that day, not on the 1st. Default 1.
+
+Until the token exists, the run ends with a notice and does nothing. Run it by hand once after adding the secrets.
+
+### Cost budget on pull requests
+
+Every pull request fails when a change makes the site measurably dearer to run. The budgets live in `scripts/cloudflare-cost-budget.json`; change one only on purpose, with the reason in the PR.
+
+| Check                                                                                                                      | Where                                                                                    | Why this signal                                                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web Worker ≤ 3,840 KiB gzip, data Worker ≤ 1,280 KiB (9 Nov: 3,206 and 1,028; about 20 % headroom)                         | `quality.yml` "Cost budget": Cloudflare build, then `scripts/cloudflare-cost-budget.mjs` | Deterministic; a bigger bundle starts slower on every cold isolate and nears the 10 MiB limit; catches a large JSON or library pulled into the Worker |
+| The prerendered routes (`robots.txt`, icons, manifest, `security.txt`) stay prerendered                                    | same step, from `.next/prerender-manifest.json`                                          | A static route turned dynamic costs a Worker request and render per hit                                                                               |
+| Every page-cache route keeps its TTL, and the route count matches                                                          | `tests/cost-budget.test.ts` (in `npm test`)                                              | Dropping a route or shortening a TTL silently turns cached views back into ≈ 0.6 s renders                                                            |
+| Every edge-cached API route keeps its TTL                                                                                  | same test                                                                                | Polling endpoints stay cache hits                                                                                                                     |
+| No new Durable Object binding, class migration, cron, rate-limit binding or paid service (KV, R2, Queues, Workflows, AI …) | same test; every DO class must be named in [ARCHITECTURE.md](ARCHITECTURE.md)            | Durable Objects bill wall-clock time and requests; crons run every minute forever                                                                     |
+
+No CPU benchmarks run in CI: runner timings are too noisy to gate on. Watch CPU with the daily check instead.
+
+### Save mode
+
+An emergency switch that keeps signed-out pages and API answers in the edge cache ten times longer (at most an hour): 60 s pages for 10 minutes, the kill feed's 30 s for 5 minutes, 5 min reference pages for 50 minutes. More visits are answered from a cached copy instead of a render. Nothing else changes: the same routes are cached, signed-in visitors always render, and every price still shows its own observation age. Client polling intervals stay as they are, but each poll is more often a cache hit. Code: `cloudflare/web/save-mode.ts`.
+
+- **On, at once:** Cloudflare dashboard → Workers & Pages → `albionoutpost-web` → Settings → Variables and Secrets → Add → Type **Text**, name `OUTPOST_SAVE_MODE`, value `1` → Deploy. This creates a new version, so the page cache starts empty and fills with the longer lives.
+- **Keep it on across deploys:** a deploy replaces dashboard variables, so also set the GitHub variable `OUTPOST_SAVE_MODE` = `1` (Settings → Environments → `cloudflare-production` → Variables). `cloudflare-release-config.mjs` passes it to the web Worker.
+- **Off:** delete the dashboard variable (or set it to `0`) and deploy, and delete the GitHub variable. Entries stored while it was on keep their longer life until they expire (at most an hour) or the next deploy.
+
+### Owner: set Cloudflare billing notifications
+
+These email the account address and need no code. Check them once:
+
+1. **Budget alert:** dashboard → Manage Account → Billing → Billable Usage → **Set Budget Alert** → amount **$1** → Create (or Notifications → Add → Budget Alert). It counts usage charges only, not the $5 plan fee, so $1 means "anything over the base". Cloudflare may already have created a default $10 alert; keep it or lower it. Budget alerts are worked out once a day, so they fire the day after.
+2. **Watch it:** Manage Account → Billing → Billable Usage shows each product's usage and cost for the current billing period, matching the invoice; the Workers & Pages, D1 and Durable Objects pages show the same in their sidebar.
+3. **Notifications:** dashboard → Notifications → Add; keep the Worker error and DDoS alerts listed under [Alerts](#alerts).
+
 **Check usage** with the account GraphQL API (`https://api.cloudflare.com/client/v4/graphql`, a token with Account Analytics read):
 
 ```graphql
@@ -212,7 +265,7 @@ After step 1 the web Worker's `OUTPOST_RENDER_SESSION_SECRET` is unused; the own
 
 | Budget             | Limit / setting                                                                                                                                                                                                                                     |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Worker bundle      | 10 MiB gzip each on Workers Paid (web ≈3.13 MiB, data ≈1.00 MiB)                                                                                                                                                                                    |
+| Worker bundle      | 10 MiB gzip each on Workers Paid; PR budget 3,840 KiB web, 1,280 KiB data (9 Nov: 3,206 and 1,028; [Cost budget](#cost-budget-on-pull-requests))                                                                                                    |
 | Render             | 30 s wall-clock deadline (streamed body included; 504 if nothing was sent), 10 s for `waitUntil` work, both cleared when their work settles; 10 s CPU per request (`limits.cpu_ms`)                                                                 |
 | Edge budgets       | Per address (IPv6 per /64), per Cloudflare location: 240 requests/min, 30 uncached searches/min, 20 item-price pages/min per server, 20 market reads/min per server (`cloudflare/web/request-budget.ts`, `ratelimits` in `wrangler.jsonc`)          |
 | AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                                                                                                                                                                                 |
@@ -238,7 +291,7 @@ After step 1 the web Worker's `OUTPOST_RENDER_SESSION_SECRET` is unused; the own
 
 ## Alerts
 
-Cloudflare Notifications email the owner (account email) on: Worker errors (real-time issues in the web and data Workers), HTTP DDoS attacks, Universal SSL certificate events and abuse reports. Manage them in the dashboard under Notifications. There is no free uptime probe — Health Checks need a paid plan, and GitHub runners are challenged by Bot Fight Mode.
+The [daily cost check](#daily-cost-check) posts to Discord when usage nears an allowance, and the [budget alert](#owner-set-cloudflare-billing-notifications) emails on any usage charge. Cloudflare Notifications email the owner (account email) on: Worker errors (real-time issues in the web and data Workers), HTTP DDoS attacks, Universal SSL certificate events and abuse reports. Manage them in the dashboard under Notifications. There is no free uptime probe — Health Checks need a paid plan, and GitHub runners are challenged by Bot Fight Mode.
 
 ## Not set up yet
 

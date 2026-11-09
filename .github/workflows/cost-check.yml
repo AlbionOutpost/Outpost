@@ -1,0 +1,34 @@
+name: Cloudflare cost check
+# Once a day: billing-period usage from the Cloudflare GraphQL Analytics API, projected against
+# the Workers Paid allowances, with a Discord alert when one nears its limit.
+# docs/OPERATIONS.md § Cost guardrails. Skips with a notice until the secrets exist.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cloudflare-cost-check
+  cancel-in-progress: false
+jobs:
+  usage:
+    if: github.repository == 'AlbionOutpost/Outpost'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    # Holds vars.CLOUDFLARE_ACCOUNT_ID, as for the deploy; this job reads no deploy token.
+    environment: cloudflare-production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Project usage against the Workers Paid allowances
+        env:
+          CLOUDFLARE_ANALYTICS_TOKEN: ${{ secrets.CLOUDFLARE_ANALYTICS_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          DISCORD_COST_WEBHOOK_URL: ${{ secrets.DISCORD_COST_WEBHOOK_URL }}
+          OUTPOST_BILLING_DAY: ${{ vars.OUTPOST_BILLING_DAY }}
+        run: node scripts/cloudflare-cost-check.mjs
