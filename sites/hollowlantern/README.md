@@ -4,15 +4,15 @@ The company website for Hollow Lantern, the studio behind Outpost. Plain HTML, o
 
 ## Layout
 
-| Path                       | What it is                                                                 |
-| -------------------------- | -------------------------------------------------------------------------- |
-| `public/`                  | Everything that is deployed, as is. No build step.                         |
-| `public/_headers`          | Security headers (CSP, HSTS and friends) and cache rules.                  |
-| `public/assets/fonts/`     | Self-hosted Barlow Condensed and Inter, with their OFL licence files.      |
-| `public/impressum.html`    | Impressum (German).                                                        |
-| `public/datenschutz.html`  | Datenschutzerklärung (German).                                             |
-| `scripts/build-images.mjs` | Optional. Regenerates the favicon PNG/ICO, touch icon, grain and OG image. |
-| `wrangler.jsonc`           | Assets-only Worker `hollowlantern-site` on the two custom domains.         |
+| Path                       | What it is                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------- |
+| `public/`                  | Everything that is deployed, as is. No build step.                                    |
+| `public/_headers`          | Security headers (CSP, HSTS and friends) and cache rules.                             |
+| `public/assets/fonts/`     | Self-hosted Barlow Condensed and Inter, with their OFL licence files.                 |
+| `public/impressum.html`    | Impressum (German).                                                                   |
+| `public/datenschutz.html`  | Datenschutzerklärung (German).                                                        |
+| `scripts/build-images.mjs` | Optional. Regenerates the favicon PNG/ICO, touch icon, grain and OG image.            |
+| `wrangler.jsonc`           | Assets-only Worker `hollowlantern-site` (custom domains attached once in Cloudflare). |
 
 The page loads nothing from third parties: no web fonts from a CDN, no analytics, no external images. Keep it that way; the CSP in `_headers` blocks anything else, and the Datenschutz text promises it.
 
@@ -33,7 +33,7 @@ cd sites/hollowlantern
 CLOUDFLARE_API_TOKEN=… npx wrangler deploy
 ```
 
-The token needs Workers Scripts edit and, on first deploy, permission to add the custom domains in the `hollowlantern.com` zone. The Worker has no script, so every request is a static-asset request: free on any plan, with no Worker invocations billed.
+A push to `main` that touches `sites/hollowlantern/` deploys it through `.github/workflows/hollowlantern-site.yml` with the existing Workers deploy token. `hollowlantern.com` and `www.hollowlantern.com` are attached as Workers Custom Domains once (not in `wrangler.jsonc`), so the token needs only Workers Scripts edit; `www` is 301-redirected to the apex by a zone Redirect Rule. The Worker has no script, so every request is a static-asset request: free on any plan, with no Worker invocations billed.
 
 `www.hollowlantern.com` serves the same pages with a canonical link to the apex. To redirect it instead, add a Cloudflare Redirect Rule on the zone (free); an assets-only Worker cannot redirect by itself.
 

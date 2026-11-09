@@ -1,0 +1,40 @@
+name: Hollow Lantern site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sites/hollowlantern/**"
+      - ".github/workflows/hollowlantern-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    environment: cloudflare-production
+    concurrency:
+      group: hollowlantern-site
+      cancel-in-progress: false
+    env:
+      WRANGLER_SEND_METRICS: "false"
+      WRANGLER_SEND_ERROR_REPORTS: "false"
+      XDG_CONFIG_HOME: ${{ github.workspace }}/.qa/wrangler-config
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Deploy the static assets-only Worker
+        working-directory: sites/hollowlantern
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: ../../node_modules/.bin/wrangler deploy

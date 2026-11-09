@@ -10,8 +10,6 @@
   },
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [
-    { "pattern": "hollowlantern.com", "custom_domain": true },
-    { "pattern": "www.hollowlantern.com", "custom_domain": true },
-  ],
+  // hollowlantern.com and www are attached as Workers Custom Domains in the dashboard/API once,
+  // so the CI deploy token only needs Workers Scripts Write.
 }
