@@ -7,14 +7,12 @@ import Link from "@/components/build-region-link";
 import { activityBackgroundFor } from "@/lib/activity-backgrounds";
 import { discoveryDate } from "@/lib/build-discovery";
 import { ItemIcon } from "./item-icon";
-import type { BoardPiece } from "./loadout-board";
-import { BuildCardLoadout } from "./build-card-loadout";
+import { LoadoutBoard, type BoardPiece } from "./loadout-board";
 
 /**
- * A build as the landing's build window: the full title (up to two lines) over the activity
- * chip and ♥ count on the bar above an ember rule, the loadout weapon first (`BuildCardLoadout`:
- * the hands large with their chosen abilities, the rest in a smaller row, empty slots folded into
- * one note), and one foot row (the weapon, who made it, when, the way in).
+ * A build as the landing's build window: the title, activity chip and ♥ count on the bar
+ * over an ember rule, the loadout on the game's board at window width with the chosen
+ * abilities on the pieces, and one foot row (the weapon, who made it, when, the way in).
  * Library, player and device-saved builds all use it; `children` replaces the board when
  * only a summary of the build is stored. Comp pages reuse it for each member: `chips` puts the
  * member's role on the bar, `line` says who plays it, and a member with no build page has no `href`.
@@ -92,18 +90,11 @@ export function BuildWindow({
       >
         <div className={`landing-window-bar ${windows.bar}`}>
           {href ? (
-            <Link
-              href={href}
-              className="landing-window-title"
-              aria-labelledby={titleId}
-              title={title}
-            >
+            <Link href={href} className="landing-window-title" aria-labelledby={titleId}>
               {name}
             </Link>
           ) : (
-            <span className="landing-window-title" title={title}>
-              {name}
-            </span>
+            <span className="landing-window-title">{name}</span>
           )}
           <span className="landing-chips">
             {chips ?? <span className="landing-chip">{activity}</span>}
@@ -113,9 +104,11 @@ export function BuildWindow({
         <div className={`landing-window-body ${windows.body}`}>
           {children ??
             (pieces?.length ? (
-              <BuildCardLoadout
+              <LoadoutBoard
                 pieces={pieces}
                 spellNames={spellNames}
+                size="card"
+                choices
                 abilities={abilities}
                 label={`${title} loadout`}
               />

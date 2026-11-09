@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { CompRoster } from "@/components/comp-roster";
 import Link from "@/components/link";
-import { BuildCardLoadout } from "@/components/build-card-loadout";
+import { LoadoutBoard } from "@/components/loadout-board";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
 import { variantSrcSet } from "@/lib/image-variants";
@@ -61,8 +61,8 @@ const teamFeatures = [
 ] as const;
 
 /**
- * Three windows riding the hero's edge: a public build as every build card shows it (weapon
- * first, with its chosen abilities), what a Team workspace does, and a public comp read as a roster by
+ * Three windows riding the hero's edge: a public build on the game's board with the chosen
+ * abilities on the items, what a Team workspace does, and a public comp read as a roster by
  * weapon type. Everything shown is recorded in the library; nothing is staged.
  */
 export function LandingWindows({
@@ -120,7 +120,13 @@ export function LandingWindows({
         }
       >
         {build ? (
-          <BuildCardLoadout pieces={build.equipment} spellNames={spellNames} label={build.title} />
+          <LoadoutBoard
+            pieces={build.equipment}
+            spellNames={spellNames}
+            size="card"
+            choices
+            label={build.title}
+          />
         ) : (
           <p className="landing-window-empty">No public build to show.</p>
         )}
