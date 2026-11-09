@@ -22,6 +22,7 @@ Sized for a private repository's included Actions minutes (about 20 billed minut
 - **Pull request** (`quality.yml`): `checks` (format, docs, types, lint, units, migrations, build, advisories, secret scans, and the cost budget: a Cloudflare build checked by `scripts/cloudflare-cost-budget.mjs`, see [OPERATIONS.md § Cost budget](OPERATIONS.md#cost-budget-on-pull-requests)) and `browser` (the core flows on the Node build).
 - **Merge to `main`** (`cloudflare-preview.yml`): `verify` builds the Cloudflare bundle, typechecks both Workers and runs the core flows under local workerd, then `deploy`.
 - **Daily** (`cost-check.yml`, 06:23 UTC): Cloudflare usage against the Workers Paid allowances ([OPERATIONS.md § Daily cost check](OPERATIONS.md#daily-cost-check)); no tests.
+- **Every 15 minutes** (`health-check.yml`): Cloudflare analytics for page, data Worker, Durable Object and cron errors and missing traffic, with Discord alerts ([OPERATIONS.md § Error alerts](OPERATIONS.md#error-alerts)); thresholds and messages are unit-tested in `tests/cloudflare-health-check.test.ts`, the restore runbook's guards in `tests/cloudflare-recovery.test.ts`.
 - **Weekly and on demand** (`full-suite.yml`, Mondays 03:17 UTC): every spec, including the slow audits and visual baselines, against the Cloudflare build in two shards. Run it by hand before a large release.
 
 When a spec guards a new permission or a flow that broke production, add it to `test:e2e:core`.

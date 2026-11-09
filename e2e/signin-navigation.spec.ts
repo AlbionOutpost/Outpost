@@ -104,7 +104,8 @@ test("the shared top navigation and Outpost browser icons stay consistent across
     ).toBeLessThanOrEqual(1);
     await expect(nav.getByRole("link", { name: "Teams", exact: true })).toHaveAttribute(
       "href",
-      /\/groups\?region=/,
+      // Europe is the default server, so its links carry no region.
+      "/groups",
     );
     await expect(nav.locator(":scope > a > svg")).toHaveCount(0);
     await nav.locator(".more-dropdown > summary").click();

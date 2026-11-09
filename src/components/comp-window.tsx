@@ -30,7 +30,7 @@ export function CompWindow({
 }) {
   return (
     <article
-      className={`raised has-scene landing-window ${windows.window} ${styles.window}`}
+      className={`raised is-link landing-window ${windows.window} ${styles.window}`}
       data-scene="composition"
       data-comp-window=""
     >

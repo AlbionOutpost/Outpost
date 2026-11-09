@@ -14,7 +14,7 @@ export type NextStepCard = {
 };
 
 /**
- * A page's closing row, in the same framed tool cards as the market pages' `MarketNextSteps`:
+ * A page's closing row, in the same tool cards as the market pages' `MarketNextSteps`:
  * a section heading with one ember word and up to three places to go next.
  */
 export function NextStepCards({
@@ -37,7 +37,7 @@ export function NextStepCards({
         {cards.map((card) => (
           <li key={card.href}>
             <Link
-              className={`raised has-scene ${styles.card}`}
+              className={`raised ${styles.card}`}
               data-scene={card.scene ?? "city"}
               href={card.href}
             >

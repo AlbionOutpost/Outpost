@@ -105,7 +105,7 @@ export default async function MarketDataPage({
         />
         <ol className={styles.steps}>
           {steps.map((step, index) => (
-            <li key={step.title} className={`raised has-scene ${styles.step}`} data-scene="market">
+            <li key={step.title} className={`raised ${styles.step}`} data-scene="market">
               <PanelHead step={index + 1} title={step.title} as="h3" />
               <p>{step.line}</p>
               <div className={styles.stepAction}>{step.action}</div>

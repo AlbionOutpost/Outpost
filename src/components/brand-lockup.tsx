@@ -1,4 +1,5 @@
 "use client";
+import { regionSuffix } from "@/lib/build-region";
 import Image from "next/image";
 import type { ComponentProps } from "react";
 import Link from "@/components/link";
@@ -19,7 +20,7 @@ export function BrandLockup({
   return (
     <Link
       {...link}
-      href={`/?region=${region}`}
+      href={`/${regionSuffix(region)}`}
       aria-label="Outpost home"
       className={`brand-lockup${className ? ` ${className}` : ""}`}
       data-size={size}

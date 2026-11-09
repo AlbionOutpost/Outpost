@@ -1,4 +1,5 @@
 "use client";
+import { regionSuffix, withBuildRegion } from "@/lib/build-region";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, LayoutGrid, List, RotateCw } from "lucide-react";
@@ -174,7 +175,7 @@ export function ItemCatalog({
   };
   const pages = Math.max(1, Math.ceil(result.total / 30));
   const shown = result.items;
-  const itemHref = (id: string) => `/items/${id}?region=${region}`;
+  const itemHref = (id: string) => `/items/${id}${regionSuffix(region)}`;
   return (
     <div className={`item-catalog ${styles.catalog}`} aria-busy={busy}>
       <section className={`raised ${styles.filters}`} aria-label="Find an item">
@@ -412,7 +413,7 @@ export function ItemCatalog({
                 <li key={i.id}>
                   <Link
                     className="pill-link is-small"
-                    href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
+                    href={withBuildRegion(`/tools/market?item=${encodeURIComponent(i.id)}`, region)}
                   >
                     {i.name}
                   </Link>

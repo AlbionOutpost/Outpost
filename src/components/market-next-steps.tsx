@@ -61,11 +61,7 @@ export function MarketNextSteps({
           const tool = tools[key];
           return (
             <li key={key}>
-              <Link
-                className={`raised has-scene ${styles.card}`}
-                data-scene="market"
-                href={tool.href}
-              >
+              <Link className={`raised ${styles.card}`} data-scene="market" href={tool.href}>
                 {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
                 <img
                   src={`/albion/icons/${tool.emblem}.webp`}

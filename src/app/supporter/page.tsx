@@ -1,4 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { regionSuffix } from "@/lib/build-region";
 import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
 import { ArrowRight, Lock } from "lucide-react";
@@ -48,7 +49,7 @@ export default async function Supporter({
   const region = regionSchema
     .catch("europe")
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
-  const suffix = `?region=${region}`;
+  const suffix = regionSuffix(region);
   const configured = stripeConfig() !== null;
   const session = await getServerSession(authOptions);
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
@@ -209,10 +210,7 @@ export default async function Supporter({
           }
         />
         <div className="supporter-grid">
-          <article
-            className={`raised has-scene landing-window ${windows.window}`}
-            data-scene="market"
-          >
+          <article className={`raised landing-window ${windows.window}`} data-scene="market">
             <div className={`landing-window-bar ${windows.bar}`}>
               <h3 className="landing-window-title">Run your Team</h3>
               <span className="landing-chips">

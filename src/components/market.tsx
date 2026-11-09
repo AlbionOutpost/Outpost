@@ -1,4 +1,5 @@
 "use client";
+import { withBuildRegion } from "@/lib/build-region";
 import { ArrowRight, ChevronDown, RotateCw, Search } from "lucide-react";
 import { WellSelect } from "./well-select";
 import "./market-explorer.css";
@@ -705,7 +706,10 @@ export function Market() {
                     </dl>
                   </section>
                   <div className="mx-inspector-actions">
-                    <Link className="pill-link is-small" href={`/tools/flipping?region=${region}`}>
+                    <Link
+                      className="pill-link is-small"
+                      href={withBuildRegion("/tools/flipping", region)}
+                    >
                       Plan a trade <ArrowRight size={15} aria-hidden="true" />
                     </Link>
                     <button

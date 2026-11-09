@@ -1,11 +1,11 @@
 /* The window: the landing's teaser windows and every build card share this chrome (a title
    bar over an ember rule, the body, a foot row over an ember rule and a darker band). Loaded by
-   `landing/windows.tsx` and `build-window.tsx`; moved here from homepage.css unchanged. */
+   `landing/windows.tsx` and `build-window.tsx`. Only the landing's teasers keep the copper frame
+   (`.has-scene`); every other window is the plain surface, its foot band rounded to match. */
 .app.outpost .landing-window {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto auto;
-  /* Clear of the frame's double line */
   padding: 16px 16px 0;
 }
 .app.outpost .landing-window-bar {
@@ -76,6 +76,9 @@ a.landing-window-title:hover {
       )
       top / 100% 1px no-repeat,
     linear-gradient(180deg, #0000004d, #0000001a);
+}
+.app.outpost .raised.landing-window:not(.has-scene) .landing-window-foot {
+  border-radius: 0 0 calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px);
 }
 .app.outpost .landing-window-foot img {
   width: 48px;

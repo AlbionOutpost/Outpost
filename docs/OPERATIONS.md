@@ -283,29 +283,70 @@ After step 1 the web Worker's `OUTPOST_RENDER_SESSION_SECRET` is unused; the own
 
 ## Backups and recovery
 
-- **Private data** (`accounts-v1-eu`: users, sessions, builds, Comps, Teams, scenarios, timers, watchlists) uses Cloudflare's built-in **point-in-time recovery**: any moment in the last 30 days can be restored. `scripts/cloudflare-recovery.mjs` deploys a short-lived private helper Worker, runs one action and deletes it again:
+What Cloudflare already keeps, at no extra cost and with nothing to switch on (checked against Cloudflare's docs on 9 Nov 2026):
 
-  ```bash
-  node scripts/cloudflare-recovery.mjs bookmark                          # check recovery works (read-only)
-  node scripts/cloudflare-recovery.mjs restore --at 2026-11-02T18:00:00Z  # dry run
-  node scripts/cloudflare-recovery.mjs restore --at 2026-11-02T18:00:00Z --apply
-  ```
+| Data                                                                                                                                  | Built-in backup                                                                                                                                                                                                                         | Window  |
+| ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| **Private data**: `OutpostDatabase` object `accounts-v1-eu` (users, sessions, builds, comps, Teams, scenarios, timers, watchlists, …) | [Point-in-time recovery](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/#pitr-point-in-time-recovery-api) of SQLite-backed Durable Objects: the whole database (SQL and key-value) to any moment, by bookmark | 30 days |
+| **Catalog** (D1 `albionoutpost-staging`: items, releases, archive)                                                                    | [D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/), to any minute (7 days on Workers Free)                                                                                                                   | 30 days |
+| `KillBoard`, `AbuseBudget` objects                                                                                                    | Same point-in-time recovery; nothing to restore in practice (the kill feed refills in minutes, budgets reset)                                                                                                                           | 30 days |
+| Library and static content, the catalog sources                                                                                       | The repository                                                                                                                                                                                                                          | Git     |
 
-  A restore rewinds **everything** in the private store to that moment; it prints an undo command (`restore --bookmark <b> --apply`) that returns to the state just before the restore. Results are saved to `.qa/recovery/`. Get the owner's OK before any `--apply`.
+Not covered: deleting a whole Durable Object namespace (a `deleted_classes` migration), the Worker or the Cloudflare account; damage noticed after 30 days. There is no off-Cloudflare copy ([ROADMAP.md § Owner actions](ROADMAP.md#owner-actions) has the proposal).
 
-- **Catalog** (D1): Time Travel, 7 days on Free (`npm run cloudflare -- d1 time-travel restore albionoutpost-staging --timestamp <ISO>`). The catalog can also be rebuilt from the repo with the data-push scripts.
-- **Library and static content** are in the repository.
-- Not covered: deleting a whole Durable Object namespace or the account. There is no off-Cloudflare copy.
+### Restoring private data
+
+`scripts/cloudflare-recovery.mjs` deploys a short-lived helper Worker (`albionoutpost-recovery`) bound to the data Worker's `OutpostDatabase` class, runs one action and deletes it again. The recovery methods (`recoveryBookmark`, `recoveryRestore`, `recoveryRestart` in `cloudflare/database/worker.ts`) live on the Durable Object only: the data Worker's RPC entrypoint does not expose them and the web Worker binds no `OutpostDatabase`, so no page, API route or admin session can reach them.
+
+Who can run it:
+
+- Only someone holding the owner's Cloudflare deploy credentials (`.env.cloudflare`, mode 0600, never in CI for this).
+- `restore --apply` also needs the owner at an **interactive terminal** typing `restore accounts-v1-eu`. It refuses in CI (`CI` or `GITHUB_ACTIONS` set) and whenever input is not a terminal, so no workflow, script or agent can trigger it.
+- The helper answers only requests carrying a random 256-bit token made for that run (compared in constant time, uploaded as a Worker secret, never a plain variable) and is deleted when the run ends, error or not.
+
+Steps:
+
+1. **Find the moment.** Pick a UTC time just before the damage (an audit row, a deploy time, a report). Note that everything written after it is undone too: every account, build, comp and Team.
+2. **Check recovery works (read-only):** `node scripts/cloudflare-recovery.mjs bookmark` prints the current bookmark; `bookmark --at <ISO>` prints the one for that time.
+3. **Dry run:** `node scripts/cloudflare-recovery.mjs restore --at 2026-11-02T18:00:00Z`. It checks the time is within 30 days and shows the target bookmark. Nothing changes.
+4. **Owner's OK, then apply:** `node scripts/cloudflare-recovery.mjs restore --at 2026-11-02T18:00:00Z --apply`, and type the confirmation. The object restarts on the old state (it runs its schema upgrades again on start), the script checks it answers, and prints an **undo** command (`restore --bookmark <b> --apply`) that returns to the state just before the restore. Keep it.
+5. **Check:** sign in, open a build and a Team. Every run writes its report (target, undo bookmark, health) to `.qa/recovery/`.
+
+The restored state must be readable by the data Worker that is deployed now: a restore to before a schema upgrade is fine (the object upgrades itself again), but never roll the data Worker back past a schema version.
+
+**Catalog (D1):** `npm run cloudflare -- d1 time-travel info albionoutpost-staging --timestamp <ISO>` shows the bookmark; `npm run cloudflare -- d1 time-travel restore albionoutpost-staging --timestamp <ISO>` restores it and prints an undo bookmark. The catalog can also be rebuilt from the repository with the data-push scripts.
 
 ## Alerts
 
-The [daily cost check](#daily-cost-check) posts to Discord when usage nears an allowance, and the [budget alert](#owner-set-cloudflare-billing-notifications) emails on any usage charge. Cloudflare Notifications email the owner (account email) on: Worker errors (real-time issues in the web and data Workers), HTTP DDoS attacks, Universal SSL certificate events and abuse reports. Manage them in the dashboard under Notifications. There is no free uptime probe — Health Checks need a paid plan, and GitHub runners are challenged by Bot Fight Mode.
+Cloudflare Notifications email the owner (account email) on: Worker errors (real-time issues in the web and data Workers), HTTP DDoS attacks, Universal SSL certificate events and abuse reports. Manage them in the dashboard under Notifications. The [daily cost check](#daily-cost-check) posts to Discord when usage nears an allowance, and the [budget alert](#owner-set-cloudflare-billing-notifications) emails on any usage charge. Cloudflare Health Checks need a paid zone plan, and GitHub runners are challenged by Bot Fight Mode, so there is no HTTP probe of albionoutpost.com; the error alerts below read Cloudflare's own analytics instead.
+
+### Error alerts
+
+`.github/workflows/health-check.yml` ("Cloudflare health check") runs `scripts/cloudflare-health-check.mjs` every 15 minutes (at :04, :19, :34 and :49) and on demand. It makes one GraphQL Analytics request (`workersInvocationsAdaptive` and `durableObjectsInvocationsAdaptiveGroups`) for the 30 minutes ending five minutes ago (analytics arrive a few minutes late) and posts to Discord when:
+
+| Problem                                 | Rule (`THRESHOLDS` in the script)                                                                                                                                                                               |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pages are failing                       | Web Worker requests that threw, ran out of CPU or memory, hit an internal error or answered 5xx are ≥ 5 % of at least 20 requests. Client disconnects and 4xx (404, 429) do not count.                          |
+| The data Worker is erroring             | The same for the data Worker's RPC calls.                                                                                                                                                                       |
+| A Durable Object is erroring            | Errors are ≥ 5 % of at least 20 calls to one namespace.                                                                                                                                                         |
+| The kill collector stopped              | The data Worker's two-minute cron did not run at all.                                                                                                                                                           |
+| The kill collector is failing           | At least half of its runs (and at least 3) failed. A run fails when any server's live Game Info feed was unreadable or its `KillBoard` write failed (`collectKillFeeds`), so stale Albion kill data shows here. |
+| The site gets no traffic                | The web Worker had no requests, in an hour of day that had at least 40 requests on each of the last 7 days (a missing day counts as 0, so a quiet or new hour never alerts).                                    |
+| The health check cannot read Cloudflare | Three analytics reads in a row failed (an expired token, an API outage).                                                                                                                                        |
+
+**No alert storms.** The set of open problems is kept between runs in a small JSON file (`.qa/health/state.json`, restored and saved with `actions/cache`). A problem gets **one** message when it starts and one "recovered" message (with how long it lasted) after two clean checks in a row; a problem that comes back before then is the same incident. Several problems that start together share one message. A failed analytics read leaves open problems as they are. If Discord rejects a message the state is not saved, so the next run sends it again (and the failed run emails the owner through GitHub). Messages mention nobody. Should the cache ever be lost (GitHub evicts entries unused for 7 days), an ongoing problem is reported once more.
+
+**Cost.** Nothing on Cloudflare: the GraphQL API is not billed and one request every 15 minutes is far inside its rate limit. The repository is public, so scheduled runs on GitHub-hosted runners use no billed minutes; if it ever goes private, 96 runs a day would be about 2,900 billed minutes a month, so drop the schedule to hourly first. GitHub pauses schedules in a public repository after 60 days without commits; re-enable it under Actions if that happens. The job runs in the `cloudflare-production` environment for its secrets with `deployment: false`, so it does not list a deployment every 15 minutes.
+
+**What the owner adds:** nothing new if the [cost check](#daily-cost-check)'s `CLOUDFLARE_ANALYTICS_TOKEN` and `DISCORD_COST_WEBHOOK_URL` are set; alerts then go to the cost channel. Optionally add secret **`DISCORD_ALERTS_WEBHOOK_URL`** (same environment; a webhook in a separate channel, so outages stand apart from cost warnings). Then run it once by hand (Actions → Cloudflare health check → Run workflow) and check the log line with the half hour's counts.
+
+**When it fires:** Workers & Pages → the Worker → Observability and Deployments (roll back with `npm run cloudflare -- rollback --name albionoutpost-web`; the data Worker only with care, see [Rolling back](#rolling-back)). For the kill collector, the data Worker's logs name the servers whose feed failed; a Game Info outage on Albion's side needs no action. For no traffic, check DNS, the zone and the Worker route first.
 
 ## Not set up yet
 
 - Off-Cloudflare backup copy.
-- Uptime probe (see Alerts).
-- GitHub org MFA requirement; branch protection (needs a paid plan on private repos).
+- An HTTP uptime probe from outside Cloudflare (see [Alerts](#alerts); the error alerts cover a Worker that stops answering).
+- GitHub org MFA requirement; branch protection.
 
 These are tracked in [ROADMAP.md](ROADMAP.md#owner-actions).
 

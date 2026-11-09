@@ -27,10 +27,7 @@ test("equipment selection opens the real item, and the redesigned server selecto
   const item = page.locator(".landing-card:first-child .landing-card-action");
   // The shell streams behind a Suspense fallback; wait for the real page before auditing it.
   await expect(item).toBeVisible();
-  await expect(item).toHaveAttribute(
-    "href",
-    "/tools/market?item=T6_METALBAR&quality=1&region=europe",
-  );
+  await expect(item).toHaveAttribute("href", "/tools/market?item=T6_METALBAR&quality=1");
   await page.getByRole("combobox", { name: "Albion region" }).click();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");

@@ -356,3 +356,25 @@ export async function fetchKillCandidates(
   }
   return { candidates, recent };
 }
+
+/**
+ * One cron pass over every server (the data Worker's `scheduled`). Servers run independently;
+ * afterwards the pass fails, naming them, when any server's live feed was unreadable or its write
+ * failed, so a stale kill feed shows as a failed cron run in Workers analytics and the health
+ * check alerts (docs/OPERATIONS.md § Error alerts).
+ */
+export async function collectKillFeeds(
+  regions: readonly Region[],
+  record: (region: Region, candidates: KillCandidate[], recent: FeedEvent[]) => Promise<unknown>,
+  fetch: (region: Region) => ReturnType<typeof fetchKillCandidates> = fetchKillCandidates,
+) {
+  const results = await Promise.allSettled(
+    regions.map(async (region) => {
+      const { candidates, recent } = await fetch(region);
+      if (candidates.length) await record(region, candidates, recent);
+      if (!recent.length) throw new Error("live kill feed unreadable");
+    }),
+  );
+  const failed = regions.filter((_, index) => results[index].status === "rejected");
+  if (failed.length) throw new Error(`Kill collector: no fresh kills from ${failed.join(", ")}`);
+}
