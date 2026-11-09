@@ -109,10 +109,13 @@ describe("projection and thresholds", () => {
   it("builds a readable Discord embed with plain names, status icons and an estimated extra", () => {
     const embed = alertEmbed(rows, period, Date.UTC(2026, 10, 9))!;
     expect(embed.title).toMatch(/\$5/);
-    expect(embed.description).toContain("Estimated bill: **$5 plan + ~$");
     const names = embed.fields.map((field: { name: string }) => field.name);
+    expect(names[0]).toContain("Estimated bill");
+    expect(embed.fields[0].value).toContain("**$5** plan");
     expect(names.some((name: string) => name.includes("Worker requests"))).toBe(true);
-    expect(names.at(-1)).toBe("Everything at a glance");
+    expect(names).toContain("On pace for");
+    expect(names.at(-1)).toContain("Needs a look");
+    expect(embed.fields.length).toBeLessThanOrEqual(25);
     expect(embed.timestamp).toBe("2026-11-09T00:00:00.000Z");
     expect(alertEmbed(evaluate({}, period, noBindings), period)).toBeNull();
     // No usage past an allowance costs nothing; usage past it is priced per unit.
@@ -189,11 +192,11 @@ describe("run", () => {
     const post = fetcher.mock.calls.find(([url]) => url === webhook)!;
     const body = JSON.parse(String(post[1].body));
     expect(body.allowed_mentions).toEqual({ parse: [] });
-    expect(body.content).toBe(body.embeds[0].title);
+    expect(body.content).toBe("Cloudflare cost alert");
     const embed = body.embeds[0];
-    expect(embed.description).toContain("$5 plan");
+    expect(embed.fields[0].value).toContain("$5");
     expect(JSON.stringify(embed.fields)).toContain("Worker CPU time");
-    expect(embed.fields.at(-1).name).toBe("Everything at a glance");
+    expect(embed.fields.at(-1).name).toContain("Needs a look");
     for (const field of embed.fields) expect(field.value.length).toBeLessThanOrEqual(1024);
     expect(output.join("\n")).not.toContain(token);
     expect(output.join("\n")).not.toContain(webhook);

@@ -201,44 +201,80 @@ export function overage(row) {
 }
 const dollars = (value) => (value < 0.01 ? "$0" : `$${value.toFixed(2)}`);
 
-/** The Discord embed, or null when nothing needs attention: what is heading past the $5 plan,
- * in plain words, with an estimated extra cost and a short status list of every allowance. */
+/** A blank line between sections of the embed. */
+const SPACER = { name: "​", value: "​" };
+const field = (name, value, inline = true) => ({
+  name,
+  value: String(value).slice(0, 1024),
+  inline,
+});
+const shortDate = (iso) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+
+/** The Discord embed, or null when nothing needs attention. Laid out as a grid: the bill and the
+ * period up top, then one block per flagged allowance (what it is, used so far, on pace for, extra
+ * cost), then everything else split into "fine" and "watch" columns. */
 export function alertEmbed(rows, period, now = Date.now()) {
   const flagged = rows.filter((row) => row.alerts.length);
   if (!flagged.length) return null;
   const extra = rows.reduce((total, row) => total + overage(row), 0);
-  const fields = flagged.slice(0, 20).map((row) => {
-    const [name, plain] = FRIENDLY[row.key] ?? [row.label, row.label];
-    const lines = row.stored
-      ? [`Using **${bytes(row.current)}** of **${fmt(row)}** included (${pct(row.share)})`]
-      : [
-          `Used **${compact(row.period)}** so far of **${fmt(row)}** included`,
-          `On pace for **${compact(row.projected)}** this period (${pct(row.share)})`,
-          `Yesterday alone: ${compact(row.day)} (pace ${pct(row.dayShare)})`,
-        ];
-    const cost = overage(row);
-    if (cost >= 0.01) lines.push(`Estimated extra: **~${dollars(cost)}**`);
-    return { name: `${ICON[status(row)]} ${name}`, value: `${lines.join("\n")}\n-# ${plain}` };
-  });
-  const list = rows
-    .map((row) => {
-      const [name] = FRIENDLY[row.key] ?? [row.label];
-      return `${ICON[status(row)]} ${name} — ${row.available ? pct(row.share) : "unavailable"}`;
-    })
-    .join("\n");
-  fields.push({ name: "Everything at a glance", value: list.slice(0, 1024) });
   const over = flagged.some((row) => status(row) === "over");
+  const day = Math.floor(period.elapsedDays);
+  const fields = [
+    field("💵 Estimated bill", `**$5** plan\n+ **~${dollars(extra)}** extra`),
+    field(
+      "📅 Billing period",
+      `Day **${day}** of **${period.days}**\n${shortDate(period.start)} → ${shortDate(period.end)}`,
+    ),
+    field("🔄 Resets", `${shortDate(period.end)}\nin ${Math.max(0, period.days - day)} days`),
+  ];
+  // One block per flagged allowance: a full-width heading, three numbers side by side, a gap.
+  for (const row of flagged.slice(0, 4)) {
+    const [name, plain] = FRIENDLY[row.key] ?? [row.label, row.label];
+    const cost = overage(row);
+    fields.push(SPACER, field(`${ICON[status(row)]} ${name}`, `-# ${plain}`, false));
+    if (row.stored) {
+      fields.push(
+        field("Size now", `**${bytes(row.current)}**`),
+        field("Included", fmt(row)),
+        field("Extra cost", cost >= 0.01 ? `**~${dollars(cost)}**` : "$0"),
+      );
+    } else {
+      fields.push(
+        field("Used so far", `**${compact(row.period)}**\nof ${fmt(row)} included`),
+        field("On pace for", `**${compact(row.projected)}**\n${pct(row.share)} of included`),
+        field(
+          "Extra cost",
+          `**${cost >= 0.01 ? `~${dollars(cost)}` : "$0"}**\nyesterday: ${compact(row.day)}`,
+        ),
+      );
+    }
+  }
+  const line = (row) => {
+    const [name] = FRIENDLY[row.key] ?? [row.label];
+    return `${ICON[status(row)]} ${name} · **${row.available ? pct(row.share) : "?"}**`;
+  };
+  const fine = rows.filter((row) => status(row) === "ok").map(line);
+  const watch = rows.filter((row) => status(row) !== "ok").map(line);
+  fields.push(
+    SPACER,
+    field("✅ Within the $5 plan", fine.join("\n") || "—"),
+    field("⚠️ Needs a look", watch.join("\n") || "—"),
+  );
   return {
-    title: over ? "Cloudflare bill is heading past $5" : "Cloudflare usage is getting close to $5",
-    description: [
-      `Day **${Math.floor(period.elapsedDays)}** of **${period.days}** · billing period ${period.start} → ${period.end}`,
-      `Estimated bill: **$5 plan + ~${dollars(extra)} extra**`,
-      "Projections assume the rest of the period runs at this period's average pace.",
-    ].join("\n"),
+    title: over
+      ? "🚨 Cloudflare bill is heading past $5"
+      : "⚠️ Cloudflare usage is getting close to $5",
+    description:
+      "Projected to the end of the billing period at this period's average pace. Percentages are shares of what the $5 plan includes.",
     color: over ? RED : AMBER,
-    fields,
+    fields: fields.slice(0, 25),
     footer: {
-      text: "What to do: docs/OPERATIONS.md › Cost guardrails · Emergency: OUTPOST_SAVE_MODE=1",
+      text: "What to do: docs/OPERATIONS.md › Cost guardrails  •  Emergency switch: OUTPOST_SAVE_MODE=1",
     },
     timestamp: new Date(now).toISOString(),
   };
@@ -480,7 +516,7 @@ async function postDiscord(url, content, embed, fetcher) {
     body: JSON.stringify({
       username: "Outpost costs",
       // The title doubles as the notification preview; the plain text stays when there is no embed.
-      content: embed ? embed.title : content,
+      content: embed ? "Cloudflare cost alert" : content,
       ...(embed ? { embeds: [embed] } : {}),
       allowed_mentions: { parse: [] },
     }),
