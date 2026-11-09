@@ -27,3 +27,9 @@
   Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
 /icon-*
   Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/icon.png
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/apple-icon.png
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/favicon.ico
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800

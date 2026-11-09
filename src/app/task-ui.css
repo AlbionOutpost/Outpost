@@ -50,14 +50,6 @@
     transition: none;
   }
 }
-@media (max-width: 780px) {
-  .production-scenarios:not(.is-open) {
-    display: none;
-  }
-  .production-scenarios .section {
-    margin-top: 12px;
-  }
-}
 
 /* Keep a focused workflow panel below the persistent global header. */
 :is(#production-setup, #production-materials, #production-results) {

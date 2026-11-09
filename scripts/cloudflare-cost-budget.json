@@ -60,7 +60,7 @@
     "/api/combat-events": 30,
     "/api/combat-events/top": 120
   },
-  "staticRoutes": ["/.well-known/security.txt", "/apple-icon.png", "/favicon.ico", "/icon.png"],
+  "staticRoutes": ["/.well-known/security.txt"],
   "workers": {
     "albionoutpost-web": {
       "config": "wrangler.jsonc",

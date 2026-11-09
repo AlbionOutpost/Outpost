@@ -39,7 +39,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.app.outpost .build-window .landing-window-body {
+/* Doubled class: beats the window module's `align-content: stretch` whatever the sheet order. */
+.app.outpost .build-window.build-window .landing-window-body {
   align-content: center;
 }
 .app.outpost .build-window-weapon {

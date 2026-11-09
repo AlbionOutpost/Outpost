@@ -22,39 +22,6 @@
   margin: 16px 0 0;
 }
 /* Combat is a dense event ledger. The equipment comparison expands only on demand. */
-@media (max-width: 600px) {
-  .app.outpost .timer-toolbar {
-    padding: 12px;
-    gap: 12px;
-  }
-  .app.outpost .timer-toolbar > label {
-    flex: 1;
-    min-width: 140px;
-  }
-  .app.outpost .timer-toolbar > span {
-    order: 3;
-    flex-basis: 100%;
-  }
-  .app.outpost .timer-row {
-    padding: 16px;
-    gap: 6px 12px;
-  }
-  .app.outpost .timer-row h2 {
-    font-size: 18px;
-  }
-  .app.outpost .timer-row .timer-countdown {
-    font-size: 20px;
-    grid-column: 1;
-    grid-row: auto;
-    margin: 4px 0;
-  }
-  .app.outpost .timer-row > .actions {
-    flex-wrap: wrap;
-  }
-  .app.outpost .timer-more-actions {
-    margin-left: 0;
-  }
-}
 @media print {
   .guide-reading-tools {
     display: none !important;
@@ -62,15 +29,6 @@
 }
 /* Settings separates editable preferences, data export, sessions and account closure. */
 /* Public profile contains only existing public, visible records. */
-/* Moderation explicitly separates the queue from the selected report and its rationale. */
-.app.outpost .team-roster-pages {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 16px;
-  font-size: 14px;
-}
 
 /* Teams directory: filters in a raised bar, each team a window with its mark */
 .app.outpost .device-library-favorites.panel {

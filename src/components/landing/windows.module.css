@@ -16,11 +16,9 @@
   align-content: stretch;
 }
 
+/* The board's cell, gap and margin come from landing-window.css. */
 .windows.windows .body.body > :global(.loadout-board) {
   align-self: center;
-  --gap: 10px;
-  --cell: min(72px, calc((100cqw - 2 * var(--gap)) / 3));
-  margin-top: 0;
 }
 
 .windows.windows .foot.foot {

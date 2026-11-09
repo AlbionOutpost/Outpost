@@ -301,6 +301,15 @@ export function rootMetadata(): Metadata {
     applicationName: "Outpost",
     // A static file (public/manifest.webmanifest): an app route ran the Worker for every fetch.
     manifest: "/manifest.webmanifest",
+    // Static files in public/ as well, for the same reason: as app/icon.png they ran the Worker
+    // and were sent uncacheable.
+    icons: {
+      icon: [
+        { url: "/favicon.ico", type: "image/x-icon", sizes: "16x16" },
+        { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      ],
+      apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
+    },
     openGraph: {
       title: "Outpost | Albion Online tools & builds",
       description: defaultDescription,

@@ -271,9 +271,6 @@
 .app.outpost .build-card-owner-actions {
   z-index: 3;
 }
-.app.outpost .ecosystem-title-link {
-  min-height: 24px;
-}
 
 .app.outpost .build-share-control {
   position: relative;
@@ -404,7 +401,4 @@
 }
 .detail-related-builds {
   margin-top: 24px;
-}
-.detail-related-builds .ecosystem-section-heading {
-  align-items: center;
 }
