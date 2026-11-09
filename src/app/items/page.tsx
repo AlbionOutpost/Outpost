@@ -1,7 +1,11 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { db } from "@/lib/db";
-import { catalogQuery, searchCatalog, type CatalogQuery } from "@/lib/catalog/item-search";
+import {
+  catalogQuery,
+  catalogSlots,
+  searchCatalog,
+  type CatalogQuery,
+} from "@/lib/catalog/item-search";
 import { ItemCatalog } from "@/components/item-catalog";
 import { MarketNextSteps } from "@/components/market-next-steps";
 import styles from "./items.module.css";
@@ -27,14 +31,7 @@ export default async function Page({
     enchantment: field("enchantment", value("enchantment")),
     page: field("page", value("page")) ?? 1,
   };
-  const [first, slots] = await Promise.all([
-    searchCatalog(query),
-    db.itemMetadata.findMany({
-      where: { active: true },
-      distinct: ["slot"],
-      select: { slot: true },
-    }),
-  ]);
+  const [first, slots] = await Promise.all([searchCatalog(query), catalogSlots()]);
   return (
     <div className={`${styles.page} ${marketPage.page}`}>
       <WorkspaceHeading
@@ -47,7 +44,7 @@ export default async function Page({
       <ItemCatalog
         metadata={first.items}
         total={first.total}
-        categories={slots.map((i) => i.slot).sort()}
+        categories={slots}
         initial={{
           search: query.search,
           category: query.slot ?? "",

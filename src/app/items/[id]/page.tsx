@@ -22,7 +22,7 @@ import {
   itemWeight,
 } from "@/lib/albion/game/server-recipes";
 import { catalogItem } from "@/lib/catalog/validation";
-import { catalogVariants } from "@/lib/catalog/item-search";
+import { activeCatalogIds, catalogVariants } from "@/lib/catalog/item-search";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
 import { itemAbilities } from "@/lib/albion/equipment-abilities";
 import { buildDiscovery } from "@/lib/build-discovery";
@@ -117,24 +117,12 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
     );
   };
   // Only equipment has a catalog page; resources and ingredients are named without a link.
-  const linkable = new Set(
-    (
-      await db.itemMetadata.findMany({
-        where: {
-          id: {
-            in: [
-              ...new Set([
-                ...itemRecipes.flatMap((option) => option.ingredients.map((i) => i.id)),
-                ...usedIn.recipes.map((option) => option.output),
-              ]),
-            ],
-          },
-          active: true,
-        },
-        select: { id: true },
-      })
-    ).map((row) => row.id),
-  );
+  const linkable = await activeCatalogIds([
+    ...new Set([
+      ...itemRecipes.flatMap((option) => option.ingredients.map((i) => i.id)),
+      ...usedIn.recipes.map((option) => option.output),
+    ]),
+  ]);
   const ItemName = ({ id: target, children }: { id: string; children: React.ReactNode }) =>
     linkable.has(target) ? (
       <Link className="item-inline-link" href={`/items/${target}`}>
