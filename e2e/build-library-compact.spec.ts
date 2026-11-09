@@ -52,11 +52,8 @@ test("phone library offers scannable previews, persistent search and independent
   const cards = page.locator(".library-build-card");
   await expect(cards).toHaveCount(24);
   const card = cards.first();
-  // Phones keep the landing's full window: the loadout weapon first, the weapon and date in the foot.
-  await expect(card.locator(".build-card-loadout")).toBeVisible();
-  await expect(
-    card.locator('.build-card-loadout [data-slot="Main hand"] img[data-albion-icon]'),
-  ).toHaveCount(1);
+  // Phones keep the landing's full window: the whole board, the weapon and date in the foot.
+  await expect(card.locator(".loadout-board")).toBeVisible();
   await expect(card.locator(".build-window-weapon img")).toHaveCount(1);
   await expect(card.locator(".landing-window-foot time")).toBeVisible();
   const save = card.locator(".library-device-save");

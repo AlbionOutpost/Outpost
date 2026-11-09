@@ -80,7 +80,7 @@ test("group builds are discoverable and retain every member while presentation c
   const members = page.locator("[data-comp-member]");
   await expect(members).toHaveCount(17);
   await expect(page.getByRole("heading", { name: "The party", exact: true })).toBeVisible();
-  await expect(members.first().locator(".build-card-loadout")).toBeVisible();
+  await expect(members.first().locator(".loadout-board")).toBeVisible();
   await expect(members.first().getByRole("link").first()).toHaveAttribute(
     "href",
     /^\/builds\/library\//,
