@@ -1,6 +1,7 @@
-// Writes public/sitemap.xml at build time: hubs, every tool, guides and the archived library
-// (builds and comps). A static file costs no Worker request per crawl. Editor, account and API
-// routes stay out (see src/app/robots.ts); item pages are left to natural crawling.
+// Writes public/sitemap.xml and public/robots.txt at build time: hubs, every tool, guides and the
+// archived library (builds and comps). Static files cost no Worker request per crawl (robots.txt
+// rendered by the app cost ≈ 270 ms of CPU per fetch). Editor, account and API routes stay out;
+// item pages are left to natural crawling.
 import { readFileSync, writeFileSync } from "node:fs";
 import { tools } from "../src/lib/tool-directory";
 import { publicOrigin } from "../src/lib/seo";
@@ -73,3 +74,46 @@ writeFileSync(
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`,
 );
 console.log(`Wrote public/sitemap.xml with ${seen.size} URLs for ${base}.`);
+
+// Crawl rules. Crawlers made ≈ 90 % of the web Worker's requests and CPU on 9 Nov 2026, mostly
+// on the build list's layout and search variants and on `?region=` copies of archived builds.
+const disallow = [
+  "/api/",
+  "/builds/new",
+  "/compositions/new",
+  "/builds/*/edit",
+  "/compositions/*/edit",
+  "/dashboard",
+  "/settings",
+  "/signin",
+  "/invitations/",
+  "/favorites",
+  "/shopping-list",
+  "/admin",
+  "/timers",
+  "/groups/new",
+  // Search results are noindex already (src/lib/seo.ts publicMetadata).
+  "/*?q=",
+  "/*&q=",
+  // Grid or list is a layout switch over the same builds; the canonical drops it.
+  "/builds?*view=",
+  // An archived build or comp, or an item, is the same page under any query (the region only
+  // seeds the client-side price check); the sitemap and links list the plain address.
+  "/builds/library/*?",
+  "/compositions/library/*?",
+  "/items/*?",
+];
+writeFileSync(
+  "public/robots.txt",
+  [
+    ["User-agent: *", "Allow: /", ...disallow.map((path) => `Disallow: ${path}`)].join("\n"),
+    // Backlink and SEO index crawlers send no visitors and made half of all Worker CPU (9 Nov
+    // 2026, ≈ 0.35 s per page). Search engines (Google, Bing, Apple, Amazon) are not affected.
+    [
+      ...["AhrefsBot", "SemrushBot", "MJ12bot", "DotBot"].map((agent) => `User-agent: ${agent}`),
+      "Disallow: /",
+    ].join("\n"),
+    `Sitemap: ${base}/sitemap.xml`,
+  ].join("\n\n") + "\n",
+);
+console.log("Wrote public/robots.txt.");

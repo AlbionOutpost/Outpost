@@ -14,8 +14,13 @@ import type { FishReference } from "../../src/lib/albion/fishing";
 import type { LibraryQuery, LibraryPage } from "../../src/lib/grind-library-query";
 import type { Activity, ActivityWeapon } from "../../src/lib/library-activities";
 
-// React cache deduplicates within a render/request, without retaining request-bound I/O globally.
+// The archive JSON ships with each deploy and never changes under a running isolate, so each
+// file is read and parsed once per isolate instead of once per request (the landing parsed all
+// guides on every view). Only the parsed value is kept, never the request's I/O; a failed read is
+// forgotten so the next request tries again.
+const kept = new Map<string, unknown>();
 const read = cache(async <T>(name: string): Promise<T> => {
+  if (kept.has(name)) return kept.get(name) as T;
   const binding = getCloudflareContext().env.ASSETS;
   if (!binding) throw new Error("Static assets binding missing");
   const response = await binding.fetch(
@@ -24,7 +29,9 @@ const read = cache(async <T>(name: string): Promise<T> => {
   if (!response.ok) throw new Error("Public archive asset unavailable");
   const text = await response.text();
   if (text.length > 500_000) throw new Error("Unexpected archive asset size");
-  return JSON.parse(text);
+  const value = JSON.parse(text) as T;
+  kept.set(name, value);
+  return value;
 });
 export const libraryGuides = () => read<LibraryGuide[]>("guides");
 export const librarySpellNames = () => read<Record<string, string>>("spell-names");
@@ -100,5 +107,14 @@ export const featuredLibraryBuilds = async () => {
   );
   return [...picks, ...fill].slice(0, 6);
 };
-export const libraryBuildDraft = async (build: LibraryBuild) =>
-  createLibraryBuildDraft(build, await librarySpellNames());
+/** Validating a draft runs the full build schema (≈ 8 ms); an archived build gives the same answer
+ * until it changes, so the last few hundred answers are kept per isolate. */
+const drafts = new Map<string, ReturnType<typeof createLibraryBuildDraft>>();
+export const libraryBuildDraft = async (build: LibraryBuild) => {
+  const key = `${build.id}:${build.updatedAt}`;
+  if (drafts.has(key)) return structuredClone(drafts.get(key)!);
+  const draft = createLibraryBuildDraft(build, await librarySpellNames());
+  if (drafts.size >= 256) drafts.delete(drafts.keys().next().value!);
+  drafts.set(key, draft);
+  return structuredClone(draft);
+};

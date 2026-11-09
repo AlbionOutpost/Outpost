@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Worker CPU back toward the allowance — 9 November 2026
+
+- Worker CPU was the only allowance over its limit (≈ 430 M CPU-ms a month against 30 M). Crawlers made ≈ 90 % of it, mostly archived builds, `?region=` copies and the build list's search and layout variants, and nearly every request woke a cold isolate (≈ 0.9 s each).
+- The Next server now loads at isolate startup, which Workers do not bill (≈ 0.3 s off every cold request). robots.txt keeps crawlers off duplicate URLs and disallows backlink crawlers (AhrefsBot, SemrushBot, MJ12bot, DotBot); robots.txt and the web manifest are static files; `/wp-*` and `*.php` probes get a bare 404; archive pages stay cached a day; library JSON is parsed once per isolate.
+- Projected ≈ 25–35 M CPU-ms a month once crawlers re-read robots.txt. Next: confirm in Workers Observability a day after deploy; if still over, make the build list and library pages cheaper to render on a cold isolate.
+
 ## D1 reads cut about five-fold — 9 November 2026
 
 - Production D1 read 1.1 billion rows in 31 days, ≈ 2.8 k per query. The hot paths scanned whole tables: library lookups by id or slug read all 10.8 k stored builds, item variants and recipe links walked every item, the slot list read all 7.5 k items, and the library lists walked unlisted builds.

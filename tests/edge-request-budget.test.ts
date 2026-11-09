@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, it, expect, vi } from "vitest";
-import { requestBudget, secureResponse } from "../cloudflare/web/request-budget";
+import { probePath, requestBudget, secureResponse } from "../cloudflare/web/request-budget";
 import { addressBucket } from "../src/lib/client-address";
 
 const req = (path = "/", address = "203.0.113.1", extra: Record<string, string> = {}) =>
@@ -214,5 +214,27 @@ describe("trusted edge request budgets", () => {
         "referrer-policy",
       ),
     ).toBe("no-referrer");
+  });
+  it("recognises probes for software Outpost does not run, and nothing it serves", () => {
+    for (const path of [
+      "/wp-admin/install.php",
+      "/wp-login.php",
+      "/.env",
+      "/.git/config",
+      "/xmlrpc.php",
+      "/admin/config.bak",
+    ])
+      expect(probePath(path)).toBe(true);
+    for (const path of [
+      "/",
+      "/.well-known/security.txt",
+      "/builds/library/wp-build",
+      "/items/T4_BAG",
+      "/robots.txt",
+      "/sitemap.xml",
+      "/tools/php",
+      "/api/health",
+    ])
+      expect(probePath(path)).toBe(false);
   });
 });
