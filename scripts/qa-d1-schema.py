@@ -456,6 +456,32 @@ def giveaways_upgrade():
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
 check("giveaways upgrade gives Manage giveaways to Manage team holders, keeps one entry each and freezes the draw", giveaways_upgrade)
 
+def catalog_read_indexes():
+    # Public D1 catalog only: 0001 + 0002 as staged, then 0017 twice (the workflow re-runs it).
+    catalog = sqlite3.connect(":memory:")
+    try:
+        for file in ["0001_schema_candidate.sql", "0002_owned_library.sql", "0017_catalog_reads.sql", "0017_catalog_reads.sql"]:
+            catalog.executescript((root / "cloudflare/d1/migrations" / file).read_text())
+        names = {row[0] for row in catalog.execute("SELECT name FROM sqlite_master WHERE type='index'")}
+        assert not names & {"OwnedLibrary_likes", "OwnedLibrary_newest", "OwnedLibrary_title", "OwnedLibrary_order"}
+        assert {"OwnedLibrary_listed_likes", "OwnedLibrary_listed_weapon", "OwnedLibrary_comps_likes", "ItemMetadata_catalog_order", "ItemMetadata_search"} <= names
+        catalog.execute("INSERT INTO \"CatalogRelease\"(id,version,sourceUrl,rightsReference,checksum,itemCount) VALUES('r','v','u','x','c',1)")
+        for i in range(400):
+            catalog.execute("INSERT INTO \"ItemMetadata\"(id,name,slot,tier,enchantment,abilities,releaseId) VALUES(?,?,?,?,?,'[]','r')", (f"T{i % 8 + 1}_ITEM_{i}", f"Item {i}", "Main hand", i % 8 + 1, i % 5))
+        listed = "kind = 'builds' AND json_extract(payload, '$.updatedAt') >= '2026' AND coalesce(json_extract(payload, '$.upvotes'), 0) >= 1"
+        for i in range(400):
+            payload = json.dumps({"updatedAt": "2026-01-01" if i % 3 else "2025-01-01", "upvotes": i % 4, "weaponName": f"W{i % 9}"})
+            catalog.execute("INSERT INTO OwnedLibrary VALUES('builds',?,?,?,?,?,?,?)", (f"b{i}", f"s{i}", f"C{i % 5}", f"title {i}", i, i, payload))
+        catalog.execute("ANALYZE")
+        plan = lambda sql: " ".join(row[3] for row in catalog.execute("EXPLAIN QUERY PLAN " + sql))
+        assert "OwnedLibrary_listed_likes" in plan(f"SELECT payload FROM OwnedLibrary WHERE {listed} ORDER BY coalesce(json_extract(payload, '$.upvotes'), 0) DESC, ordinal LIMIT 24")
+        assert "OwnedLibrary_listed_weapon" in plan(f"SELECT COUNT(*) FROM OwnedLibrary WHERE {listed} AND json_extract(payload, '$.weaponName') = 'W1'")
+        assert "SCAN" not in plan("SELECT id, name, tier, slot FROM ItemMetadata WHERE active = 1 AND enchantment = 0 ORDER BY id LIMIT 120")
+        assert "sqlite_autoindex_ItemMetadata_1" in plan("SELECT id FROM ItemMetadata WHERE id IN ('T1_ITEM_0','T2_ITEM_1','T3_ITEM_2','T4_ITEM_3','T5_ITEM_4','T6_ITEM_5','T7_ITEM_6','T8_ITEM_7','T1_ITEM_8','T2_ITEM_9','T3_ITEM_10','T4_ITEM_11')")
+    finally:
+        catalog.close()
+check("catalog read indexes replace the archive order indexes idempotently and serve listed-build, weapon and item lookups", catalog_read_indexes)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

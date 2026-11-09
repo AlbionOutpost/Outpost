@@ -87,7 +87,10 @@ if (process.argv.includes("--write-local")) {
       "\n" +
       statements.join("\n") +
       "\n" +
-      prepared.manifests.join("\n"),
+      prepared.manifests.join("\n") +
+      "\n" +
+      // Read indexes over the library and the item catalog (staged first).
+      readFileSync("cloudflare/d1/migrations/0017_catalog_reads.sql", "utf8"),
   );
 }
 if (!process.argv.includes("--apply")) {
@@ -147,6 +150,8 @@ if (!marker?.completed) {
   }
   await query("UPDATE _outpost_library_import SET completed = 1 WHERE id = 1");
 }
+// Read indexes (idempotent); they replace the 0002 order indexes.
+await query(readFileSync("cloudflare/d1/migrations/0017_catalog_reads.sql", "utf8"));
 const manifests = (
   await query("SELECT kind, checksum, total FROM OwnedLibraryManifest ORDER BY kind")
 )[0].results;
