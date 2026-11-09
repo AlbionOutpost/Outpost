@@ -25,11 +25,13 @@ export function BrandLockup({
       data-size={size}
     >
       <Image
-        src="/brand/outpost-mark.png"
+        // A 96px cut of the painted banner (public/brand/outpost-mark.png, 512px) covers the
+        // header mark at 2x for a twentieth of the bytes.
+        src="/brand/outpost-mark-96w.webp"
         alt=""
         width={mark}
         height={mark}
-        priority={size === "md"}
+        loading={size === "md" ? "eager" : "lazy"}
       />
       <span className="brand-lockup-word" aria-hidden="true">
         OUTPOST

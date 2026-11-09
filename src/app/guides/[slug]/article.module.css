@@ -8,10 +8,6 @@
   max-width: var(--page-width);
   margin-inline: auto;
 }
-/* The shell narrows reading routes to 880px; the reader needs its rails beside the text */
-:global(.app.outpost main):has(> .page) {
-  max-width: calc(var(--page-width) + 2 * var(--page-gutter));
-}
 /* The cover is the guide's art; an emblem beside the title would only repeat it */
 :global(.app.outpost) .page :global(.workspace-emblem) {
   display: none;

@@ -20,7 +20,7 @@ The static 1200×630 `/brand/outpost-social.png` (palette PNG, about 310 KB) giv
 
 `src/app/manifest.ts` serves `/manifest.webmanifest` (name, short name, `#0b1016` theme/background, 192 and 512 icons plus a maskable 512, all in `public/`). The root `viewport` export sets `theme-color` and `color-scheme`. `favicon.ico`, `icon.png` and `apple-icon.png` stay in `src/app`. Every icon is cut from the owner's painted banner (`public/brand/outpost-mark.png`, the same banner as the wordmark); always use that logo, never a redrawn one. `/legal` declares `en`/`de`/`x-default` alternates for its `?lang` pair; it stays noindex while operator details are incomplete.
 
-`e2e/accessibility.spec.ts` runs axe (WCAG 2.0 to 2.2 A/AA tags) on 16 main public pages at 1440 and 390 and fails on serious or critical findings, and checks one `h1` and one `main` per page.
+`e2e/accessibility.spec.ts` runs axe (WCAG 2.0 to 2.2 A/AA tags) on 35 public pages and 7 signed-in pages at 1440 and 390 and fails on serious or critical findings; it also checks one `h1` and one `main` per page, heading order and keyboard use ([TESTING.md](TESTING.md#writing-tests)).
 
 Not done: per-entity Open Graph images. The static card is used everywhere; `ImageResponse` would add Worker CPU/size cost on the Free tier and was not verified on the OpenNext build.
 

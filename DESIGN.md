@@ -349,7 +349,9 @@ Shared rules live in `src/app/motion-system.css` and the surface rules in `produ
 - **Do** show where every number came from and how fresh it is; label manual inputs and estimates as such.
 - **Do** use Albion vocabulary: **Comps** (not "compositions" in UI), builds, loadout, swaps, IP, spec, focus, RRR, buy order / sell order (never bid/ask), Teams (UI name for guilds/groups), tier notation T4.0 / T6.1.
 - **Do** design empty, loading, error, stale and unavailable states for every data view.
-- **Do** keep everything keyboard-reachable with visible focus, labelled controls, dismissible dialogs and focus return.
+- **Do** keep everything keyboard-reachable with visible focus, labelled controls, dismissible dialogs and focus return. Header menus close on Escape (focus back on the menu button) and when focus tabs out of them; the phone drawer keeps focus inside until it closes.
+- **Do** keep heading levels in order under the page's one `h1`. When a section has no visible title (its cards carry `h3`s), give it an `sr-only` `h2` and label the section with it. A link's accessible name must contain the text it shows, so don't `aria-labelledby` a link with part of its own content.
+- **Do** load images by role: the page's largest paint (the masthead emblem, the first row of activity cards, a guide cover) is eager with `fetchPriority="high"`; menus, closed panels, empty states and below-the-fold emblems are `loading="lazy"`; painted emblems drawn at 28–64px use their 64/128px cuts (`variantSrcSet`, or the `-64w.webp` file), never the full painting.
 - **Do** compare your rendered page against the matching reference at desktop and phone width before calling it done.
 
 ### Don't:

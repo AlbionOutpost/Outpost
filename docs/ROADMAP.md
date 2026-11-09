@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Faster first load and a wider accessibility check — 9 November 2026
+
+- Lab Lighthouse on the local Cloudflare build (median of 3) on the home, build list, Market Explorer, Crafting, guide, item database and comps pages: mobile LCP 5.6–7.1 s → 4.3–5.2 s and performance 70–78 → 80–84; desktop LCP 1.2–2.0 s → 1.0–1.1 s and performance 78–97 → 98–99. The journal guide's desktop CLS 0.16 → 0. Accessibility 100 on all seven.
+- Every page fetched ≈ 330 KB of images it never showed first: the 512px header mark (now a 96px WebP, 3 KB), the Tools menu's 25 full-size paintings (now lazy 64px cuts) and the not-found emblem that React preloaded on every route (now lazy). Masthead emblems, often the page's largest paint, load their 64/128px cuts first; the first row of activity cards on Comps and Builds by activity loads eagerly.
+- Guides get their full width from the first paint, so the page no longer jumps when the article streams in.
+- Accessibility: axe now scans 35 public and 7 signed-in pages at 1440 and 390 (was 16 public), plus heading order, the skip link and focus ring, the header menus, the phone drawer, the item picker and reduced motion. Fixed: heading levels on Comps, Builds by activity and Guides; comp member links and starting-set buttons whose names left out what they show; header menus now close when focus tabs out.
+- Next: the 13 global stylesheets (≈ 360 KB raw) still block the first paint on every route (Lighthouse estimates ≈ 0.9 s on mobile); the crafting calculators ship ≈ 650 KB of recipe and mastery JSON to the browser; Market Explorer's hero shrinks when prices fail to load (CLS 0.05 in the lab, where the market API is unreachable).
+
 ## Worker CPU back toward the allowance — 9 November 2026
 
 - Worker CPU was the only allowance over its limit (≈ 430 M CPU-ms a month against 30 M). Crawlers made ≈ 90 % of it, mostly archived builds, `?region=` copies and the build list's search and layout variants, and nearly every request woke a cold isolate (≈ 0.9 s each).

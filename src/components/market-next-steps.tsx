@@ -67,7 +67,13 @@ export function MarketNextSteps({
                 href={tool.href}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-                <img src={`/albion/icons/${tool.emblem}.webp`} alt="" width={48} height={48} />
+                <img
+                  src={`/albion/icons/${tool.emblem}.webp`}
+                  alt=""
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                />
                 <span className={styles.copy}>
                   <span className={styles.title}>{tool.title}</span>
                   <span className={styles.line}>{tool.line}</span>

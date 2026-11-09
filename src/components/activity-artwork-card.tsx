@@ -12,7 +12,17 @@ const librarySizes =
   "(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1199px) 33vw, 380px";
 
 /** The sharp scene and its three blur layers share one candidate: one download per card. */
-function Art({ src, sizes, scene }: { src: string; sizes: string; scene?: boolean }) {
+function Art({
+  src,
+  sizes,
+  scene,
+  priority,
+}: {
+  src: string;
+  sizes: string;
+  scene?: boolean;
+  priority?: boolean;
+}) {
   return (
     // eslint-disable-next-line @next/next/no-img-element -- static artwork with its own srcset
     <img
@@ -23,7 +33,8 @@ function Art({ src, sizes, scene }: { src: string; sizes: string; scene?: boolea
       sizes={sizes}
       {...variantSize(src)}
       alt=""
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
       decoding="async"
     />
   );
@@ -38,6 +49,7 @@ export function ActivityArtworkCard({
   sizes = librarySizes,
   href = `/builds?source=library&category=${encodeURIComponent(category)}`,
   noun = ["build", "builds"],
+  priority = false,
 }: {
   category: string;
   name: string;
@@ -50,6 +62,8 @@ export function ActivityArtworkCard({
   href?: string;
   /** What `builds` counts, singular and plural: comps reuse the card. */
   noun?: [string, string];
+  /** The first row on screen: its scene loads first, as it is the page's largest paint. */
+  priority?: boolean;
 }) {
   const art = activityBackgrounds.find((a) => a.id === category);
   return (
@@ -69,7 +83,7 @@ export function ActivityArtworkCard({
             : undefined
         }
       >
-        {art && <Art src={art.src} sizes={sizes} scene />}
+        {art && <Art src={art.src} sizes={sizes} scene priority={priority} />}
         <span className={styles.blur} aria-hidden="true">
           {[0, 1, 2].map((layer) => (
             <span key={layer}>{art && <Art src={art.src} sizes={sizes} />}</span>

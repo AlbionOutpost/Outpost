@@ -41,6 +41,17 @@ node scripts/qa-cloudflare-database.mjs
 
 The catalog step needs local Postgres with `npm run data:sync` done. CI runs the same sequence in the deploy workflow.
 
+## Lab speed (Lighthouse)
+
+Measure against a production build, never `next dev`. The closest to production is local workerd: `node scripts/cloudflare-build.mjs`, then `E2E_CLOUDFLARE=1 node scripts/cloudflare-local-server.mjs` (port 3000). A Node build (`npm run build`, then `npm start`) inlines its CSS, so its numbers differ from Cloudflare's.
+
+```bash
+CHROME_PATH=/opt/pw-browsers/chromium node scripts/lighthouse.mjs --runs=3
+node scripts/lighthouse.mjs --base=http://localhost:3000 --runs=3 /builds /guides/first-silver
+```
+
+It runs Lighthouse (fetched by `npx`) at the mobile and desktop presets on the main pages (or the paths given), keeps the reports in `.qa/lighthouse/` and prints the median performance and accessibility scores, LCP, TBT, CLS and script transfer per page. Compare medians of at least three runs on an otherwise idle machine; TBT swings with machine load. Local wrangler does not compress HTML, so large pages read heavier than in production. Last numbers: [outpost-performance skill](../.claude/skills/outpost-performance/SKILL.md).
+
 ## Playwright modes
 
 | Env                | Server                                                                          |
@@ -57,6 +68,7 @@ Sessions in browser tests are fixture database sessions, not real Discord logins
 - **Permissions:** for every allowed path add a denied one — anonymous, unrelated user, wrong role, revoked member — and assert nothing changed in the database.
 - **Caches:** warm as user A, request as B and anonymous; check headers and payload.
 - **UI:** visual specs write captures under `.qa/` (e.g. `.qa/<area>-correction/current/`, `.qa/design-review/`); review them, don't just count passes. Cover populated, empty, loading, error and stale states.
+- **Accessibility:** add every new page to `pages` (or `accountPages` when it needs a session) in `e2e/accessibility.spec.ts`. It runs axe (WCAG 2.0–2.2 A/AA) at 1440 and 390 and fails on serious or critical findings, and checks one `h1` and one `main`, heading levels that never skip, the skip link and focus ring, the header menus, the phone drawer's focus trap, the item picker by keyboard, and that nothing moves under reduced motion.
 - **One screen:** tool and workspace pages are held to 1440×900 by `e2e/one-screen.spec.ts`; add a page there when it should fit.
 - Keep tests fast and focused; don't add checks whose only purpose is a report.
 
