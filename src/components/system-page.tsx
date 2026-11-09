@@ -31,6 +31,8 @@ export function SystemPage({
           alt=""
           width={72}
           height={72}
+          // Every page carries the not-found tree; lazy keeps its emblem from being preloaded
+          loading="lazy"
         />
         <p className="system-page-eyebrow">{eyebrow}</p>
         <h1 id="system-page-title">{title}</h1>

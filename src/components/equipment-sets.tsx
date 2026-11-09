@@ -182,7 +182,6 @@ export function StartingSets({
           <button
             type="button"
             key={item.id}
-            aria-label={`Use ${item.name}`}
             title={item.description}
             onClick={() => onPick(item.id, templateEquipment(item.id))}
           >
@@ -191,7 +190,12 @@ export function StartingSets({
                 <ItemIcon key={slot} id={itemId} size={28} />
               ))}
             </span>
+            {/* Named by what it shows, with the words the card leaves out read aloud */}
+            <span className="sr-only">Use </span>
             <strong>{item.name.replace(/ (equipment|starting) set$/, "")}</strong>
+            <span className="sr-only">
+              {item.name.match(/ (equipment|starting) set$/)?.[0]}
+            </span>{" "}
             <small>{item.items.length} slots</small>
           </button>
         ))}

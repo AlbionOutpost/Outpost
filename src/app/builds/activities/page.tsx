@@ -27,9 +27,10 @@ export default function Activities() {
   const total = listed.reduce((sum, a) => sum + a.builds, 0);
   const grid = (items: typeof activities) => (
     <ul className={styles.grid}>
-      {items.map((a) => (
+      {items.map((a, i) => (
         <li key={a.id}>
           <ActivityArtworkCard
+            priority={i < 4}
             category={a.id}
             name={a.name}
             builds={a.builds}
@@ -49,7 +50,10 @@ export default function Activities() {
         accent="activity"
         description={`${total.toLocaleString("en-US")} builds across ${listed.length} activities. Open one to see the loadouts players run there.`}
       />
-      <section aria-label="Build activities" className={styles.sections}>
+      <section aria-labelledby="build-activities-title" className={styles.sections}>
+        <h2 id="build-activities-title" className="sr-only">
+          Build activities
+        </h2>
         {grid(listed)}
         {open.length > 0 && (
           <section className={`well ${styles.open}`} aria-labelledby="activities-open">

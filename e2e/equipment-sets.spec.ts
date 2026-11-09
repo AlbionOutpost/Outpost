@@ -34,7 +34,7 @@ test("full sets persist in builds, copy into comps independently, and retain pri
     await page.getByLabel("Build title", { exact: true }).fill("Complete equipment set fixture");
     const tools = page.getByRole("region", { name: "Spare sets" });
     await selectEditorSlot(page, "Main hand");
-    await page.getByRole("button", { name: "Use Battleaxe starting set", exact: true }).click();
+    await page.getByRole("button", { name: /^Use Battleaxe starting set( \d+ slots)?$/ }).click();
     await expect(page.locator(".loadout-board-slot.is-equipped")).toHaveCount(10);
     await selectEditorSlot(page, "Main hand", "Abilities");
     await page.getByLabel("Main hand Q", { exact: true }).selectOption("Rending Spin");

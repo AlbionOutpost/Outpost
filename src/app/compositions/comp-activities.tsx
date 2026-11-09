@@ -116,7 +116,10 @@ export default async function CompActivities() {
         title="Comps by activity"
         description={`${total.toLocaleString("en-US")} comps across ${listed.length + others.length} activities. Open one to see the parties players run there.`}
       />
-      <section aria-label="Comp activities" className={styles.sections}>
+      <section aria-labelledby="comp-activities-title" className={styles.sections}>
+        <h2 id="comp-activities-title" className="sr-only">
+          Comp activities
+        </h2>
         {!total && (
           <EmptyWell
             emblem="team-comps"
@@ -130,9 +133,10 @@ export default async function CompActivities() {
           />
         )}
         <ul className={styles.grid}>
-          {listed.map((a) => (
+          {listed.map((a, i) => (
             <li key={a.id}>
               <ActivityArtworkCard
+                priority={i < 4}
                 category={a.id}
                 name={a.name}
                 builds={a.comps}

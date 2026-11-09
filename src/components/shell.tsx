@@ -58,8 +58,16 @@ function ToolMenuMark({ tool }: { tool: DirectoryTool }) {
   return (
     <span className={`tool-menu-mark${painting ? "" : " well"}`} aria-hidden="true">
       {painting ? (
+        // The 64px cut covers the 28px mark at 2x; lazy, so the closed menus cost nothing
         // eslint-disable-next-line @next/next/no-img-element -- owner-supplied task emblem
-        <img src={`/albion/icons/${painting}.webp`} alt="" width={28} height={28} />
+        <img
+          src={`/albion/icons/${painting}-64w.webp`}
+          alt=""
+          width={28}
+          height={28}
+          loading="lazy"
+          decoding="async"
+        />
       ) : (
         <ToolIcon name={tool.icon} size={15} />
       )}
@@ -471,7 +479,7 @@ export function Shell({
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
                         <img
-                          src={`/albion/icons/${sectionEmblems[url]}.webp`}
+                          src={`/albion/icons/${sectionEmblems[url]}-64w.webp`}
                           alt=""
                           width={32}
                           height={32}
@@ -539,6 +547,13 @@ export function Shell({
               <header
                 className="site-header"
                 ref={header}
+                // Tabbing out of an open menu closes it, so it never hangs over the page
+                // behind the keyboard user's focus (a click elsewhere already closes it).
+                onBlur={(e) => {
+                  const details = (e.target as HTMLElement).closest("details[open]");
+                  const next = e.relatedTarget as Node | null;
+                  if (details && next && !details.contains(next)) details.removeAttribute("open");
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     const details = (e.target as HTMLElement).closest("details");
@@ -645,14 +660,18 @@ export function Shell({
                   id="main-content"
                   tabIndex={-1}
                   data-page={path.split("/")[1] || "home"}
+                  // Guides get their full width from the first paint (the loading state
+                  // included): widening only once the article streamed in shifted the page.
                   data-width={
                     path.startsWith("/compositions/")
                       ? "board"
-                      : path.startsWith("/guides/") || path === "/legal"
-                        ? "reading"
-                        : workspace
-                          ? "workspace"
-                          : "marketing"
+                      : path.startsWith("/guides/")
+                        ? "guide"
+                        : path === "/legal"
+                          ? "reading"
+                          : workspace
+                            ? "workspace"
+                            : "marketing"
                   }
                 >
                   {children}

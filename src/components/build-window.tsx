@@ -90,7 +90,8 @@ export function BuildWindow({
       >
         <div className={`landing-window-bar ${windows.bar}`}>
           {href ? (
-            <Link href={href} className="landing-window-title" aria-labelledby={titleId}>
+            // Named by its content, so a comp member's number is part of the name it shows
+            <Link href={href} className="landing-window-title">
               {name}
             </Link>
           ) : (

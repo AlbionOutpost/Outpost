@@ -35,6 +35,7 @@ export function EmptyWell({
           alt=""
           width={48}
           height={48}
+          loading="lazy"
         />
       )}
       <div className={styles.copy}>
