@@ -1,4 +1,5 @@
 "use client";
+import { regionSuffix, withBuildRegion } from "@/lib/build-region";
 import { useEffect, useState } from "react";
 import Link from "@/components/link";
 import { ArrowUpRight, RefreshCw, Pause, Play } from "lucide-react";
@@ -102,7 +103,7 @@ export function HomeMarketPulse() {
           >
             <RefreshCw size={14} />
           </button>
-          <Link href={`/tools/market?region=${region}`}>
+          <Link href={`/tools/market${regionSuffix(region)}`}>
             View market <ArrowUpRight size={13} />
           </Link>
         </div>
@@ -117,7 +118,7 @@ export function HomeMarketPulse() {
               className="market-pulse-item"
               data-item={item.id}
               key={item.id}
-              href={`/tools/market?region=${region}&item=${item.id}`}
+              href={withBuildRegion(`/tools/market?item=${item.id}`, region)}
             >
               <ItemIcon id={item.id} size={48} />
               <div>

@@ -1,15 +1,23 @@
 // Writes public/sitemap.xml and public/robots.txt at build time: hubs, every tool, guides and the
 // archived library (builds and comps). Static files cost no Worker request per crawl (robots.txt
 // rendered by the app cost ≈ 270 ms of CPU per fetch). Editor, account and API routes stay out;
-// item pages are left to natural crawling.
+// item pages are left to natural crawling. The sitemap lists only indexable pages under their own
+// canonical address; the checks at the end fail the build otherwise.
 import { readFileSync, writeFileSync } from "node:fs";
 import { tools } from "../src/lib/tool-directory";
-import { publicOrigin } from "../src/lib/seo";
+import { canonicalUrl, publicOrigin } from "../src/lib/seo";
 import { activityBackgrounds } from "../src/lib/activity-backgrounds";
+import { indexedBuild, listedBuild } from "../src/lib/library-scope";
 const base = publicOrigin();
 const read = <T>(name: string): T =>
   JSON.parse(readFileSync(`public/library/grind-${name}.json`, "utf8"));
 type Entry = { path: string; lastModified?: string; changeFrequency: string; priority: number };
+type Build = { slug: string; updatedAt: string; upvotes?: number; category?: string };
+// Only builds a player liked are indexable (src/lib/library-scope.ts); the rest render noindex.
+// An activity list shows listed builds only, and one with none of them is an empty page.
+const allBuilds = read<Build[]>("builds");
+const builds = allBuilds.filter(indexedBuild);
+const activeCategories = new Set(allBuilds.filter(listedBuild).map((build) => build.category));
 const entries: Entry[] = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/tools", changeFrequency: "weekly", priority: 0.9 },
@@ -29,18 +37,20 @@ const entries: Entry[] = [
         !["/tools/market", "/tools/death-feed"].includes(tool.href),
     )
     .map((tool) => ({ path: tool.href, changeFrequency: "weekly", priority: 0.8 })),
-  ...activityBackgrounds.map((activity) => ({
-    path: `/builds?source=library&category=${encodeURIComponent(activity.id)}`,
-    changeFrequency: "weekly",
-    priority: 0.6,
-  })),
+  ...activityBackgrounds
+    .filter((activity) => activeCategories.has(activity.id))
+    .map((activity) => ({
+      path: `/builds?source=library&category=${encodeURIComponent(activity.id)}`,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    })),
   ...read<{ slug: string; updatedAt: string }[]>("guides").map((guide) => ({
     path: `/guides/${encodeURIComponent(guide.slug)}`,
     lastModified: guide.updatedAt,
     changeFrequency: "monthly",
     priority: 0.6,
   })),
-  ...read<{ slug: string; updatedAt: string }[]>("builds").map((build) => ({
+  ...builds.map((build) => ({
     path: `/builds/library/${encodeURIComponent(build.slug)}`,
     lastModified: build.updatedAt,
     changeFrequency: "monthly",
@@ -81,8 +91,11 @@ const disallow = [
   "/api/",
   "/builds/new",
   "/compositions/new",
-  "/builds/*/edit",
-  "/compositions/*/edit",
+  // `$` ends the match, so a library slug that starts with "edit" stays crawlable.
+  "/builds/*/edit$",
+  "/builds/*/edit?",
+  "/compositions/*/edit$",
+  "/compositions/*/edit?",
   "/dashboard",
   "/settings",
   "/signin",
@@ -103,6 +116,26 @@ const disallow = [
   "/compositions/library/*?",
   "/items/*?",
 ];
+// Nothing listed may be blocked by robots.txt, render noindex, redirect or name another canonical.
+const blocked = disallow.map(
+  (rule) =>
+    new RegExp(
+      `^${rule
+        .replace(/[.+^${}()|[\]\\?]/g, "\\$&")
+        .replaceAll("*", ".*")
+        .replace(/\\\$$/, "$")}`,
+    ),
+);
+const noindex =
+  /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|legal|premium|supporter)(\/|\?|$)|^\/tools\/death-feed|^\/(builds|compositions)\/library(\?|$)|[?&](q|mine|region)=|[?&]view=saved/;
+for (const path of seen) {
+  if (blocked.some((rule) => rule.test(path))) throw new Error(`robots.txt blocks ${path}`);
+  if (noindex.test(path))
+    throw new Error(`The sitemap lists a noindex or redirected page: ${path}`);
+  const url = new URL(path, base);
+  if (canonicalUrl(url.pathname, Object.fromEntries(url.searchParams)) !== url.href)
+    throw new Error(`${path} names another canonical`);
+}
 writeFileSync(
   "public/robots.txt",
   [

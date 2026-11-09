@@ -39,31 +39,26 @@ const scalar = (query: SeoQuery, name: string) =>
 const compListKeys = ["view", "source", "mine", "q", "category", "page"];
 export const isCompList = (query: SeoQuery) => compListKeys.some((key) => key in query);
 
-/** Only explicit, bounded public identity enters metadata. Search/account inputs stay out. */
+/**
+ * The canonical names the content, never the viewer's presentation of it. It keeps only a query
+ * that is its own page with its own title: the builds or comps source and activity, the comps
+ * list (`view=all`), the deaths feed and public pagination. Everything else is dropped:
+ * `?region=` (the same page with another server's numbers; links on Europe omit it),
+ * Market item/quality and weapon/family/tag filters (narrowings of the list or tool they belong
+ * to, which is the page to index), sort/layout switches, search, account inputs and tracking.
+ */
 export function canonicalUrl(path: string, query: SeoQuery = {}) {
   if (!path.startsWith("/") || path.startsWith("//") || /[?#\\\u0000-\u0020\u007f]/.test(path))
     throw new Error("Canonical paths must be local route paths without query or fragment");
   const origin = publicOrigin();
   const url = new URL(path, origin);
   if (url.origin !== origin) throw new Error("Canonical origin must remain the public site");
-  const region = scalar(query, "region");
-  if (["europe", "americas", "asia"].includes(region)) url.searchParams.set("region", region);
-  if (path === "/tools/market") {
-    const item = scalar(query, "item"),
-      quality = scalar(query, "quality");
-    if (/^[A-Z0-9_@.-]{1,150}$/.test(item)) url.searchParams.set("item", item);
-    if (/^[1-5]$/.test(quality)) url.searchParams.set("quality", quality);
-  }
   if (["/builds", "/compositions"].includes(path)) {
     const source = scalar(query, "source");
     if (["community", "player", "library"].includes(source)) url.searchParams.set("source", source);
     const category = scalar(query, "category");
     if (activityBackgrounds.some((activity) => activity.id === category))
       url.searchParams.set("category", category);
-    for (const key of ["weapon", "family", "tag"]) {
-      const value = scalar(query, key);
-      if (/^[\p{L}\p{N} _'’+-]{1,80}$/u.test(value)) url.searchParams.set(key, value);
-    }
   }
   if (["/guides", "/items", "/builds", "/compositions"].includes(path)) {
     const page = scalar(query, "page");

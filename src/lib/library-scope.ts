@@ -8,3 +8,9 @@ export const listedBuild = (b: { updatedAt?: string; upvotes?: number }) =>
   (b.updatedAt ?? "") >= LISTED_SINCE && (b.upvotes ?? 0) >= 1;
 export const byLikes = <T extends { upvotes?: number }>(a: T, b: T) =>
   (b.upvotes ?? 0) - (a.upvotes ?? 0);
+/**
+ * Which archived builds search engines may index: any build at least one player liked, listed or
+ * not (a liked 2025 build is still a real, vetted page). Unliked builds are mostly scratch copies
+ * and stay noindex and out of the sitemap; their pages still work for the comps that link them.
+ */
+export const indexedBuild = (b: { upvotes?: number }) => (b.upvotes ?? 0) >= 1;

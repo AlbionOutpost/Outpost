@@ -1,4 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { regionSuffix, withBuildRegion } from "@/lib/build-region";
 import "./homepage.css";
 import { AdSlot } from "@/components/ad-slot";
 import { CraftCard } from "@/components/landing/craft-card";
@@ -56,7 +57,7 @@ export default async function Home({
   // A session cookie is enough to swap the hero's second action; the dashboard re-checks it.
   const signedIn =
     jar.has("next-auth.session-token") || jar.has("__Secure-next-auth.session-token");
-  const suffix = `?region=${region}`;
+  const suffix = regionSuffix(region);
   // Two round trips to the library on Cloudflare: everything independent first, then the
   // comp's members, so the page streams without showing the shell fallback.
   const [library, spellNames, picked, comp, guides, players, activities, price] = await Promise.all(
@@ -217,7 +218,7 @@ export default async function Home({
               scene="market"
               title="Market Explorer"
               description="Prices in every city, so you know where to buy and where to dump."
-              href={`/tools/market?item=${showcase.market.id}&quality=1&region=${region}`}
+              href={withBuildRegion(`/tools/market?item=${showcase.market.id}&quality=1`, region)}
               action="Open Market Explorer"
             >
               <MarketCard
