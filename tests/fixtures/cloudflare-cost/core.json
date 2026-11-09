@@ -1,0 +1,77 @@
+{
+  "data": {
+    "viewer": {
+      "accounts": [
+        {
+          "periodWorkers": [
+            {
+              "dimensions": { "scriptName": "albionoutpost-web" },
+              "sum": { "requests": 2400000, "cpuTimeUs": 21000000000 }
+            },
+            {
+              "dimensions": { "scriptName": "albionoutpost-data" },
+              "sum": { "requests": 600000, "cpuTimeUs": 600000000 }
+            }
+          ],
+          "dayWorkers": [
+            {
+              "dimensions": { "scriptName": "albionoutpost-web" },
+              "sum": { "requests": 250000, "cpuTimeUs": 900000000 }
+            },
+            {
+              "dimensions": { "scriptName": "albionoutpost-data" },
+              "sum": { "requests": 50000, "cpuTimeUs": 100000000 }
+            }
+          ],
+          "periodDoRequests": [
+            {
+              "dimensions": {
+                "namespaceId": "aaaaaaaa11112222333344445555666677",
+                "scriptName": "albionoutpost-data"
+              },
+              "sum": { "requests": 150000 }
+            }
+          ],
+          "dayDoRequests": [
+            {
+              "dimensions": {
+                "namespaceId": "aaaaaaaa11112222333344445555666677",
+                "scriptName": "albionoutpost-data"
+              },
+              "sum": { "requests": 15000 }
+            }
+          ],
+          "periodDoDuration": [
+            {
+              "dimensions": { "namespaceId": "aaaaaaaa11112222333344445555666677" },
+              "sum": { "activeTime": 480000000000 }
+            },
+            {
+              "dimensions": { "namespaceId": "bbbbbbbb11112222333344445555666677" },
+              "sum": { "activeTime": 160000000000 }
+            }
+          ],
+          "dayDoDuration": [
+            {
+              "dimensions": { "namespaceId": "aaaaaaaa11112222333344445555666677" },
+              "sum": { "activeTime": 64000000000 }
+            }
+          ],
+          "periodD1": [
+            {
+              "dimensions": { "databaseId": "d1" },
+              "sum": { "rowsRead": 300000000, "rowsWritten": 1000 }
+            }
+          ],
+          "dayD1": [
+            {
+              "dimensions": { "databaseId": "d1" },
+              "sum": { "rowsRead": 30000000, "rowsWritten": 100 }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "errors": null
+}

@@ -1,0 +1,25 @@
+{
+  "data": {
+    "viewer": {
+      "accounts": [
+        {
+          "stored": [
+            {
+              "dimensions": { "date": "2026-11-08", "databaseId": "d1" },
+              "max": { "databaseSizeBytes": 4100000000 }
+            },
+            {
+              "dimensions": { "date": "2026-11-09", "databaseId": "d1" },
+              "max": { "databaseSizeBytes": 4200000000 }
+            },
+            {
+              "dimensions": { "date": "2026-11-09", "databaseId": "d2" },
+              "max": { "databaseSizeBytes": 100000000 }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "errors": null
+}

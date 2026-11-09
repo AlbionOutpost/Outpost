@@ -9,6 +9,7 @@ import { probePath, requestBudget, secureResponse } from "./request-budget";
 import { edgeCacheEntry } from "./edge-cache";
 import { pageCacheEntry, pageFromStore, pageToStore } from "./page-cache";
 import { boundedContext, withDeadline } from "./deadline";
+import { edgeTtl } from "./save-mode";
 
 /* The edge gateway: www redirect, edge cache, per-address budgets, then the OpenNext app in this
  * same Worker (CPU-billed). docs/ARCHITECTURE.md § albionoutpost-web. */
@@ -79,7 +80,7 @@ const worker = {
       // The page streams to the visitor; its copy is checked and kept once the render ends.
       const copy = result.clone();
       ctx.waitUntil(
-        pageToStore(copy, page.ttl)
+        pageToStore(copy, edgeTtl(page.ttl, env))
           .then((stored) => stored && cache.put(page.key, stored))
           .catch(() => {}),
       );
@@ -90,7 +91,7 @@ const worker = {
       const stored = new Response(body, {
         headers: {
           "Content-Type": response.headers.get("Content-Type") || "application/json",
-          "Cache-Control": `public, max-age=${entry.ttl}`,
+          "Cache-Control": `public, max-age=${edgeTtl(entry.ttl, env)}`,
         },
       });
       ctx.waitUntil(cache.put(entry.key, stored).catch(() => {}));

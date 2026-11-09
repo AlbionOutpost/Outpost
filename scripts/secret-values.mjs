@@ -13,6 +13,8 @@ const names = [
   "CLOUDFLARE_DNS_API_TOKEN",
   "CLOUDFLARE_DEPLOY_API_TOKEN",
   "CLOUDFLARE_API_KEY",
+  "CLOUDFLARE_ANALYTICS_TOKEN",
+  "DISCORD_COST_WEBHOOK_URL",
 ];
 /** Keep every configured value, including different local/hosted secrets with the same name. */
 export function configuredSecrets() {

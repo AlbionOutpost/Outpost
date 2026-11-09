@@ -1,0 +1,84 @@
+{
+  "$comment": "Cost budget checked on every pull request (docs/OPERATIONS.md § Cost guardrails). Change a value only on purpose, with the reason in the PR. Bundles: scripts/cloudflare-cost-budget.mjs; everything else: tests/cost-budget.test.ts.",
+  "bundles": {
+    "albionoutpost-web": {
+      "config": "wrangler.jsonc",
+      "measuredGzipKiB": 3206,
+      "maxGzipKiB": 3840
+    },
+    "albionoutpost-data": {
+      "config": "cloudflare/database/wrangler.jsonc",
+      "measuredGzipKiB": 1028,
+      "maxGzipKiB": 1280
+    }
+  },
+  "pageCache": {
+    "routeCount": 15,
+    "samples": {
+      "/": 60,
+      "/market-data": 60,
+      "/tools/kill-feed": 60,
+      "/tools/market": 60,
+      "/tools": 300,
+      "/tools/alchemy": 300,
+      "/tools/avalon-mapper": 300,
+      "/tools/black-market": 300,
+      "/tools/cooking": 300,
+      "/tools/crafting": 300,
+      "/tools/enchanting": 300,
+      "/tools/farming": 300,
+      "/tools/fishing": 300,
+      "/tools/flipping": 300,
+      "/tools/gold": 300,
+      "/tools/laborers": 300,
+      "/tools/mastery": 300,
+      "/tools/profitable-crafts": 300,
+      "/tools/reference": 300,
+      "/tools/refining": 300,
+      "/tools/transporting": 300,
+      "/builds": 60,
+      "/builds/activities": 300,
+      "/builds/library/sample-build": 86400,
+      "/compositions": 60,
+      "/compositions/library/sample-comp": 86400,
+      "/guides": 86400,
+      "/guides/sample-guide": 86400,
+      "/items": 300,
+      "/items/T4_MAIN_SWORD": 120,
+      "/groups": 60
+    }
+  },
+  "edgeCache": {
+    "/api/search": 120,
+    "/api/landing": 120,
+    "/api/landing/craft": 120,
+    "/api/economy/crafts": 120,
+    "/api/economy/black-market": 120,
+    "/api/market": 60,
+    "/api/items/prices": 120,
+    "/api/history": 300,
+    "/api/combat-events": 30,
+    "/api/combat-events/top": 120
+  },
+  "staticRoutes": ["/.well-known/security.txt", "/apple-icon.png", "/favicon.ico", "/icon.png"],
+  "workers": {
+    "albionoutpost-web": {
+      "config": "wrangler.jsonc",
+      "durableObjects": {},
+      "migrations": ["v1-sessions"],
+      "crons": [],
+      "ratelimits": ["EDGE_REQUESTS", "EDGE_SEARCH", "EDGE_ITEM_PRICES", "EDGE_MARKET"]
+    },
+    "albionoutpost-data": {
+      "config": "cloudflare/database/wrangler.jsonc",
+      "durableObjects": {
+        "DATABASE": "OutpostDatabase",
+        "BUDGETS": "AbuseBudget",
+        "KILLS": "KillBoard"
+      },
+      "migrations": ["v1", "v2-kill-board"],
+      "crons": ["* * * * *"],
+      "ratelimits": []
+    }
+  }
+}

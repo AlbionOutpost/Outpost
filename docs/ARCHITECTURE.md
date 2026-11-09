@@ -25,7 +25,7 @@ flowchart LR
 - **The Next server is evaluated at isolate startup** (`cloudflare/web/worker.ts` imports OpenNext's `handler.mjs` statically). OpenNext loads it lazily, which billed ≈ 0.3–0.5 s of CPU to the first request of every cold isolate; Workers do not bill startup. Startup stays well under the 1 s limit (≈ 0.3 s locally with `wrangler check startup`, against 0.04 s before).
 - Probes for software Outpost does not run (`/wp-*`, `*.php`, dotfiles other than `.well-known`; `probePath` in `request-budget.ts`) get a bare 404 before the cache and the app.
 - Every render has a 30-second deadline, streamed body included (504 if nothing was sent), and background work handed to `waitUntil` gets ten seconds; both timers are cleared as soon as their work settles. `limits.cpu_ms` caps one request at 10 s of CPU (the Paid default is 30 s).
-- Bindings: `ASSETS`, `OUTPOST_DATA` (service → data Worker), `EDGE_REQUESTS`, `EDGE_SEARCH`, `EDGE_ITEM_PRICES`, `EDGE_MARKET` (rate limits), `CF_VERSION_METADATA` (the deploy's version id, part of every page cache key). Var `OUTPOST_RUNTIME=cloudflare`; release vars and secrets are listed in [OPERATIONS.md](OPERATIONS.md#runtime-configuration).
+- Bindings: `ASSETS`, `OUTPOST_DATA` (service → data Worker), `EDGE_REQUESTS`, `EDGE_SEARCH`, `EDGE_ITEM_PRICES`, `EDGE_MARKET` (rate limits), `CF_VERSION_METADATA` (the deploy's version id, part of every page cache key). Var `OUTPOST_RUNTIME=cloudflare` (and `OUTPOST_SAVE_MODE` when save mode is on); release vars and secrets are listed in [OPERATIONS.md](OPERATIONS.md#runtime-configuration).
 - OpenNext caches are `dummy` (no ISR store); images are unoptimized; link prefetch is off by default (`src/components/link.tsx`) to protect CPU and request budgets.
 
 ### `albionoutpost-data` (`cloudflare/database/wrangler.jsonc`, `cloudflare/database/worker.ts`)
@@ -75,7 +75,7 @@ Never kept: a player's own build, comp or Team page (`/builds/<id>`, `/compositi
 
 **Nonce.** The page is stored as rendered, nonce included. The nonce appears in script and preload `nonce` attributes, in React's `"nonce"` props inside the flight payload (font and stylesheet hints) and in the `Link` font-preload header. On each hit a fresh nonce (base64 of a random UUID, as `src/proxy.ts` makes it) replaces every occurrence of the exact stored value in the body, `Link` and `Content-Security-Policy`, so two hits never share a nonce and the policy always matches the body. It is the same length, so length-prefixed flight rows stay valid. Rewriting every `nonce=` attribute with HTMLRewriter would miss the flight payload and would give a valid nonce to any injected attribute; replacing only the render's own value does neither. The policy itself is unchanged.
 
-No stale-while-revalidate: without coordination across isolates every stale hit would render in the background, which can cost more CPU than a plain miss. Operating it (purge, disable): [OPERATIONS.md § Cost guardrails](OPERATIONS.md#cost-guardrails).
+No stale-while-revalidate: without coordination across isolates every stale hit would render in the background, which can cost more CPU than a plain miss. In an emergency, save mode (`OUTPOST_SAVE_MODE=1`, `cloudflare/web/save-mode.ts`) stores page and API answers with ten times their TTL, at most an hour, without changing what is cached ([OPERATIONS.md § Save mode](OPERATIONS.md#save-mode)). Operating it (purge, disable): [OPERATIONS.md § Cost guardrails](OPERATIONS.md#cost-guardrails).
 
 ## Runtime swap
 
