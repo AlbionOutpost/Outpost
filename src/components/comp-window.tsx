@@ -25,7 +25,7 @@ export function CompWindow({
   /** How many members the comp has. */
   total: number;
   noun: "member" | "player";
-  byline: string;
+  byline: ReactNode;
   children: ReactNode;
 }) {
   return (

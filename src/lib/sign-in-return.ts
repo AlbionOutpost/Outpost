@@ -7,6 +7,7 @@ const returnPages = [
   /^\/admin(?:\/(?:reports|review|audit|users))?$/,
   /^\/(?:builds|compositions)\/[A-Za-z0-9_-]{1,64}\/edit$/,
   /^\/groups\/[a-z0-9]+(?:-[a-z0-9]+)*(?:#join)?$/,
+  /^\/supporter\/cancel(?:\?lang=(?:en|de))?$/,
 ];
 
 /** The sign-in page that returns to `path` (a same-origin page from the list above). */

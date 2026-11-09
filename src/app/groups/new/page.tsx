@@ -9,6 +9,7 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { SupporterGate } from "@/components/supporter-gate";
 import { PanelHead } from "@/components/panel-head";
 import { canCreateTeam } from "@/lib/billing/gate";
+import { salesOpen } from "@/lib/billing/plan";
 import styles from "@/components/teams.module.css";
 import ceremony from "@/components/group-create.module.css";
 import { signInPath } from "@/lib/sign-in-return";
@@ -75,7 +76,7 @@ export default async function NewGroup() {
       ) : (
         <>
           <div className={styles.createLayout}>{featureList}</div>
-          <SupporterGate kind="create" />
+          <SupporterGate kind="create" onSale={salesOpen()} />
         </>
       )}
     </div>

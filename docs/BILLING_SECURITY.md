@@ -73,6 +73,22 @@ production migration or restore evidence. Billing remains subject to those provi
 deployment gates. Changing the configured Supporter price requires an explicit policy for
 existing subscribers; no implicit grandfathering or multi-price entitlement is implemented.
 
+## Cancellation and consent — 9 November 2026
+
+`POST /api/billing/cancel` accepts no subscription or customer id (strict schema). After the
+origin, session and budget checks it reads the account's stored Stripe customer, lists that
+customer's complete subscription history, filters live subscriptions for the configured price
+and sets `cancel_at_period_end` on each. A reply naming another customer fails with 502. The
+local plan is unchanged until the signed webhook reports the subscription's end, so the
+existing reconciliation stays the only entitlement writer. Tests: `tests/billing-cancel.test.ts`
+(another account's subscription, forged ids, signed out, cross-origin and missing origin,
+already scheduled, other price, provider mismatch; denied cases make no Stripe call).
+
+Checkout now requires `{terms: true, immediateStart: true}` and `salesOpen()`. The consent time
+is part of the durable checkout operation (optional field, older operations replay unchanged)
+and is sent as `metadata[outpostConsentAt]` and `subscription_data[metadata][outpostConsentAt]`,
+so idempotent recovery replays the same request. No schema change.
+
 Provider references: [subscription listing](https://docs.stripe.com/api/subscriptions/list),
 [checkout session listing](https://docs.stripe.com/api/checkout/sessions/list),
 [checkout expiration](https://docs.stripe.com/api/checkout/sessions/expire),

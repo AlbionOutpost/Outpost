@@ -9,6 +9,7 @@ import { targetKind, communityAction } from "@/lib/community/validation";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { communityTarget, requireModerator } from "@/lib/community/access";
 import { communityMutation } from "@/lib/community/service";
+import { badgeSelect, publicSupporter } from "@/lib/billing/plan";
 type Context = { params: Promise<{ kind: string; id: string }> };
 export const GET = apiHandler("community.read", async (req: NextRequest, ctx: Context) => {
   const { kind: raw, id } = await ctx.params,
@@ -56,7 +57,7 @@ export const GET = apiHandler("community.read", async (req: NextRequest, ctx: Co
       createdAt: true,
       updatedAt: true,
       authorId: true,
-      author: { select: { name: true, avatarFrame: true } },
+      author: { select: { name: true, avatarFrame: true, ...badgeSelect } },
     },
   });
   const favoriteCount =
@@ -81,7 +82,10 @@ export const GET = apiHandler("community.read", async (req: NextRequest, ctx: Co
         ? !!(await db.buildVote.findUnique({ where: { userId_buildId: { userId, buildId: id } } }))
         : false,
     voteCount: kind === "build" ? await db.buildVote.count({ where: { buildId: id } }) : null,
-    comments: comments.slice(0, 20),
+    // Only the badge flag goes out, never the author's plan or gift dates.
+    comments: comments
+      .slice(0, 20)
+      .map((comment) => ({ ...comment, author: publicSupporter(comment.author) })),
     hasNext: comments.length > 20,
     page,
   });

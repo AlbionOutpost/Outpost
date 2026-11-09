@@ -18,6 +18,7 @@ import {
   visibilityLabel,
 } from "@/components/group-parts";
 import { teamManagementOpen } from "@/lib/billing/gate";
+import { salesOpen } from "@/lib/billing/plan";
 import { decodeActivities } from "@/lib/groups/crest";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -57,7 +58,11 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
           now={renderedAt()}
           gate={
             (await teamManagementOpen(group.id)) ? undefined : (
-              <SupporterGate kind="manage" owner={data.group.ownerId === data.membership.userId} />
+              <SupporterGate
+                kind="manage"
+                owner={data.group.ownerId === data.membership.userId}
+                onSale={salesOpen()}
+              />
             )
           }
           profile={

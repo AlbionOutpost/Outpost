@@ -102,6 +102,8 @@ export async function createCheckoutSession(
     successUrl: string;
     cancelUrl: string;
     priceId: string;
+    /** When the buyer ticked the terms and immediate-start boxes (ISO), kept on the subscription. */
+    consentAt?: string;
   },
   operationId: string,
 ) {
@@ -119,6 +121,10 @@ export async function createCheckoutSession(
       client_reference_id: input.userId,
       "subscription_data[metadata][outpostUserId]": input.userId,
       "metadata[outpostCheckoutId]": operationId,
+      // Proof of the order-page consent (terms + immediate start, § 356 Abs. 5 BGB) lives in
+      // Stripe: on the session and, durably, on the subscription it creates.
+      "metadata[outpostConsentAt]": input.consentAt,
+      "subscription_data[metadata][outpostConsentAt]": input.consentAt,
       allow_promotion_codes: "true",
       billing_address_collection: "auto",
     },
@@ -150,6 +156,23 @@ export type StripeSubscription = {
 };
 export const getSubscription = (config: StripeConfig, id: string) =>
   call<StripeSubscription>(config, "GET", `/subscriptions/${encodeURIComponent(id)}`);
+
+/**
+ * Cancels at the end of the paid period (§ 312k BGB "ordentliche Kündigung"). The note and
+ * kind land in `cancellation_details` and metadata for the operator; Stripe keeps the plan
+ * active until `current_period_end`, then the webhook ends it.
+ */
+export const cancelSubscriptionAtPeriodEnd = (
+  config: StripeConfig,
+  id: string,
+  input: { kind: "ordinary" | "extraordinary"; reason?: string; receivedAt: string },
+) =>
+  call<StripeSubscription>(config, "POST", `/subscriptions/${encodeURIComponent(id)}`, {
+    cancel_at_period_end: "true",
+    "cancellation_details[comment]": input.reason || undefined,
+    "metadata[outpostCancelKind]": input.kind,
+    "metadata[outpostCancelReceivedAt]": input.receivedAt,
+  });
 
 export type StripeCheckout = {
   id: string;
