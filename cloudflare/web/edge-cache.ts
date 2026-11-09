@@ -125,6 +125,22 @@ const rules: Record<string, Rule> = {
         : null;
     },
   },
+  // The kill feed page polls this once a minute while "Update every minute" is on; the
+  // collector refreshes its window once a minute, so every viewer of a page shares one answer.
+  "/api/combat-events": {
+    ttl: 30,
+    key: (params) => {
+      const region = params.get("region") || "",
+        offset = params.get("offset") ?? "0";
+      return regions.has(region) &&
+        [...params.keys()].every((name) => name === "region" || name === "offset") &&
+        /^(0|[1-9]\d{0,2})$/.test(offset) &&
+        Number(offset) <= 200 &&
+        Number(offset) % 20 === 0
+        ? `region=${region}&offset=${offset}`
+        : null;
+    },
+  },
   "/api/combat-events/top": {
     ttl: 120,
     key: (params) => {

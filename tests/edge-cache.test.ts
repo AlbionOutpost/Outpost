@@ -27,6 +27,23 @@ describe("edge cache for signed-out public answers", () => {
     );
     expect(key("/api/combat-events/top?region=europe&region=asia")).toBeNull();
   });
+  it("shares the polled kill feed per server and page, never an answer the route would refuse", () => {
+    expect(key("/api/combat-events?offset=20&region=asia")).toBe(
+      "https://albionoutpost.com/api/combat-events?region=asia&offset=20",
+    );
+    expect(key("/api/combat-events?region=europe")).toBe(
+      "https://albionoutpost.com/api/combat-events?region=europe&offset=0",
+    );
+    expect(edgeCacheEntry(req("/api/combat-events?region=europe&offset=0"))!.ttl).toBe(30);
+    for (const bad of ["offset=10", "offset=220", "offset=020", "offset=-20", "offset=20&utm=x"])
+      expect(key(`/api/combat-events?region=europe&${bad}`)).toBeNull();
+    expect(key("/api/combat-events?region=mars&offset=0")).toBeNull();
+    expect(
+      key("/api/combat-events?region=europe&offset=0", {
+        headers: { Cookie: "__Secure-next-auth.session-token=x" },
+      }),
+    ).toBeNull();
+  });
   it("keys the scan routes by their validated selection only", () => {
     expect(
       key("/api/economy/crafts?utm=x&quality=2&region=europe&category=sword&tier=6&enchantment=1"),
