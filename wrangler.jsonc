@@ -9,6 +9,7 @@
   "minify": true,
   "vars": { "OUTPOST_RUNTIME": "cloudflare" },
   "services": [{ "binding": "OUTPOST_DATA", "service": "albionoutpost-data" }],
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
   "ratelimits": [
     { "name": "EDGE_REQUESTS", "namespace_id": "4101", "simple": { "limit": 240, "period": 60 } },
     { "name": "EDGE_SEARCH", "namespace_id": "4102", "simple": { "limit": 30, "period": 60 } },

@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import app from "../../.open-next/worker.js";
 import { requestBudget, secureResponse } from "./request-budget";
 import { edgeCacheEntry } from "./edge-cache";
+import { pageCacheEntry, pageFromStore, pageToStore } from "./page-cache";
 import { boundedContext, withDeadline } from "./deadline";
 
 /* The edge gateway: www redirect, edge cache, per-address budgets, then the OpenNext app in this
@@ -29,12 +30,17 @@ const worker = {
       url.port = "";
       return secureResponse(Response.redirect(url.toString(), 308), request);
     }
-    const entry = edgeCacheEntry(request);
-    const cache = entry && typeof caches !== "undefined" ? caches.default : null;
+    const cache = typeof caches !== "undefined" ? caches.default : null;
+    // Pages are keyed per deploy: a kept page names that build's script chunks.
+    const page = cache ? pageCacheEntry(request, env.CF_VERSION_METADATA?.id ?? "") : null;
+    const entry = cache && !page ? edgeCacheEntry(request) : null;
     // A cache hit is answered before the rate limit and the app: it costs almost no CPU.
-    if (cache && entry) {
-      const hit = await cache.match(entry.key).catch(() => undefined);
-      if (hit) {
+    if (cache && (page || entry)) {
+      const hit = await cache.match((page || entry)!.key).catch(() => undefined);
+      if (hit && page) {
+        const renewed = await pageFromStore(hit).catch(() => null);
+        if (renewed) return secureResponse(renewed, request);
+      } else if (hit) {
         const answer = new Response(hit.body, hit);
         answer.headers.set("Cache-Control", "private, max-age=60");
         answer.headers.set("X-Outpost-Edge", "hit");
@@ -53,6 +59,15 @@ const worker = {
     }
     const response = await withDeadline(app.fetch(request, env, boundedContext(ctx)));
     const result = new Response(response.body, response);
+    if (cache && page && response.status === 200) {
+      // The page streams to the visitor; its copy is checked and kept once the render ends.
+      const copy = result.clone();
+      ctx.waitUntil(
+        pageToStore(copy, page.ttl)
+          .then((stored) => stored && cache.put(page.key, stored))
+          .catch(() => {}),
+      );
+    }
     // An answer with a failed part (`X-Outpost-Partial`) is served but never kept.
     if (cache && entry && response.status === 200 && !response.headers.has("X-Outpost-Partial")) {
       const body = await result.clone().arrayBuffer();

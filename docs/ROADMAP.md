@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Signed-out pages come from the edge cache — 9 November 2026
+
+- Repeat signed-out views of public pages (landing, the build, comp and Team lists, library builds and comps, guides, tools, items, kill feed, market data) are answered from the Workers Cache API instead of rendering again: 60 s for live pages and players' content, 2 min for item pages, 5 min for reference pages. Signed-in visitors, a player's own build, comp or Team page (so making one private takes effect at once), editors, account and admin pages always render.
+- Each cached copy gets a fresh CSP nonce on every hit, in the body, the flight payload, the preload header and the policy. Keys are per deploy, theme and server cookie, and exact query; RSC and prefetch requests never touch it ([ARCHITECTURE.md § Page cache](ARCHITECTURE.md#page-cache)).
+- Next: measure the hit rate and CPU after deploy; add routes only after checking their signed-out output is the same for everyone.
+
 ## Pages render in the Worker, not a Durable Object — 9 November 2026
 
 - The bill had reached about $12 over the $5 base and was growing by $7–8 a day: the per-session `OutpostSession` Durable Object that ran the app billed wall-clock time (6.7 M s in 31 days, 43–250 s per request against 0.6 s of CPU) while timers, `waitUntil` work and pending data-Worker calls kept it in memory.
