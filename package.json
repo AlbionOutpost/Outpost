@@ -50,21 +50,21 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
-    "@opennextjs/cloudflare": "1.20.13",
-    "@playwright/test": "^1.55.0",
+    "@opennextjs/cloudflare": "1.20.16",
+    "@playwright/test": "^1.65.0",
     "@prisma/adapter-d1": "6.19.3",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.39.0",
-    "eslint-config-next": "^16.4.3",
+    "eslint-config-next": "^16.4.5",
     "prettier": "^3.6.0",
     "prisma": "^6.19.0",
     "rclone.js": "0.6.6",
     "tsx": "^4.20.0",
     "typescript": "^5.8.0",
-    "vitest": "^5.0.5",
-    "wrangler": "4.154.0"
+    "vitest": "^5.1.0",
+    "wrangler": "4.158.0"
   },
   "overrides": {
     "deepmerge-ts": "^8.0.0",
