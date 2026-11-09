@@ -304,6 +304,8 @@ export function rootMetadata(): Metadata {
     title: { default: "Outpost | Albion Online tools & builds", template: "%s | Outpost" },
     description: defaultDescription,
     applicationName: "Outpost",
+    // A static file (public/manifest.webmanifest): an app route ran the Worker for every fetch.
+    manifest: "/manifest.webmanifest",
     openGraph: {
       title: "Outpost | Albion Online tools & builds",
       description: defaultDescription,

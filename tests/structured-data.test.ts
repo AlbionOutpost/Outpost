@@ -49,8 +49,12 @@ describe("structured data", () => {
   });
 
   it("ships the manifest icons and an optimised 1200x630 social image", () => {
-    for (const icon of ["icon-192.png", "icon-512.png", "icon-maskable-512.png"])
+    const manifest = JSON.parse(readFileSync("public/manifest.webmanifest", "utf8"));
+    expect(manifest.start_url).toBe("/");
+    for (const icon of ["icon-192.png", "icon-512.png", "icon-maskable-512.png"]) {
       expect(readFileSync(`public/${icon}`).subarray(1, 4).toString()).toBe("PNG");
+      expect(manifest.icons.map((entry: { src: string }) => entry.src)).toContain(`/${icon}`);
+    }
     const social = readFileSync("public/brand/outpost-social.png");
     expect(social.readUInt32BE(16)).toBe(1200);
     expect(social.readUInt32BE(20)).toBe(630);

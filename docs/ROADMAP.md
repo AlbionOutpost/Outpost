@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Worker CPU back toward the allowance — 9 November 2026
+
+- Worker CPU was the only allowance over its limit (≈ 430 M CPU-ms a month against 30 M). Crawlers made ≈ 90 % of it, mostly archived builds, `?region=` copies and the build list's search and layout variants, and nearly every request woke a cold isolate (≈ 0.9 s each).
+- The Next server now loads at isolate startup, which Workers do not bill (≈ 0.3 s off every cold request). robots.txt keeps crawlers off duplicate URLs and disallows backlink crawlers (AhrefsBot, SemrushBot, MJ12bot, DotBot); robots.txt and the web manifest are static files; `/wp-*` and `*.php` probes get a bare 404; archive pages stay cached a day; library JSON is parsed once per isolate.
+- Projected ≈ 25–35 M CPU-ms a month once crawlers re-read robots.txt. Next: confirm in Workers Observability a day after deploy; if still over, make the build list and library pages cheaper to render on a cold isolate.
+
 ## Signed-out pages come from the edge cache — 9 November 2026
 
 - Repeat signed-out views of public pages (landing, the build, comp and Team lists, library builds and comps, guides, tools, items, kill feed, market data) are answered from the Workers Cache API instead of rendering again: 60 s for live pages and players' content, 2 min for item pages, 5 min for reference pages. Signed-in visitors, a player's own build, comp or Team page (so making one private takes effect at once), editors, account and admin pages always render.

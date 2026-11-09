@@ -1,6 +1,11 @@
 import { DurableObject } from "cloudflare:workers";
 import app from "../../.open-next/worker.js";
-import { requestBudget, secureResponse } from "./request-budget";
+// Evaluate the Next server (≈ 15 MB of bundled code) when the isolate starts, not inside its first
+// request. OpenNext imports it lazily, so every cold isolate billed ≈ 0.4–0.5 s of CPU to the
+// request that woke it; Workers do not bill startup. It keeps startup well under the 1 s limit
+// (`wrangler check startup`, docs/OPERATIONS.md § Cost guardrails).
+import "../../.open-next/server-functions/default/handler.mjs";
+import { probePath, requestBudget, secureResponse } from "./request-budget";
 import { edgeCacheEntry } from "./edge-cache";
 import { pageCacheEntry, pageFromStore, pageToStore } from "./page-cache";
 import { boundedContext, withDeadline } from "./deadline";
@@ -30,6 +35,17 @@ const worker = {
       url.port = "";
       return secureResponse(Response.redirect(url.toString(), 308), request);
     }
+    if (probePath(url.pathname))
+      return secureResponse(
+        new Response("Not found", {
+          status: 404,
+          headers: {
+            "Cache-Control": "no-store",
+            "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+          },
+        }),
+        request,
+      );
     const cache = typeof caches !== "undefined" ? caches.default : null;
     // Pages are keyed per deploy: a kept page names that build's script chunks.
     const page = cache ? pageCacheEntry(request, env.CF_VERSION_METADATA?.id ?? "") : null;

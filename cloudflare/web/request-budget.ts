@@ -31,6 +31,12 @@ function denied(request: Request, message: string, status: number, retry = false
     : new Response(message, { status, headers });
 }
 
+/** Probes for software Outpost does not run (WordPress, PHP, dotfiles other than `.well-known`).
+ * The worker answers them with a bare 404: rendering the not-found page on a cold isolate cost
+ * ≈ 0.8 s of CPU each. */
+export const probePath = (path: string) =>
+  /^\/(?:wp-|\.(?!well-known\/))|\.(?:php\d?|aspx?|jsp|cgi|env|sql|bak|ini)$/i.test(path);
+
 /** Cloudflare overwrites this address header. Cookies and forwarded headers are not identity.
  * IPv6 clients are counted per /64 so rotating through one allocation does not reset the budget. */
 export async function requestBudget(

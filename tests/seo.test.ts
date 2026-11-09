@@ -358,6 +358,23 @@ describe("public discovery output", () => {
       expect(urls.some((url) => url.pathname === "/supporter")).toBe(false);
       expect(urls.some((url) => url.searchParams.get("category") === "MISTS_SOLO")).toBe(true);
       expect(urls.some((url) => url.pathname === "/builds/library/public-builds")).toBe(true);
+      // robots.txt is a static file too; nothing the sitemap lists may be disallowed in it.
+      const robots = readFileSync(join(directory, "public/robots.txt"), "utf8");
+      expect(robots).toContain("Sitemap: https://albionoutpost.com/sitemap.xml");
+      expect(robots).toContain("Disallow: /builds/new");
+      // The rules for every crawler (the first group; later groups name single bots).
+      const blocked = [...robots.split("\n\n")[0].matchAll(/^Disallow: (.+)$/gm)].map(
+        ([, rule]) =>
+          new RegExp(`^${rule.replace(/[.+^${}()|[\]\\?]/g, "\\$&").replaceAll("*", ".*")}`),
+      );
+      const crawlable = (path: string) => !blocked.some((rule) => rule.test(path));
+      for (const url of urls) expect(crawlable(url.pathname + url.search)).toBe(true);
+      expect(crawlable("/builds?source=library&view=list")).toBe(false);
+      expect(crawlable("/builds?q=sword")).toBe(false);
+      expect(crawlable("/builds/library/public-builds?region=europe")).toBe(false);
+      expect(crawlable("/items/T4_BAG?region=asia")).toBe(false);
+      expect(crawlable("/compositions?view=all")).toBe(true);
+      expect(robots).toMatch(/User-agent: AhrefsBot\n(User-agent: .+\n)*Disallow: \/\n/);
     } finally {
       rmSync(directory, { recursive: true, force: true });
     }
