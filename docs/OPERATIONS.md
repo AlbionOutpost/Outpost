@@ -60,7 +60,7 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 | Kind          | Values                                                                                                                                                                                                                                                                                                                                  | Where set                                                                                   |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Vars (web)    | `OUTPOST_RUNTIME`, `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`, optional `NEXT_PUBLIC_ADSENSE_CLIENT` (AdSense `ca-pub-…`; unset = no ad units, strict CSP) with `NEXT_PUBLIC_ADSENSE_SLOT_HUB` / `NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE` (the two ad unit ids) | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
-| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`, `OUTPOST_RENDER_SESSION_SECRET`; Supporter billing: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_SUPPORTER` (all three or none)                                                                                                                          | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
+| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`; Supporter billing: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_SUPPORTER` (all three or none)                                                                                                                                                           | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
 | GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`                                                                                                                                                           | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
 
 ### Local credential files (git-ignored, mode 0600, never print or commit)
@@ -113,20 +113,110 @@ Switch-on order (done 6 Nov 2026 up to the imprint): client id → deploy → co
 - `npm run discord:status` shows the bot/app profile; `npm run discord:setup -- --apply` applies avatar, icon, description and tags (backs up to `.qa/discord/`). The helper only touches `/users/@me` and `/applications/@me`.
 - Still to do in the Developer Portal: real Terms and Privacy URLs (after the legal page is completed). The page is unpublished for now (`src/lib/legal.ts`), so `/legal` returns 404 until then.
 
-## Free-tier budgets
+## Cost guardrails
 
-| Budget             | Limit / setting                                                                                                                                                                                                                                              |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Worker bundle      | 10 MiB gzip each on Workers Paid (web ≈2.96 MiB, data ≈1.02 MB)                                                                                                                                                                                              |
-| Daily requests     | 100 k Worker and 100 k Durable Object requests per day; static assets are free                                                                                                                                                                               |
-| DO duration        | 13,000 GB-s per day (≈ 28 h of one session object at 128 MB); over it every page answers Error 1101 until 00:00 UTC. Renders are capped at 30 s and `waitUntil` work at 10 s (`cloudflare/web/worker.ts`); Workers Paid raises the allowance to 400,000 GB-s |
-| Session DO         | 240 requests/min per browser session, in memory (no storage writes)                                                                                                                                                                                          |
-| AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                                                                                                                                                                                          |
-| Game Info upstream | 12/min per region                                                                                                                                                                                                                                            |
-| D1                 | Imports and index updates count as row writes; there is no scheduled ingestion by design                                                                                                                                                                     |
-| Kill collector     | The data Worker's per-minute cron (`cloudflare/database/wrangler.jsonc`) makes 3 Game Info reads per server and one `KillBoard` write per server; the kill feed adds one `killWatermark` read per upstream page fetch (at most every 45 s per page)          |
+The bill must stay at the **$5 Workers Paid base**. Treat every included monthly allowance as a ceiling, and check usage after any change that adds requests, polling, cron work or Durable Object traffic.
 
-Measure with the account GraphQL analytics (`workersInvocationsAdaptive`, `durableObjectsInvocationsAdaptiveGroups`, zone `httpRequestsAdaptiveGroups` by path and user agent). Check current Free plan quotas on Cloudflare's limits pages before adding any background job, cron or ingestion.
+| Allowance (per month)   | Included   | Last 31 days (to 9 Nov 2026)                                                                               |
+| ----------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| Worker requests         | 10 million | 277 k                                                                                                      |
+| Worker CPU time         | 30 M ms    | small while pages rendered in a Durable Object; renders now count here (≈ 0.6 s CPU each, see below)       |
+| Durable Object requests | 1 million  | 657 k: 500 k to `albionoutpost-data`, 157 k to the retired `OutpostSession`                                |
+| Durable Object duration | 400 k GB-s | ≈ 840 k GB-s, almost all `OutpostSession` (6.7 M s); `AbuseBudget` 7.4 k s and `KillBoard` 28 k s are tiny |
+| D1 rows read            | 25 billion | 1.1 billion                                                                                                |
+
+Overage is billed per started unit: Durable Object duration costs $12.50 per million GB-s, Worker CPU $0.02 per million ms, Durable Object requests $0.15 per million.
+
+**What keeps usage inside the allowances:**
+
+- **No Durable Object renders pages.** Durable Objects bill wall-clock time while anything keeps them in memory (a request, a timer, a `waitUntil` promise, a pending service-binding call, each for up to 15 minutes); `OutpostSession` billed 43–250 s of duration per request against 0.6 s of CPU and cost about $7 a day by 9 Nov 2026. Pages now render in the web Worker, which bills CPU only. Never put request handling, polling or rendering in a Durable Object.
+- **Worker CPU is the one to watch.** At 157 k renders a month and ≈ 0.6 s each, renders use about 94 M CPU-ms, three times the 30 M included (≈ $1.30 a month over at today's traffic, against ≈ $7 a day before). The next levers are cheaper renders and more edge caching. `limits.cpu_ms` (10 s) stops a runaway request.
+- **Edge budgets cost no Durable Object request.** The web Worker's per-address limits are Workers Rate Limiting bindings (`ratelimits` in `wrangler.jsonc`), not `AbuseBudget` objects. `AbuseBudget` is reached only for writes, sign-in, exports and AODP/Game Info upstream misses.
+- **Static assets and edge-cache hits are free of app work.** Assets never invoke the Worker; signed-out reads of the public APIs in `cloudflare/web/edge-cache.ts` are answered from the edge cache before the rate limit and the app.
+- **Polling hits the edge cache.** The kill feed's "Update every minute" (`/api/combat-events`, 30 s), the homepage pulse and Market Explorer (`/api/market`, 60 s) and item database prices (`/api/items/prices`, 2 min) are edge-cached for signed-out visitors, and every poll waits while the tab is hidden. A Team's open loot roll polls every 20 s while visible and stops when the roll closes.
+- **Fixed background work:** the data Worker's cron makes 3 `KillBoard` requests a minute (≈ 134 k a month). A signed-out page view makes no Durable Object request; a signed-in one reads its session from `accounts-v1-eu`.
+
+**Expected after 9 Nov 2026:** Durable Object duration falls from ≈ 840 k GB-s to roughly 15–20 k GB-s a month (the data Worker's objects); Durable Object requests drop by the 157 k session requests plus the edge-budget `AbuseBudget` calls; Worker CPU rises as above.
+
+**Check usage** with the account GraphQL API (`https://api.cloudflare.com/client/v4/graphql`, a token with Account Analytics read):
+
+```graphql
+query Usage($account: string!, $since: Date!, $until: Date!) {
+  viewer {
+    accounts(filter: { accountTag: $account }) {
+      durableObjectsPeriodicGroups(limit: 1000, filter: { date_geq: $since, date_leq: $until }) {
+        dimensions {
+          namespaceId
+          datetimeHour
+        }
+        sum {
+          activeTime
+          cpuTime
+        }
+      }
+      durableObjectsInvocationsAdaptiveGroups(
+        limit: 1000
+        filter: { date_geq: $since, date_leq: $until }
+      ) {
+        dimensions {
+          namespaceId
+          scriptName
+        }
+        sum {
+          requests
+        }
+      }
+      workersInvocationsAdaptive(limit: 1000, filter: { date_geq: $since, date_leq: $until }) {
+        dimensions {
+          scriptName
+        }
+        sum {
+          requests
+          subrequests
+        }
+        quantiles {
+          cpuTimeP50
+          cpuTimeP99
+        }
+      }
+      d1AnalyticsAdaptiveGroups(limit: 1000, filter: { date_geq: $since, date_leq: $until }) {
+        dimensions {
+          databaseId
+        }
+        sum {
+          rowsRead
+          rowsWritten
+        }
+      }
+    }
+  }
+}
+```
+
+`activeTime` is in microseconds; GB-s = seconds × 0.125. Zone `httpRequestsAdaptiveGroups` by path and user agent shows who is calling. Check Cloudflare's pricing and limits pages before adding any background job, cron, ingestion or Durable Object.
+
+**After the deploy that moved rendering into the Worker** (and after any deploy touching `cloudflare/web`): an hour later, `durableObjectsPeriodicGroups` for the `OutpostSession` namespace should show no new `activeTime`, and the web Worker's `workersInvocationsAdaptive` CPU (P50 and P99) should stay well under the 10 s cap. If 429s climb, compare the Rate Limiting counts with the zone analytics before raising a limit.
+
+### Retiring the session object
+
+Deleting a Durable Object class needs a `deleted_classes` migration, which cannot be undone and blocks `wrangler rollback` to any version before it. So it happens in two releases:
+
+1. **9 Nov 2026 (this release):** pages render in the Worker; the `SESSIONS` binding is gone; the class stays exported as an inert stub (answers 410, stores nothing) and the `v1-sessions` migration is unchanged. No migration runs, so `npm run cloudflare -- rollback --name albionoutpost-web` still works.
+2. **The next release, once the post-deploy check above is clean for a few days:** delete the class from `cloudflare/web/worker.ts` and from the local QA entry in `scripts/cloudflare-local-server.mjs`, and add `{ "tag": "v2-retire-sessions", "deleted_classes": ["OutpostSession"] }` to `migrations` in `wrangler.jsonc`. The objects hold no data. Deploy it on its own (no other change), through the normal workflow.
+
+After step 1 the web Worker's `OUTPOST_RENDER_SESSION_SECRET` is unused; the owner can delete it (`npm run cloudflare -- secret delete OUTPOST_RENDER_SESSION_SECRET --name albionoutpost-web`) and drop it from `.env.cloudflare-runtime`.
+
+## Limits and budgets
+
+| Budget             | Limit / setting                                                                                                                                                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Worker bundle      | 10 MiB gzip each on Workers Paid (web ≈3.13 MiB, data ≈1.00 MiB)                                                                                                                                                                                    |
+| Render             | 30 s wall-clock deadline (streamed body included; 504 if nothing was sent), 10 s for `waitUntil` work, both cleared when their work settles; 10 s CPU per request (`limits.cpu_ms`)                                                                 |
+| Edge budgets       | Per address (IPv6 per /64), per Cloudflare location: 240 requests/min, 30 uncached searches/min, 20 item-price pages/min per server, 20 market reads/min per server (`cloudflare/web/request-budget.ts`, `ratelimits` in `wrangler.jsonc`)          |
+| AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                                                                                                                                                                                 |
+| Game Info upstream | 12/min per region                                                                                                                                                                                                                                   |
+| D1                 | Imports and index updates count as row writes; there is no scheduled ingestion by design                                                                                                                                                            |
+| Kill collector     | The data Worker's per-minute cron (`cloudflare/database/wrangler.jsonc`) makes 3 Game Info reads per server and one `KillBoard` write per server; the kill feed adds one `killWatermark` read per upstream page fetch (at most every 45 s per page) |
 
 ## Backups and recovery
 

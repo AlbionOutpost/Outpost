@@ -8,21 +8,22 @@ Outpost is a Next.js 16 / React 19 / TypeScript app that runs in production on *
 flowchart LR
   B[Browser] -->|albionoutpost.com| Z[Cloudflare zone<br/>WAF · Bot Fight Mode · TLS]
   Z -->|static asset| A[(ASSETS<br/>.open-next/assets)]
-  Z --> W[albionoutpost-web<br/>edge gateway]
-  W -->|signed route cookie| S[OutpostSession DO<br/>one per browser session<br/>runs the Next app]
-  S -->|RPC via OUTPOST_DATA| D[albionoutpost-data<br/>binding-only Worker]
+  Z --> W[albionoutpost-web<br/>edge gateway · rate limits<br/>runs the Next app]
+  W -->|RPC via OUTPOST_DATA| D[albionoutpost-data<br/>binding-only Worker]
   D --> P[(OutpostDatabase DO<br/>accounts-v1-eu<br/>private SQLite)]
   D --> C[(D1 CATALOG<br/>items · releases · archive)]
   D --> R[AbuseBudget DOs<br/>rate limits · cooldowns]
-  S -->|on demand, cached| M[AODP market API<br/>Game Info API<br/>item renderer]
+  W -->|on demand, cached| M[AODP market API<br/>Game Info API<br/>item renderer]
 ```
 
 ### `albionoutpost-web` (`wrangler.jsonc`, `cloudflare/web/worker.ts`)
 
 - Redirects `www.` → apex (308).
-- Issues/validates an HMAC-signed `outpost-route` cookie (HttpOnly, SameSite=Lax, Secure, 30 min) and forwards the request to `SESSIONS.getByName(id)`.
-- **`OutpostSession` Durable Object** runs the whole OpenNext app for that browser session. Rendering inside a DO (instead of directly in the Worker) is what fixed the Free-tier CPU-limit failures (Error 1102). Each session has an in-memory budget of 240 requests/min (429 + `Retry-After` beyond that); the object writes nothing to storage, so page views cost no Durable Object storage writes. The route cookie is valid for 30 minutes from issue and is not refreshed, so session objects rotate every 30 minutes regardless of activity (Discord login sessions are separate and last 14 days). Every render has a hard 30-second deadline, streamed body included (504 if nothing was sent), and background work handed to `waitUntil` gets ten seconds: Free allows 13,000 GB-s of Durable Object duration per day, and requests that never settled (Next keeps the response open until its `waitUntil` work finishes) once held objects open for the platform's 15-minute limit and spent the whole day's allowance (31 Oct 2026, Error 1101 "Exceeded allowed duration").
-- Bindings: `ASSETS`, `OUTPOST_DATA` (service → data Worker), `SESSIONS` (DO). Var `OUTPOST_RUNTIME=cloudflare`; release vars and secrets are listed in [OPERATIONS.md](OPERATIONS.md#runtime-configuration).
+- Answers signed-out GETs on the public routes in `cloudflare/web/edge-cache.ts` from the edge cache before anything else runs.
+- Checks the caller's budgets (`cloudflare/web/request-budget.ts`) with four Workers Rate Limiting bindings, keyed by `cf-connecting-ip` (IPv6 per /64): 240 requests/min overall, 30 uncached searches/min, 20 item-database price pages/min per server and 20 market reads/min per server. They are counted at each Cloudflare location and cost no Durable Object request; a limiter error fails closed (503).
+- **Runs the whole OpenNext app in the Worker itself** (the standard OpenNext deployment). Workers bill CPU time, not wall-clock time. Until 9 Nov 2026 the app ran in an `OutpostSession` Durable Object per browser session (chosen for the Free plan's CPU limit, Error 1102); Durable Objects bill wall-clock time while any request, timer, `waitUntil` promise or pending service-binding call keeps them in memory, and those objects billed 43–250 s per request against 0.6 s of CPU. The class is still exported, unbound and inert, until the next release deletes it ([OPERATIONS.md](OPERATIONS.md#retiring-the-session-object)). No routing cookie is set any more.
+- Every render has a 30-second deadline, streamed body included (504 if nothing was sent), and background work handed to `waitUntil` gets ten seconds; both timers are cleared as soon as their work settles. `limits.cpu_ms` caps one request at 10 s of CPU (the Paid default is 30 s).
+- Bindings: `ASSETS`, `OUTPOST_DATA` (service → data Worker), `EDGE_REQUESTS`, `EDGE_SEARCH`, `EDGE_ITEM_PRICES`, `EDGE_MARKET` (rate limits). Var `OUTPOST_RUNTIME=cloudflare`; release vars and secrets are listed in [OPERATIONS.md](OPERATIONS.md#runtime-configuration).
 - OpenNext caches are `dummy` (no ISR store); images are unoptimized; link prefetch is off by default (`src/components/link.tsx`) to protect CPU and request budgets.
 
 ### `albionoutpost-data` (`cloudflare/database/wrangler.jsonc`, `cloudflare/database/worker.ts`)
@@ -40,17 +41,16 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 ### Request flow
 
 1. Browser → zone (WAF, Bot Fight Mode). Asset hits are served from `ASSETS`.
-2. Everything else → web Worker → the browser's `OutpostSession` DO → Next (`src/proxy.ts` sets CSP and headers, and passes a valid `?region=` to the layout as `x-outpost-region` so the shell renders on the server with it) → page or API route.
+2. Everything else → web Worker (edge cache, then rate limits) → Next in the same Worker (`src/proxy.ts` sets CSP and headers, and passes a valid `?region=` to the layout as `x-outpost-region` so the shell renders on the server with it) → page or API route.
 3. Database calls become RPC to the data Worker: private models → `accounts-v1-eu`, catalog models → D1.
 4. Market/combat data is fetched from AODP / Game Info on demand and cached in the Workers Cache API (≤1 h).
 
-### Free-tier budget
+### Request budget
 
-The Workers account is on Workers Paid (10 MiB bundles, higher request quotas); these Free-tier figures stay the design target so page views stay cheap.
+The account is on Workers Paid and the bill must stay at the $5 base, so every included allowance is a ceiling; [OPERATIONS.md § Cost guardrails](OPERATIONS.md#cost-guardrails) has the figures and the queries. Per dynamic request the web Worker costs one Worker request and its CPU time; static assets and edge-cache hits run no app code. A signed-out page view makes no Durable Object request (catalog reads go to D1); a signed-in one reads its session from `accounts-v1-eu`. To keep it that way:
 
-Free allows 100,000 Worker requests and 100,000 Durable Object requests per day (plus 5 M D1 rows read, 100 k rows written). Every dynamic request costs one web Worker invocation and one `OutpostSession` request; static assets cost nothing. To stay inside that:
-
-- Rate limits are per user (content writes, exports, settings) or per upstream region (AODP 50/min, Game Info 12/min) — never one site-wide budget for cached reads, which would block every visitor under load. Per-visitor flooding is handled by the session budget and the zone rate-limiting rule.
+- Edge budgets are Rate Limiting bindings, not Durable Objects. App-level rate limits (`AbuseBudget`) are per user (content writes, exports, settings) or per upstream region (AODP 50/min, Game Info 12/min) and run only on writes and upstream misses — never one site-wide budget for cached reads, which would block every visitor under load. The zone rate-limiting rule also caps `/api/`.
+- Anything a page polls is edge-cached for signed-out visitors: market prices, the homepage pulse (`/api/market`), the kill feed (`/api/combat-events`, 30 s), item database prices.
 - `robots.ts` keeps crawlers out of editors, account pages and the API; "use as template" links are `nofollow` and editors are `noindex`. On 29–30 Oct one crawler alone made 81 % of all Worker requests on `/builds/new` and `/compositions/new`.
 - Link prefetch stays off (`src/components/link.tsx`).
 - The homepage asks for its live previews once: `/api/landing` returns market, history, crafting, planner and top kills together (edge-cached signed out), and its like chips share one batched `/api/library-likes?items=` read.
@@ -59,13 +59,13 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 
 `next.config.ts` uses a webpack `NormalModuleReplacementPlugin` when `OUTPOST_RUNTIME=cloudflare`:
 
-| Node module (`src/lib`) | Cloudflare module (`cloudflare/database`) | Behaviour on Cloudflare                                                  |
-| ----------------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
-| `database-driver.ts`    | `web-driver.ts`                           | Prisma-shaped proxy → RPC; array `$transaction` only                     |
-| `prisma-runtime.ts`     | `prisma-web.ts`                           | Error classes only                                                       |
-| `redis.ts`              | `redis-web.ts`                            | Cache API for `atlas:data:*` keys; rate limits/cooldowns → `AbuseBudget` |
-| `grind-library.ts`      | `library-web.ts`                          | Library JSON from `ASSETS`, archive from D1                              |
-| `inflight-cache.ts`     | `inflight-web.ts`                         | Per-request de-duplication                                               |
+| Node module (`src/lib`) | Cloudflare module (`cloudflare/database`) | Behaviour on Cloudflare                                                      |
+| ----------------------- | ----------------------------------------- | ---------------------------------------------------------------------------- |
+| `database-driver.ts`    | `web-driver.ts`                           | Prisma-shaped proxy → RPC; array `$transaction` only                         |
+| `prisma-runtime.ts`     | `prisma-web.ts`                           | Error classes only                                                           |
+| `redis.ts`              | `redis-web.ts`                            | Cache API for `atlas:data:*` keys; app rate limits/cooldowns → `AbuseBudget` |
+| `grind-library.ts`      | `library-web.ts`                          | Library JSON from `ASSETS`, archive from D1                                  |
+| `inflight-cache.ts`     | `inflight-web.ts`                         | Per-request de-duplication                                                   |
 
 **Domain services** (mostly `src/lib/*/service.ts`; also `builds/discovery-service.ts` and `market-watch-service.ts`) are written once: `databaseService("name", args) ?? localName(args)`. On Node `databaseService` returns `undefined` and the local implementation runs against Postgres; on Cloudflare the data DO runs the same TypeScript inside its transaction with `db` bound through AsyncLocalStorage (`cloudflare/database/context.ts`). Registered services: `createBuild`, `reviseBuild`, `duplicateBuild`, `saveComposition`, `duplicateComposition`, `deleteComposition`, `mutateGroup` (including every Team role action), `acceptInvitation`, `communityMutation`, `moderateReport`, `saveWatchItem`, `listAccountBuilds`, `listAccountFavorites`, `accountSaves`, `teamLoot`, `teamWallet`, `teamGames`, `giveawayBoard`, `changeGiveaway`, `countPlayers`, `applySubscription`, `rememberCustomer` (`cloudflare/database/services.ts`).
 
@@ -116,7 +116,9 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 
 **Display names** (`src/lib/display-name.ts`). A name is cleaned when an account is created (`createUser` in `src/lib/auth.ts`) and when a player changes it in settings: format and control characters (bidi overrides and isolates, zero-width characters), blank-rendering letters and repeated whitespace are removed. Names that read as Outpost or its staff (Outpost, Outpost staff, admin, moderator, official, support, system and a few more; case, accents, spacing, punctuation and look-alike letters ignored) are refused in settings and dropped at sign-up. Stored names are not rewritten; `displayName` applies the same cleaning wherever a player's name is shown, and shows "Adventurer" for an empty or reserved one.
 
-**Abuse controls.** Rate limits per route — public routes share one **site-wide** counter per route group (e.g. all `/api/market*` routes share 120/min), signed-in budgets are per user (e.g. market 120/min, history/economy/transport/build-cost 60/min, opportunities 30/min, export 5/h, delete 3/h), per-address budgets count IPv6 per /64 (`src/lib/client-address.ts`), Turnstile on comments/edits/reports in production (fails closed when partly configured), WAF rule blocking sensitive paths, Bot Fight Mode.
+**Abuse controls.** Rate limits per route — public routes share one **site-wide** counter per route group (e.g. all `/api/market*` routes share 120/min), signed-in budgets are per user (e.g. market 120/min, history/economy/transport/build-cost 60/min, opportunities 30/min, export 5/h, delete 3/h), per-address budgets count IPv6 per /64 (`src/lib/client-address.ts`), Turnstile on comments/edits/reports in production (fails closed when partly configured), WAF rule blocking sensitive paths, Bot Fight Mode. Before Next runs, the web Worker applies its per-address edge budgets (Rate Limiting bindings, above); no cookie renews them.
+
+**Rendering is not an isolation boundary.** Requests from different visitors share Worker isolates, as they did when pages rendered in per-session Durable Objects (objects of one class share isolates too). Nothing private lives in module state: authority comes from the NextAuth session and the database services on every request, and private responses are `private, no-store`. The `outpost-route` cookie that addressed the old session object was routing only; nothing (CSRF, NextAuth, permissions) read it, and it is no longer set.
 
 **Headers.** Per-request CSP nonce with `strict-dynamic`; `img-src` self/data/blob/`render.albiononline.com`; Turnstile allowed in script/frame/connect; while ads are active (publisher id plus a complete `OPERATOR_*` imprint, `adsActive()` in `src/components/adsense-loader.tsx`) the policy adds Google's ad and consent origins to frame/connect, `https:` to img and `fonts.gstatic.com` to font; scripts still need the nonce (asserted by `tests/advertising-privacy.test.ts`). Otherwise `NEXT_PUBLIC_ADSENSE_CLIENT` only emits the ownership `<meta>`; `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. HSTS on https, `nosniff`, `X-Frame-Options: DENY`, restrictive Permissions-Policy, `Cache-Control: private, no-store` on dynamic responses (signed-out `/api/search`, `/api/landing`, `/api/landing/craft`, `/api/economy/crafts`, `/api/economy/black-market` and `/api/combat-events/top` are answered from the edge cache, keyed on validated parameters, for two minutes, and Market Explorer's `/api/market` (60 s) and `/api/history` (5 min) for their server cache lives; an answer marked `X-Outpost-Partial` (a part failed) is served but not kept; see `cloudflare/web/edge-cache.ts`), `no-referrer` on invitation pages.
 
@@ -127,7 +129,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 - **Single private DO** (`accounts-v1-eu`): every session lookup and write is serialized through one object — a throughput ceiling and single point of failure. Scaling means partitioning by tenant or moving to a paid database.
 - **No backups** of the private DO are scripted or tested yet.
 - **Two schemas** must be kept in parity by generation scripts; local tests run against Postgres, not the production SQLite path (the Cloudflare e2e run and `qa-cloudflare-database.mjs` cover that).
-- **Bundle headroom:** web ≈2.96 MiB / data ≈1.02 MB gzip against the 10 MiB Workers Paid limit each; smaller still starts faster. Client-only heavy libraries stay out of the Worker. The Treasury's coin and chest are CSS 3D (`economy-stage.tsx`), so three.js is no longer a dependency.
+- **Bundle headroom:** web ≈3.13 MiB / data ≈1.00 MiB gzip against the 10 MiB Workers Paid limit each; smaller still starts faster. Client-only heavy libraries stay out of the Worker. The Treasury's coin and chest are CSS 3D (`economy-stage.tsx`), so three.js is no longer a dependency.
 - Public downloads and new composition/trade exports use `albion-outpost-*`; composition imports also accept the legacy `albion-atlas-composition` format. Historical cookies (`atlas-theme`/`atlas-region`), cache keys (`atlas:*`), database names, source version identifiers and ICS UIDs remain stable so preferences, cached budgets, provenance and existing calendar events retain their identity. Calendar producer metadata uses Albion Outpost. Archived evidence retains the name used when captured.
 
 ## Administrative controls (schema 7)

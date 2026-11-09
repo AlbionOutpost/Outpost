@@ -15,7 +15,7 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 | INP                    | ≤ 200 ms                                                    | not measured in the field                               |
 | CLS                    | ≤ 0.1                                                       | library once 0.06                                       |
 | Lighthouse perf / a11y | ≥ 90 / ≥ 95                                                 | 78–89                                                   |
-| Web Worker bundle      | under 10 MiB gzip (Workers Paid); keep it lean for start-up | ≈ 2.96 MiB                                              |
+| Web Worker bundle      | under 10 MiB gzip (Workers Paid); keep it lean for start-up | ≈ 3.13 MiB                                              |
 | Global CSS             | as small as possible                                        | homepage 308 KB inlined (7 Nov, Node build; was 405 KB) |
 
 ## Measure
@@ -31,7 +31,7 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 - Large local images get width variants from `node scripts/image-variants.mjs` and a `srcset` from `variantSrcSet()` ([DATA.md](../../../docs/DATA.md)); lazy-load below the fold, eager + `fetchPriority="high"` for the LCP image only.
 - Keep data fetching on the server and parallel; avoid per-item client fetches; batch market requests (`/api/market/batch`).
 - Lazy-load heavy, below-the-fold or interaction-only code (charts, PNG export, editors' secondary panels).
-- Every page view costs Worker + session DO + data RPC + possibly `AbuseBudget` DO requests — avoid extra round trips, keep prefetch off unless measured safe.
+- Every page view costs a Worker request and its CPU (pages render in the web Worker), plus data RPC; edge budgets are Rate Limiting bindings, not Durable Objects. Never render, poll or hold timers in a Durable Object: it bills wall-clock time while anything keeps it in memory. Keep every allowance in [OPERATIONS.md § Cost guardrails](../../../docs/OPERATIONS.md#cost-guardrails); avoid extra round trips, keep prefetch off unless measured safe.
 - Use the `vercel-react-best-practices` skill for React/Next patterns. Caching must never mix users (see `outpost-security`).
 
 ## Verify
