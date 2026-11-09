@@ -29,6 +29,9 @@ web.vars = {
   OUTPOST_OWNER_DISCORD_ID: "303585687460904970",
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: sitekey,
   TURNSTILE_HOSTNAMES: "albionoutpost.com,www.albionoutpost.com",
+  // Emergency save mode (docs/OPERATIONS.md § Save mode): longer edge-cache lives. A dashboard
+  // flip lasts until the next deploy; the repository variable keeps it across deploys.
+  ...(values.OUTPOST_SAVE_MODE === "1" ? { OUTPOST_SAVE_MODE: "1" } : {}),
   // Optional public search-engine verification tokens. No fabricated fallback; blank values omit tags.
   ...Object.fromEntries(
     ["GOOGLE_SITE_VERIFICATION", "BING_SITE_VERIFICATION"]

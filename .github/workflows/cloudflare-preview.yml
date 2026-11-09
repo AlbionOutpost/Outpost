@@ -94,6 +94,7 @@ jobs:
           NEXT_PUBLIC_ADSENSE_CLIENT: ${{ vars.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-3003146014371070' }}
           NEXT_PUBLIC_ADSENSE_SLOT_HUB: ${{ vars.NEXT_PUBLIC_ADSENSE_SLOT_HUB || '8311745950' }}
           NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE: ${{ vars.NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE || '2411572079' }}
+          OUTPOST_SAVE_MODE: ${{ vars.OUTPOST_SAVE_MODE }}
         run: |
           node scripts/cloudflare-build.mjs
           node scripts/cloudflare-release-config.mjs
