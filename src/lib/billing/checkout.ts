@@ -20,6 +20,8 @@ const checkoutIntent = z.object({
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
   sessionId: z.string().min(1).optional(),
+  /** Order-page consent time (ISO). Optional: operations saved before it existed lack it. */
+  consentAt: z.string().datetime().optional(),
 });
 export type CheckoutIntent = z.infer<typeof checkoutIntent>;
 export function parseCheckoutIntent(value: unknown): CheckoutIntent | null {

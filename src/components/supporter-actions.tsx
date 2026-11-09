@@ -1,25 +1,20 @@
 "use client";
 import { useState } from "react";
-import { ArrowRight, CreditCard } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
-/** Subscribe or manage: both hand the browser to Stripe's hosted pages. */
-export function SupporterActions({
-  region,
-  mode,
-}: {
-  region: string;
-  mode: "subscribe" | "manage";
-}) {
+/** Opens Stripe's billing portal (card, invoices). Ordering is the order box (`SupporterOrder`). */
+export function SupporterActions({ region }: { region: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   async function go() {
     setBusy(true);
     setError("");
     try {
-      const r = await fetch(
-        `/api/billing/${mode === "subscribe" ? "checkout" : "portal"}?region=${region}`,
-        { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" },
-      );
+      const r = await fetch(`/api/billing/portal?region=${region}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
       const body = await r.json();
       if (!r.ok || !body.url) throw new Error(body.error || "Billing is unavailable right now.");
       location.assign(body.url);
@@ -30,21 +25,8 @@ export function SupporterActions({
   }
   return (
     <div className="supporter-actions">
-      <button
-        type="button"
-        className={`button ${mode === "subscribe" ? "primary" : "secondary"}`}
-        disabled={busy}
-        onClick={go}
-      >
-        {mode === "subscribe" ? (
-          <>
-            {busy ? "Opening checkout…" : "Become a Supporter"} <ArrowRight size={17} />
-          </>
-        ) : (
-          <>
-            <CreditCard size={16} /> {busy ? "Opening billing…" : "Manage subscription"}
-          </>
-        )}
+      <button type="button" className="button secondary" disabled={busy} onClick={go}>
+        <CreditCard size={16} /> {busy ? "Opening billing…" : "Manage subscription"}
       </button>
       {error && (
         <p role="alert" className="supporter-error">

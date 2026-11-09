@@ -25,7 +25,7 @@ function form(data: Record<string, string | number | undefined>) {
 }
 async function call<T>(
   config: StripeConfig,
-  method: "GET" | "POST",
+  method: "GET" | "POST" | "DELETE",
   path: string,
   data?: Record<string, string | number | undefined>,
   idempotencyKey?: string,
@@ -40,7 +40,7 @@ async function call<T>(
     body = form(data);
     headers["Content-Type"] = "application/x-www-form-urlencoded";
   }
-  const query = data && method === "GET" ? `?${form(data)}` : "";
+  const query = data && method !== "POST" ? `?${form(data)}` : "";
   const response = await fetch(`${api}${path}${query}`, {
     method,
     headers,
@@ -102,6 +102,8 @@ export async function createCheckoutSession(
     successUrl: string;
     cancelUrl: string;
     priceId: string;
+    /** When the buyer ticked the terms box (ISO), kept on the subscription. */
+    consentAt?: string;
   },
   operationId: string,
 ) {
@@ -119,6 +121,10 @@ export async function createCheckoutSession(
       client_reference_id: input.userId,
       "subscription_data[metadata][outpostUserId]": input.userId,
       "metadata[outpostCheckoutId]": operationId,
+      // Proof of the order-page consent to the terms lives in Stripe: on the session and,
+      // durably, on the subscription it creates.
+      "metadata[outpostConsentAt]": input.consentAt,
+      "subscription_data[metadata][outpostConsentAt]": input.consentAt,
       allow_promotion_codes: "true",
       billing_address_collection: "auto",
     },
@@ -141,6 +147,8 @@ export async function createPortalSession(
 export type StripeSubscription = {
   id: string;
   created: number;
+  /** When the contract began (the withdrawal period counts from here). */
+  start_date?: number;
   customer: string;
   status: string;
   current_period_end: number | null;
@@ -150,6 +158,106 @@ export type StripeSubscription = {
 };
 export const getSubscription = (config: StripeConfig, id: string) =>
   call<StripeSubscription>(config, "GET", `/subscriptions/${encodeURIComponent(id)}`);
+
+/**
+ * Cancels at the end of the paid period (§ 312k BGB "ordentliche Kündigung"). The note and
+ * kind land in `cancellation_details` and metadata for the operator; Stripe keeps the plan
+ * active until `current_period_end`, then the webhook ends it.
+ */
+export const cancelSubscriptionAtPeriodEnd = (
+  config: StripeConfig,
+  id: string,
+  input: { kind: "ordinary" | "extraordinary"; reason?: string; receivedAt: string },
+) =>
+  call<StripeSubscription>(config, "POST", `/subscriptions/${encodeURIComponent(id)}`, {
+    cancel_at_period_end: "true",
+    "cancellation_details[comment]": input.reason || undefined,
+    "metadata[outpostCancelKind]": input.kind,
+    "metadata[outpostCancelReceivedAt]": input.receivedAt,
+  });
+
+/**
+ * Ends a subscription now, for a withdrawal (§ 355 BGB). No proration credit and no final
+ * invoice: the refund covers every payment. The parameters never vary, so a retry under the
+ * same idempotency key replays the first answer instead of failing.
+ */
+export const cancelSubscriptionNow = (config: StripeConfig, id: string) =>
+  call<StripeSubscription>(
+    config,
+    "DELETE",
+    `/subscriptions/${encodeURIComponent(id)}`,
+    { prorate: "false", invoice_now: "false", "cancellation_details[comment]": "Withdrawal" },
+    `withdraw-cancel-${id}`,
+  );
+
+export type StripeCharge = {
+  id: string;
+  customer: string | null;
+  amount: number;
+  amount_refunded: number;
+  refunded: boolean;
+  currency: string;
+};
+export type StripeInvoice = {
+  id: string;
+  customer: string;
+  subscription: string | null;
+  status: string;
+  amount_paid: number;
+  currency: string;
+  charge: StripeCharge | string | null;
+};
+
+/** A subscription's paid invoices with their charges, or a failure: never a partial list. */
+export async function listPaidInvoices(
+  config: StripeConfig,
+  customerId: string,
+  subscriptionId: string,
+) {
+  const list = await call<{ data: StripeInvoice[]; has_more: boolean }>(
+    config,
+    "GET",
+    "/invoices",
+    {
+      customer: customerId,
+      subscription: subscriptionId,
+      status: "paid",
+      limit: 100,
+      "expand[]": "data.charge",
+    },
+  );
+  if (
+    !Array.isArray(list.data) ||
+    list.has_more !== false ||
+    list.data.some(
+      (invoice) =>
+        !invoice ||
+        typeof invoice.id !== "string" ||
+        invoice.customer !== customerId ||
+        invoice.subscription !== subscriptionId,
+    )
+  )
+    throw new HttpError(502, "Invalid billing provider list");
+  return list.data;
+}
+
+/**
+ * Refunds what is left of a charge, in full. The key is the charge, so a retry or a second
+ * request never refunds twice: Stripe replays the first refund for 24 hours, and after that
+ * the caller sees `refunded` on the charge and skips it.
+ */
+export const refundCharge = (config: StripeConfig, chargeId: string, subscriptionId: string) =>
+  call<{ id: string; status: string; amount: number; currency: string; charge: string }>(
+    config,
+    "POST",
+    "/refunds",
+    {
+      charge: chargeId,
+      reason: "requested_by_customer",
+      "metadata[outpostWithdrawal]": subscriptionId,
+    },
+    `withdraw-refund-${chargeId}`,
+  );
 
 export type StripeCheckout = {
   id: string;

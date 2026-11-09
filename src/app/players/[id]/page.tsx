@@ -17,6 +17,8 @@ import { plural } from "@/components/group-parts";
 import { AvatarFrame } from "@/components/avatar-frame";
 import styles from "@/components/account.module.css";
 import { displayName } from "@/lib/display-name";
+import { badgeSelect, showsBadge } from "@/lib/billing/plan";
+import { SupporterBadge } from "@/components/supporter-badge";
 export const metadata = privateMetadata("Player profile");
 
 const since = (d: Date) =>
@@ -31,6 +33,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
       name: true,
       avatarFrame: true,
       createdAt: true,
+      ...badgeSelect,
       builds: {
         where: { visibility: "PUBLIC", hiddenAt: null },
         select: {
@@ -87,6 +90,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
   if (!u || (!u.builds.length && !u.compositions.length && !u.comments.length && viewer !== id))
     notFound();
   const name = displayName(u.name);
+  const supporter = showsBadge(u);
   return (
     <div className={styles.page}>
       <WorkspaceHeading
@@ -97,6 +101,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
         description={`Builds and comps ${name} has published on Outpost.`}
       >
         <div className={`landing-chips ${styles.chips}`}>
+          {supporter && <SupporterBadge />}
           <span className="landing-chip">
             <time dateTime={u.createdAt.toISOString()}>Member since {since(u.createdAt)}</time>
           </span>
@@ -122,7 +127,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
             {u.builds.map((b) => (
               <CommunityBuildCard
                 key={b.id}
-                build={b}
+                build={{ ...b, author: { name: b.author.name, supporter } }}
                 authenticated={!!viewer}
                 saved={b.favorites.length > 0}
                 favoriteCount={b._count.favorites}

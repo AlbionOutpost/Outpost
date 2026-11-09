@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import { CalendarDays, ChevronRight, UserRound } from "lucide-react";
 import Link from "./build-region-link";
 import { ItemIcon } from "./item-icon";
+import { SupporterBadge } from "./supporter-badge";
 export function BuildDetailHeader({
   title,
   description,
   author,
   authorHref,
+  authorSupporter = false,
   activity,
   tags = [],
   updatedAt,
@@ -20,6 +22,8 @@ export function BuildDetailHeader({
   description?: string;
   author: string;
   authorHref?: string;
+  /** Server-derived Supporter badge for the author. */
+  authorSupporter?: boolean;
   activity: string;
   tags?: string[];
   updatedAt?: string;
@@ -59,6 +63,7 @@ export function BuildDetailHeader({
           <div className="detail-author-line">
             <UserRound size={15} />
             <span>By {authorHref ? <Link href={authorHref}>{author}</Link> : author}</span>
+            {authorSupporter && <SupporterBadge />}
             {updatedAt && (
               <span>
                 <CalendarDays size={13} />

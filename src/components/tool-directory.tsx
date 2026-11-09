@@ -202,7 +202,10 @@ export function ToolDirectory() {
         </p>
       )}
       {matches.some((t) => featured[t.href]) && (
-        <section className="directory-featured" aria-label="Most used tools">
+        <section className="directory-featured" aria-labelledby="directory-featured-title">
+          <h2 id="directory-featured-title" className="sr-only">
+            Most used tools
+          </h2>
           {Object.keys(featured).map((href) => {
             const tool = matches.find((t) => t.href === href);
             return tool ? entry(tool, featured[href]) : null;

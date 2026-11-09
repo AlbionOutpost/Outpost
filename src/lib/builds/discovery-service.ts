@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { db, databaseService } from "../db";
 import { contentTypes } from "./validation";
 import { buildDiscovery } from "../build-discovery";
+import { badgeSelect, publicSupporter } from "../billing/plan";
 
 const actor = z.string().min(1).max(100);
 const pageNumber = z.number().int().min(1).max(10000);
@@ -67,12 +68,18 @@ async function localListAccountBuilds(userId: string | null, input: DiscoveryInp
         skip: (page - 1) * 24,
         include: {
           equipment: true,
-          author: { select: { name: true } },
+          author: { select: { name: true, ...badgeSelect } },
           favorites: { where: { userId: viewer || "" }, select: { userId: true }, take: 1 },
           _count: { select: { favorites: true } },
         },
       });
-      return { builds, total, page, pages };
+      // Only the badge flag leaves the service, never the author's plan or gift dates.
+      return {
+        builds: builds.map((b) => ({ ...b, author: publicSupporter(b.author) })),
+        total,
+        page,
+        pages,
+      };
     },
     { isolationLevel: "RepeatableRead" },
   );
@@ -122,7 +129,7 @@ async function localListAccountFavorites(userId: string, input: FavoritesInput) 
           build: {
             include: {
               equipment: true,
-              author: { select: { name: true } },
+              author: { select: { name: true, ...badgeSelect } },
               _count: { select: { favorites: true } },
             },
           },
@@ -135,7 +142,18 @@ async function localListAccountFavorites(userId: string, input: FavoritesInput) 
         orderBy: [{ createdAt: "desc" }, { compositionId: "asc" }],
         select: { composition: { select: { id: true, title: true } } },
       });
-      return { builds, compositions, total, compTotal, page, pages, compPage, compPages };
+      return {
+        builds: builds.map(({ build }) => ({
+          build: { ...build, author: publicSupporter(build.author) },
+        })),
+        compositions,
+        total,
+        compTotal,
+        page,
+        pages,
+        compPage,
+        compPages,
+      };
     },
     { isolationLevel: "RepeatableRead" },
   );

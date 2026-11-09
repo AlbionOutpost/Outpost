@@ -36,7 +36,7 @@ test("German legal draft keeps operator gaps, legacy anchors and usable rights r
   for (const id of ["operator", "data-sources", "scene-artwork", "media", "privacy"])
     await expect(legal.locator(`#${id}`)).toHaveCount(1);
   const contents = legal.getByRole("navigation", { name: copies.de.topics });
-  await expect(contents.getByRole("link")).toHaveCount(12);
+  await expect(contents.getByRole("link")).toHaveCount(14);
   for (const link of await contents.getByRole("link").all()) {
     const target = await link.getAttribute("href");
     expect(target).toMatch(/^#[a-z-]+$/);

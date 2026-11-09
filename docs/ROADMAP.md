@@ -14,6 +14,15 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - The web Worker grows 29 KiB gzip (3,227 → 3,256 KiB, budget 3,840) for the 19 route loading boundaries; no new bindings or per-request work.
 - Not done: the other pages still stream behind their loading skeleton, so their mobile LCP stays 4–7 s in the lab; dropping it there trades the navigation skeleton for a later first byte (owner's call). The item and spell icons come from `render.albiononline.com` as PNG with a one-day cache, which is most of PageSpeed's "image delivery" and all of its "cache lifetime" estimate; only mirroring them would change that (a data-provenance decision). The 12 KB of "legacy JavaScript" is Next's built-in polyfill module, not configurable. Cloudflare's Early Hints still sends the old preloads (`outpost-mark.png`, tool paintings) until its cache refreshes.
 
+## Supporter plan ready for go-live — 9 November 2026
+
+- Owner decision: Supporter is €2.99 a month (price from Stripe) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys, `/legal` stays unpublished and the launch grant stays open. Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
+- Supporter badge beside names on builds, comps, comments, Team rosters, the player profile and the account menu (plan or gift only, derived on the server).
+- Owner decision: the badge is optional, on by default. "Show Supporter badge" in Settings hides it everywhere (new `User.showSupporterBadge`, Postgres and private-store migration step 16).
+- German consumer-law pieces: the order box on `/supporter` (required facts, two unticked consents, "Zahlungspflichtig bestellen"), consent time stored in Stripe metadata, the § 312k cancellation page `/supporter/cancel` linked from every footer and Settings, `POST /api/billing/cancel`, and draft terms, cancellation policy and model withdrawal form in `/legal`.
+- Electronic withdrawal function (§ 356a BGB): "Vertrag widerrufen" beside the cancellation link in every footer and in Settings, the page `/supporter/withdraw` and `POST /api/billing/withdraw`. Owner decision: a withdrawal within 14 days ends the plan at once and refunds every payment in full, so checkout no longer asks for the immediate-start waiver; terms and cancellation policy say so.
+- Next: legal review; confirm Stripe sends cancellation and refund emails for API calls.
+
 ## Ads for everyone but Supporters — 9 November 2026
 
 - Owner decision: everyone sees ads except Supporters with a plan or an admin gift. The launch grant keeps every Supporter feature but no longer hides ads; the Supporter page and both privacy texts say so. Ads still switch on only once the Impressum is complete.

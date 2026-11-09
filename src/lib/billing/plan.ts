@@ -1,6 +1,8 @@
 import { db, databaseService } from "@/lib/db";
 import { HttpError } from "@/lib/http-error";
 import { giftedSupporter } from "../admin/policy";
+import { legalPublished } from "../legal";
+import { billingEnabled } from "./stripe";
 
 export type Plan = "FREE" | "SUPPORTER";
 /** Stripe statuses that keep the Supporter benefits on. */
@@ -40,6 +42,36 @@ export const launchSupporter = (user: Entitlement) =>
 export const storedSupporter = (user: Entitlement) =>
   user?.plan === "SUPPORTER" || giftedSupporter(user);
 
+/** The columns `showsBadge` reads. Select them for an author or member, then hand on only
+ * `publicSupporter(row)`: gift dates, plan state and the preference never leave the server. */
+export const badgeSelect = {
+  plan: true,
+  supporterGiftUntil: true,
+  supporterGiftPermanent: true,
+  showSupporterBadge: true,
+} as const;
+type BadgeRow = {
+  plan?: string | null;
+  supporterGiftUntil?: Date | string | null;
+  supporterGiftPermanent?: boolean;
+  showSupporterBadge?: boolean;
+};
+/** The public badge shows: a stored plan or a gift, and the player has not hidden it. The launch
+ * grant shows none (owner, 9 Nov 2026: the badge is a paid benefit, optional and on by default).
+ * A row without the preference column reads as hidden, so a query that forgets it never shows a
+ * badge the player turned off. */
+export const showsBadge = (row: BadgeRow | null | undefined) =>
+  !!row?.showSupporterBadge && storedSupporter(row);
+
+/** Swaps the badge columns for the public badge flag. */
+export function publicSupporter<T extends BadgeRow>(row: T) {
+  const { plan, supporterGiftUntil, supporterGiftPermanent, showSupporterBadge, ...rest } = row;
+  return {
+    ...rest,
+    supporter: showsBadge({ plan, supporterGiftUntil, supporterGiftPermanent, showSupporterBadge }),
+  };
+}
+
 /** Supporter from a stored plan, an admin gift or the launch grant. */
 export const isSupporter = (user: Entitlement) => storedSupporter(user) || launchSupporter(user);
 
@@ -52,6 +84,13 @@ export const supporterSource = (user: Entitlement): "plan" | "gift" | "launch" |
       : launchSupporter(user)
         ? "launch"
         : null;
+/**
+ * The plan is for sale: Stripe is configured, the launch grant is closed (nothing is sold while
+ * every account holds it) and the legal page with the terms and withdrawal policy is published.
+ * Cancelling never depends on this, only on `billingEnabled()`.
+ */
+export const salesOpen = () => billingEnabled() && !launchOpen() && legalPublished;
+
 /** How an account's status reads: "Launch Supporter" marks the launch grant. */
 export function supporterLabel(user: Entitlement) {
   const source = supporterSource(user);

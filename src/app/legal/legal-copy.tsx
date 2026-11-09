@@ -1,9 +1,16 @@
 import type { ReactNode } from "react";
 import Link from "@/components/link";
 import styles from "./legal.module.css";
+import { supporterTermsSection, withdrawalFormSection, withdrawalSection } from "./supporter-legal";
 
 export type LegalLocale = "en" | "de";
-export type LegalOperator = { name?: string; address?: string; email?: string };
+export type LegalOperator = {
+  name?: string;
+  address?: string;
+  email?: string;
+  /** `OPERATOR_SMALL_BUSINESS`: the terms say no VAT is charged (§ 19 UStG). */
+  smallBusiness?: boolean;
+};
 export type LegalCopy = {
   title: string;
   description: string;
@@ -523,11 +530,11 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
             </p>
             <p>
               Die vorhandene Integration ist für ein wiederkehrendes Supporter-Abonnement
-              vorgesehen. Dazu gehören laut Produktdarstellung werbefreie Anzeigenplätze und die
-              Möglichkeit, einen Team-Arbeitsbereich zu betreiben; Mitglieder können kostenlos
-              beitreten. Aktuelle Eigenschaften und Verfügbarkeit sind auf der{" "}
-              {supporterLink(configuredBilling, "Supporter-Seite")} beschrieben. Supporter sehen
-              keine Werbung (siehe Abschnitt zu Cookies und Werbung).
+              vorgesehen. Dazu gehören laut Produktdarstellung werbefreie Anzeigenplätze, ein
+              öffentlich sichtbares Supporter-Abzeichen und das Recht, Teams zu erstellen;
+              Mitglieder können kostenlos beitreten. Aktuelle Eigenschaften und Verfügbarkeit sind
+              auf der {supporterLink(configuredBilling, "Supporter-Seite")} beschrieben. Supporter
+              sehen keine Werbung (siehe Abschnitt zu Cookies und Werbung).
             </p>
             <p>
               Bei aktivierter Abrechnung werden Sie zum gehosteten Stripe Checkout weitergeleitet.
@@ -556,70 +563,19 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               Portal-Kündigungstermins oder aller gesetzlichen Verbraucherfunktionen.
             </p>
             <p className={styles.open}>
-              Vor Verkaufsfreigabe offen: konkrete Anbieter-/Steuerdaten, Preis- und
-              Vertragsinformationen, wirksame Einbeziehung der Bedingungen, Vertragsbestätigung auf
-              dauerhaftem Datenträger, Widerrufsinformationen, technisch richtige Kündigungs- und
-              Widerrufsfunktionen sowie ein Verfahren für Erstattungen und Beschwerden. Die
-              gesetzlichen Rechte bei digitalen Produkten und Dienstleistungen bleiben unberührt.
+              Vor Verkaufsfreigabe offen: konkrete Anbieter-/Steuerdaten, rechtliche Prüfung der AGB
+              und der Widerrufsbelehrung unten, Vertragsbestätigung auf dauerhaftem Datenträger
+              sowie ein Verfahren für Beschwerden. Bestellseite (Pflichtangaben, Zustimmung,
+              „Zahlungspflichtig bestellen“), Kündigungsbutton und Widerrufsbutton (mit voller
+              Erstattung) sind technisch vorbereitet. Die gesetzlichen Rechte bei digitalen
+              Produkten und Dienstleistungen bleiben unberührt.
             </p>
           </>
         ),
       },
-      {
-        id: "withdrawal",
-        title: "Widerruf & Kündigung unterscheiden",
-        body: (
-          <>
-            <p>
-              Der Widerruf eines Fernabsatzvertrags und die Kündigung eines laufenden Abonnements
-              sind unterschiedliche Erklärungen. Kontolöschung ist weder das eine noch das andere.
-              Bei einschlägigen Verbraucherverträgen besteht grundsätzlich ein 14-tägiges
-              Widerrufsrecht; Beginn, Belehrung und mögliche Ausnahmen richten sich nach dem Gesetz.
-              Eine fehlende oder falsche Belehrung kann den Fristbeginn beeinflussen.
-            </p>
-            <p>
-              Für Dienstleistungen erlischt ein bestehendes Widerrufsrecht nicht allein deshalb
-              sofort, weil ein Zugang freigeschaltet wurde. Die Voraussetzungen unterscheiden sich
-              von denen für nicht auf einem Datenträger gelieferte digitale Inhalte. Ein vorzeitiger
-              Leistungsbeginn, gegebenenfalls Wertersatz und ein mögliches Erlöschen erfordern die
-              jeweils gesetzlich vorgesehenen Informationen und ausdrücklichen Erklärungen. Die
-              vorhandene Checkout-Implementierung weist hierfür keine abgeschlossene Erfassungs- und
-              Nachweiskette aus; eine pauschale Regel „keine Rückerstattung“ wird nicht festgelegt.
-            </p>
-            <p>
-              Für ein entsprechendes entgeltliches Online-Dauerschuldverhältnis ist insbesondere die
-              Kündigungsfunktion nach{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__312k.html">§ 312k BGB</a> zu prüfen.
-              Daneben ist seit 19. Juni 2026 die elektronische Widerrufsfunktion nach{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__356a.html">§ 356a BGB</a> relevant.
-              Ein lediglich nach Anmeldung erreichbares Zahlungsportal ist nicht ohne weitere
-              Prüfung als Erfüllung aller Anforderungen anzusehen.
-            </p>
-            <p className={styles.open}>
-              Noch nicht bereitgestellt: endgültige Widerrufsbelehrung mit richtigem Empfänger,
-              Muster-Widerrufsformular, freigegebene öffentliche Kündigungs-/Bestätigungsstrecke und
-              erforderliche elektronische Widerrufs-/Bestätigungsfunktion. Die Links in diesem
-              Absatz sind Gesetzesquellen und keine funktionsfähigen Kündigungs- oder
-              Widerrufsbuttons.
-            </p>
-            <p>
-              Eine eindeutige Widerrufs- oder Kündigungserklärung ist an den{" "}
-              <a href="#operator">Anbieter</a> zu richten. Der Kontakt ist vor einer entsprechenden
-              Vertragsfreigabe einzutragen. Für die Ausgestaltung sind insbesondere{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__355.html">§ 355 BGB</a>,{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__356.html">§ 356 BGB</a>,{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__357a.html">§ 357a BGB</a>,{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__312j.html">§ 312j BGB</a> und{" "}
-              <a href="https://www.gesetze-im-internet.de/bgbeg/art_246a__1.html">
-                Art. 246a § 1 EGBGB
-              </a>{" "}
-              heranzuziehen. Eine etwaige Teilnahme an Verbraucherschlichtung und Informationen nach{" "}
-              <a href="https://www.gesetze-im-internet.de/vsbg/__36.html">§ 36 VSBG</a> sind noch
-              festzulegen; eine zuständige Stelle wird nicht erfunden.
-            </p>
-          </>
-        ),
-      },
+      supporterTermsSection("de", operator, configuredBilling),
+      withdrawalSection("de", operator, configuredBilling),
+      withdrawalFormSection("de", operator),
       {
         id: "data-sources",
         title: "Datenquellen & Aussagekraft",
@@ -1174,10 +1130,11 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
             </p>
             <p>
               The existing integration is intended for a recurring Supporter subscription. According
-              to the product description, this includes ad-free placements and the ability to run a
-              Team workspace; members can join for free. Current features and availability are
-              described on the {supporterLink(configuredBilling, "Supporter page")}. Supporters see
-              no ads (see the section on cookies and advertising).
+              to the product description, this includes ad-free placements, a publicly visible
+              Supporter badge and the right to create Teams; members can join for free. Current
+              features and availability are described on the{" "}
+              {supporterLink(configuredBilling, "Supporter page")}. Supporters see no ads (see the
+              section on cookies and advertising).
             </p>
             <p>
               When billing is activated, you are redirected to hosted Stripe Checkout. Outpost sends
@@ -1204,66 +1161,18 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
             </p>
             <p className={styles.open}>
               Before sales approval, the following remain unresolved: specific provider/tax details,
-              price and contract information, effective incorporation of terms, contractual
-              confirmation on a durable medium, withdrawal information, technically correct
-              cancellation and withdrawal features, and a procedure for refunds and complaints.
-              Statutory rights for digital products and services remain unaffected.
+              legal review of the terms and cancellation policy below, contractual confirmation on a
+              durable medium and a procedure for complaints. The order page (required information,
+              consent, “Subscribe and pay”), the cancellation button and the withdrawal button (with
+              a full refund) are technically prepared. Statutory rights for digital products and
+              services remain unaffected.
             </p>
           </>
         ),
       },
-      {
-        id: "withdrawal",
-        title: "Withdrawal & subscription cancellation",
-        body: (
-          <>
-            <p>
-              Withdrawing from a distance contract and cancelling an ongoing subscription are
-              different declarations. Account deletion is neither. For applicable consumer
-              contracts, a 14-day right of withdrawal generally exists; its start, required
-              information and possible exceptions are governed by law. Missing or incorrect
-              information can affect when the period begins.
-            </p>
-            <p>
-              For services, an existing right of withdrawal does not immediately expire merely
-              because access was activated. The conditions differ from those for digital content not
-              supplied on a physical medium. An early start of performance, any compensation for
-              value and possible expiry require the information and express declarations prescribed
-              by the applicable law. The current Checkout implementation does not establish a
-              complete collection and evidence chain for this; no blanket “no refunds” rule is set.
-            </p>
-            <p>
-              For a relevant paid ongoing online contract, the cancellation feature under{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__312k.html">section 312k BGB</a> must
-              in particular be assessed. The electronic withdrawal feature under{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__356a.html">section 356a BGB</a> has
-              also been relevant since 19 June 2026. A payment portal reachable only after sign-in
-              must not be treated as meeting all requirements without further assessment.
-            </p>
-            <p className={styles.open}>
-              Not yet provided: final withdrawal information naming the correct recipient, a model
-              withdrawal form, an approved public cancellation/confirmation flow and the required
-              electronic withdrawal/confirmation feature. The links in this paragraph are legal
-              sources, not functioning cancellation or withdrawal buttons.
-            </p>
-            <p>
-              An unambiguous withdrawal or cancellation declaration must be addressed to the{" "}
-              <a href="#operator">provider</a>. Contact details must be entered before the
-              corresponding contract is approved. The relevant provisions include{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__355.html">section 355 BGB</a>,{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__356.html">section 356 BGB</a>,{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__357a.html">section 357a BGB</a>,{" "}
-              <a href="https://www.gesetze-im-internet.de/bgb/__312j.html">section 312j BGB</a> and{" "}
-              <a href="https://www.gesetze-im-internet.de/bgbeg/art_246a__1.html">
-                Article 246a section 1 EGBGB
-              </a>
-              . Any participation in consumer dispute resolution and information under{" "}
-              <a href="https://www.gesetze-im-internet.de/vsbg/__36.html">section 36 VSBG</a> still
-              need to be determined; no competent body is invented here.
-            </p>
-          </>
-        ),
-      },
+      supporterTermsSection("en", operator, configuredBilling),
+      withdrawalSection("en", operator, configuredBilling),
+      withdrawalFormSection("en", operator),
       {
         id: "data-sources",
         title: "Data sources & reliability",

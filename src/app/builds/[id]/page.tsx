@@ -1,4 +1,5 @@
 import { authoredShareMetadata } from "@/lib/seo-public";
+import { badgeSelect, showsBadge } from "@/lib/billing/plan";
 import type { SeoQuery } from "@/lib/seo";
 import { CommunityPanel } from "@/components/community-panel";
 import { SavedEquipmentSets } from "@/components/saved-equipment-sets";
@@ -33,7 +34,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
     where: { id },
     include: {
       equipment: true,
-      author: { select: { name: true, id: true } },
+      author: { select: { name: true, id: true, ...badgeSelect } },
       versions: {
         select: { version: true, createdAt: true },
         orderBy: { version: "desc" },
@@ -55,6 +56,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         description={build.description}
         author={displayName(build.author.name)}
         authorHref={`/players/${build.author.id}`}
+        authorSupporter={showsBadge(build.author)}
         activity={build.contentType}
         updatedAt={build.updatedAt.toISOString()}
         revision={build.version}

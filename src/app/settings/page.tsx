@@ -6,7 +6,14 @@ import { ArrowRight, Download } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { resolveAvatarFrame } from "@/lib/avatar-frames";
-import { isSupporter, supporterLabel, supporterSource } from "@/lib/billing/plan";
+import {
+  isSupporter,
+  launchOpen,
+  storedSupporter,
+  supporterLabel,
+  supporterSource,
+} from "@/lib/billing/plan";
+import { billingEnabled } from "@/lib/billing/stripe";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
@@ -105,8 +112,10 @@ export default async function Settings({
               region: user.region,
               characterName: user.characterName || "",
               avatarFrame: resolveAvatarFrame(user.avatarFrame) ?? "none",
+              showSupporterBadge: user.showSupporterBadge,
             }}
             image={user.image}
+            badge={storedSupporter(user)}
           />
         </Group>
         <Group
@@ -124,12 +133,36 @@ export default async function Settings({
               title={supporterLabel(user)}
               line={
                 supporterSource(user) === "launch"
-                  ? "A launch grant: every account is a lifetime Supporter, free. There is nothing to pay or renew."
+                  ? launchOpen()
+                    ? "A launch grant: every account is a lifetime Supporter, free. There is nothing to pay or renew."
+                    : "A launch grant: your account keeps creating and running Teams for life, free."
                   : "Your account holds every Supporter benefit."
               }
               action={
                 <Link className="button secondary" href="/supporter">
                   About Supporter
+                </Link>
+              }
+            />
+          )}
+          {billingEnabled() && user.stripeCustomerId && (
+            <Line
+              title="Subscription"
+              line="Cancel your Supporter plan here. It runs to the end of the paid month."
+              action={
+                <Link className="button secondary" href="/supporter/cancel">
+                  Cancel subscription
+                </Link>
+              }
+            />
+          )}
+          {billingEnabled() && user.stripeCustomerId && (
+            <Line
+              title="Withdrawal"
+              line="Within 14 days of ordering you can withdraw instead and get every payment back."
+              action={
+                <Link className="button secondary" href="/supporter/withdraw">
+                  Withdraw from contract
                 </Link>
               }
             />

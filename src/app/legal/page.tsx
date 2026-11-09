@@ -10,7 +10,7 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { NextStepCards } from "@/components/next-step-cards";
 import styles from "./legal.module.css";
 import { notFound } from "next/navigation";
-import { legalPublished } from "@/lib/legal";
+import { legalPublished, smallBusiness } from "@/lib/legal";
 
 export const dynamic = "force-dynamic";
 type Query = { lang?: string | string[]; region?: string | string[] };
@@ -49,6 +49,7 @@ export default async function Legal({ searchParams }: Props) {
       name: process.env.OPERATOR_NAME?.trim(),
       address: process.env.OPERATOR_ADDRESS?.trim(),
       email: process.env.OPERATOR_EMAIL?.trim(),
+      smallBusiness: smallBusiness(),
     },
     billing,
     !!adsActive(),

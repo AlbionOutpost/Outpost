@@ -1,10 +1,12 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { regionSuffix } from "@/lib/build-region";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getServerSession } from "next-auth";
 import { ArrowRight, Lock } from "lucide-react";
 import Link from "@/components/link";
 import { SupporterActions } from "@/components/supporter-actions";
+import { SupporterOrder } from "@/components/supporter-order";
+import { SupporterBadge } from "@/components/supporter-badge";
 import { SupporterBand } from "@/components/supporter-band";
 import { SectionHeading } from "@/components/section-heading";
 import { PanelHead } from "@/components/panel-head";
@@ -13,9 +15,17 @@ import { DiscordMark } from "@/components/discord-mark";
 import { authOptions } from "@/lib/auth";
 import { regionSchema } from "@/lib/albion/region-config";
 import { giftedSupporter } from "@/lib/admin/policy";
-import { billingProfile, isSupporter, launchOpen, supporterSource } from "@/lib/billing/plan";
+import {
+  billingProfile,
+  isSupporter,
+  launchOpen,
+  salesOpen,
+  supporterSource,
+} from "@/lib/billing/plan";
 import { supporterPrice } from "@/lib/billing/price";
-import { billingEnabled, stripeConfig } from "@/lib/billing/stripe";
+import { billingEnabled, getSubscription, stripeConfig } from "@/lib/billing/stripe";
+import { resolveLegalLocale } from "@/lib/legal-language";
+import { smallBusiness } from "@/lib/legal";
 import { notFound } from "next/navigation";
 import "@/app/landing-window.css";
 import windows from "@/components/landing/windows.module.css";
@@ -30,12 +40,22 @@ const teamFeatures = [
   ["team-roles", "Roles & invites", "Owner, officers, members · private by default"],
 ] as const;
 
+const longDate = (date: Date) =>
+  date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
 /**
- * The Supporter plan: a Team workspace of your own. During launch every account is a lifetime
- * Supporter for free (`launchGrant` in src/lib/billing/plan.ts), so the page says that and
- * nothing about prices or payment. States: launch grant (signed in or out), billing not
- * configured (nothing for sale, nothing locked), signed out, free account, supporter, gifted
- * supporter.
+ * The Supporter plan: no ads, the Supporter badge and the right to create Teams. During launch
+ * every account is a lifetime Supporter for free (`launchGrant` in src/lib/billing/plan.ts), so
+ * the page says that and nothing about prices or payment. After the launch closes, accounts made
+ * before it keep their Team rights for life and may still buy the plan for no ads and the badge.
+ * States: launch grant open (signed in or out), launch account after the close, plan not on sale
+ * (`salesOpen()` false: no Stripe keys or terms unpublished), signed out, free account,
+ * supporter (renewing or cancelled to the period end), gifted supporter.
  */
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/supporter", await searchParams);
@@ -43,32 +63,64 @@ export async function generateMetadata({ searchParams }: SeoPageProps) {
 export default async function Supporter({
   searchParams,
 }: {
-  searchParams: Promise<{ region?: string; checkout?: string }>;
+  searchParams: Promise<{ region?: string; checkout?: string; lang?: string }>;
 }) {
   const params = await searchParams;
   const region = regionSchema
     .catch("europe")
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
   const suffix = regionSuffix(region);
-  const configured = stripeConfig() !== null;
+  const config = stripeConfig();
+  const configured = config !== null;
+  const onSale = salesOpen();
   const session = await getServerSession(authOptions);
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
   const supporter = isSupporter(profile);
   const gifted = giftedSupporter(profile);
-  // The launch grant: every account, old or new, is a lifetime Supporter, free.
-  const launch = profile ? supporterSource(profile) === "launch" : launchOpen();
-  // Everything is free while billing is off (owner, 6 Nov 2026): outside the launch the plan page
-  // exists only for accounts an admin gifted the plan to, so they can still see it.
-  if (!billingEnabled() && !supporter && !launch) notFound();
-  const price = launch ? null : await supporterPrice();
-  const renews = profile?.planRenewsAt
-    ? profile.planRenewsAt.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        timeZone: "UTC",
-      })
-    : null;
+  const source = supporterSource(profile);
+  // While the launch is on, every account, old or new, is a lifetime Supporter, free (a plan or a
+  // gift still shows as itself).
+  const launch = launchOpen() && (!profile || source === "launch");
+  // After the close, an account made during the launch keeps its Team rights for life.
+  const launchAccount = !launchOpen() && source === "launch";
+  // Nothing is for sale while billing is off (owner, 6 Nov 2026): outside the launch the plan page
+  // exists only for accounts that hold Supporter (a gift, the plan or the launch grant).
+  if (!billingEnabled() && !supporter && !launchOpen()) notFound();
+  const locale = resolveLegalLocale(params.lang, (await headers()).get("accept-language"));
+  const [price, orderPrice] = launch
+    ? [null, null]
+    : await Promise.all([supporterPrice(), supporterPrice(locale)]);
+  // A Supporter's renewal or end date, read live from Stripe: after a cancellation the plan
+  // ends instead of renewing. Only the account's own subscription counts.
+  let ends: string | null = null;
+  let renews = profile?.planRenewsAt ? longDate(profile.planRenewsAt) : null;
+  if (config && source === "plan" && profile?.stripeSubscriptionId) {
+    try {
+      const live = await getSubscription(config, profile.stripeSubscriptionId);
+      if (live.customer === profile.stripeCustomerId) {
+        const end = live.current_period_end
+          ? longDate(new Date(live.current_period_end * 1000))
+          : null;
+        if (live.cancel_at_period_end) [ends, renews] = [end, null];
+        else renews = end ?? renews;
+      }
+    } catch {
+      // Stripe unreachable: keep the stored renewal date.
+    }
+  }
+  const order = (
+    <a href="#supporter-order" className="button primary">
+      Order the plan <ArrowRight size={16} aria-hidden="true" />
+    </a>
+  );
+  // The order box: a signed-in account that can buy the plan right now.
+  const showOrder =
+    onSale && !!profile && !launch && source !== "plan" && !gifted && params.checkout !== "success";
+  const cancelLink = (
+    <Link href="/supporter/cancel" className="button secondary">
+      Cancel subscription
+    </Link>
+  );
   const signIn = (
     <Link
       href={`/signin?callbackUrl=%2Fsupporter${suffix.replace("?", "%3F")}`}
@@ -107,79 +159,96 @@ export default async function Supporter({
           line: "A launch grant: every Outpost account, including new ones, is a lifetime Supporter, free. Sign in with Discord and yours has it straight away.",
           actions: signIn,
         }
-    : gifted
+    : launchAccount && !gifted && params.checkout !== "success"
       ? {
           title: (
             <>
-              Your Supporter <em>gift</em> is active
+              Your Team rights are <em>for life</em>
             </>
           ),
-          line: `You have every Supporter benefit${profile?.supporterGiftUntil && !profile.supporterGiftPermanent ? ` until ${profile.supporterGiftUntil.toLocaleDateString("en-GB", { timeZone: "UTC" })}` : " until the gift is revoked"}. A gift never creates a charge or changes a subscription.`,
-          actions:
-            profile?.stripeCustomerId && configured ? (
-              <SupporterActions region={region} mode="manage" />
-            ) : (
-              free
-            ),
+          line: `Your account was made during the launch, so creating and running Teams stays free for you. ${onSale ? `The Supporter plan adds no ads and the Supporter badge${price ? `, for ${price}` : ""}.` : "Nothing to pay and nothing to renew."}`,
+          actions: onSale ? (
+            order
+          ) : (
+            <Link href={`/groups/new${suffix}`} className="button primary">
+              Start a team <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          ),
         }
-      : !configured
+      : gifted
         ? {
             title: (
               <>
-                Supporter is not on sale <em>yet</em>
+                Your Supporter <em>gift</em> is active
               </>
             ),
-            line: "The plan will bring no advertising and a Team workspace for your guild. Billing is not switched on, so nobody is charged and nothing is locked. Sign in now and the plan can join your account when it launches.",
-            actions: (
-              <>
-                {!profile && (
-                  <Link href={`/signin${suffix}`} className="button primary">
-                    <DiscordMark /> Sign in with Discord
-                  </Link>
-                )}
-                {free}
-              </>
-            ),
+            line: `You have every Supporter benefit${profile?.supporterGiftUntil && !profile.supporterGiftPermanent ? ` until ${profile.supporterGiftUntil.toLocaleDateString("en-GB", { timeZone: "UTC" })}` : " until the gift is revoked"}. A gift never creates a charge or changes a subscription.`,
+            actions:
+              profile?.stripeCustomerId && configured ? <SupporterActions region={region} /> : free,
           }
-        : !profile
+        : source === "plan"
           ? {
               title: (
                 <>
-                  Become a <em>Supporter</em>
+                  You are a <em>Supporter</em>
                 </>
               ),
-              line: `No advertising and a Team workspace for your guild${price ? `, for ${price}` : ""}. The plan lives on your Outpost account, so sign in first.`,
-              actions: signIn,
+              line: `Thank you. ${ends ? `You cancelled: your plan ends on ${ends} and is not charged again.` : renews ? `Your plan renews on ${renews}.` : "Your plan is active."}${profile?.planStatus === "past_due" ? " The last payment failed; update your card to keep the plan." : ""} Change the card or get invoices in Stripe's billing portal.`,
+              actions: (
+                <>
+                  <SupporterActions region={region} />
+                  {!ends && cancelLink}
+                </>
+              ),
             }
-          : supporter
+          : !onSale
             ? {
                 title: (
                   <>
-                    You are a <em>Supporter</em>
+                    Supporter is not on sale <em>yet</em>
                   </>
                 ),
-                line: `Thank you. ${renews ? `Your plan renews on ${renews}.` : "Your plan is active."}${profile.planStatus === "past_due" ? " The last payment failed; update your card to keep the plan." : ""} Change the card, get invoices or cancel in Stripe's billing portal.`,
-                actions: <SupporterActions region={region} mode="manage" />,
+                line: "The plan will bring no ads, the Supporter badge and the right to create Teams. It is not on sale yet, so nobody is charged. Joining a team stays free.",
+                actions: (
+                  <>
+                    {!profile && (
+                      <Link href={`/signin${suffix}`} className="button primary">
+                        <DiscordMark /> Sign in with Discord
+                      </Link>
+                    )}
+                    {free}
+                  </>
+                ),
               }
-            : params.checkout === "success"
+            : !profile
               ? {
-                  title: (
-                    <>
-                      Almost <em>there</em>
-                    </>
-                  ),
-                  line: "Stripe confirmed your payment. The plan reaches your account as soon as the confirmation arrives, usually within a minute; reload this page to check.",
-                  actions: free,
-                }
-              : {
                   title: (
                     <>
                       Become a <em>Supporter</em>
                     </>
                   ),
-                  line: `No advertising and a Team workspace for your guild${price ? `, for ${price}` : ""}. Cancel any time; checkout happens on Stripe.`,
-                  actions: <SupporterActions region={region} mode="subscribe" />,
-                };
+                  line: `No ads, the Supporter badge and the right to create Teams${price ? `, for ${price}` : ""}. The plan lives on your Outpost account, so sign in first.`,
+                  actions: signIn,
+                }
+              : params.checkout === "success"
+                ? {
+                    title: (
+                      <>
+                        Almost <em>there</em>
+                      </>
+                    ),
+                    line: "Stripe confirmed your payment. The plan reaches your account as soon as the confirmation arrives, usually within a minute; reload this page to check.",
+                    actions: free,
+                  }
+                : {
+                    title: (
+                      <>
+                        Become a <em>Supporter</em>
+                      </>
+                    ),
+                    line: `No ads, the Supporter badge and the right to create Teams${price ? `, for ${price}` : ""}. Cancel any time to the end of the paid month.`,
+                    actions: order,
+                  };
   return (
     <div className="supporter-page">
       <SupporterBand
@@ -189,12 +258,20 @@ export default async function Supporter({
         line={state.line}
         actions={state.actions}
       >
-        {configured && !launch && (
+        {onSale && !launch && !showOrder && (
           <span className="supporter-note">
             <Lock size={14} aria-hidden="true" /> Outpost never sees your card.
           </span>
         )}
       </SupporterBand>
+      {showOrder && (
+        <SupporterOrder
+          region={region}
+          price={orderPrice}
+          locale={locale}
+          smallBusiness={smallBusiness()}
+        />
+      )}
       <section className="supporter-includes" aria-labelledby="supporter-includes">
         <SectionHeading
           id="supporter-includes"
@@ -206,13 +283,13 @@ export default async function Supporter({
           line={
             launch
               ? "A Team workspace for your guild. Every tool, price and guide stays free for everyone."
-              : "Two things, and nothing else changes: every tool, price and guide stays free."
+              : "Three things, and nothing else changes: every tool, price and guide stays free."
           }
         />
         <div className="supporter-grid">
           <article className={`raised landing-window ${windows.window}`} data-scene="market">
             <div className={`landing-window-bar ${windows.bar}`}>
-              <h3 className="landing-window-title">Run your Team</h3>
+              <h3 className="landing-window-title">{launch ? "Run your Team" : "Create Teams"}</h3>
               <span className="landing-chips">
                 <span className="landing-chip">Supporter</span>
               </span>
@@ -235,7 +312,9 @@ export default async function Supporter({
               <span>
                 <strong>Members join free</strong>
                 <small>
-                  {launch ? "Every account is a Supporter" : "Only the owner needs the plan"}
+                  {launch
+                    ? "Every account is a Supporter"
+                    : "Only the owner needs the plan. Launch accounts keep it for life"}
                 </small>
               </span>
               <ArrowRight size={20} aria-hidden="true" />
@@ -261,12 +340,16 @@ export default async function Supporter({
                 id="supporter-ads"
                 as="h3"
                 emblem="fame"
-                title="No advertising"
-                line="Ad slots disappear from every page for the account that holds the plan."
+                title="No ads, and a badge"
+                line="Ad slots disappear for the account that holds the plan, on every device you sign in on."
               />
               <ul className="supporter-points">
                 <li className="well">Market, calculators and build pages without ad units</li>
-                <li className="well">On every device you sign in on</li>
+                <li className="well">
+                  <span>
+                    <SupporterBadge /> beside your name on builds, comps, comments and Teams
+                  </span>
+                </li>
               </ul>
             </section>
           )}
@@ -286,7 +369,12 @@ export default async function Supporter({
               <li className="well">Prices, builds, comps and guides stay free</li>
               <li className="well">Joining a Team, RSVPs and loot splits stay free</li>
               {configured && !launch && (
-                <li className="well">Cancel any time in Stripe&apos;s portal</li>
+                <li className="well">
+                  <span>
+                    Cancel any time, to the end of the paid month:{" "}
+                    <Link href="/supporter/cancel">cancel subscription</Link>
+                  </span>
+                </li>
               )}
             </ul>
           </section>
