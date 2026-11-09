@@ -40,31 +40,6 @@
 a:hover .task-glyph {
   transform: rotate(-6deg) scale(1.06);
 }
-/* Compact, genuine equipment composition instead of a stretched scene. */
-.app.outpost .outpost-home-hub .outpost-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 54px;
-  min-height: 436px;
-  padding: 36px 12px 36px 8px;
-  margin-bottom: 20px;
-  background: transparent;
-  overflow: visible;
-}
-.app.outpost .outpost-home-hub .outpost-hero::before,
-.app.outpost .outpost-home-hub .outpost-hero::after {
-  display: none;
-}
-.app.outpost .outpost-home-hub .outpost-hero h1 {
-  font-size: clamp(38px, 4.3vw, 64px);
-  color: var(--text);
-  letter-spacing: -0.045em;
-  line-height: 1.04;
-}
-.app.outpost .outpost-home-hub .outpost-hero h1 em {
-  color: var(--accent-ink);
-}
 @keyframes equipment-arrive {
   from {
     opacity: 0.35;
@@ -83,27 +58,6 @@ a:hover .task-glyph {
   .app.outpost .desktop-navigation > .nav-dropdown > summary {
     padding-inline: 7px;
     font-size: 14px;
-  }
-}
-@media (max-width: 1000px) {
-  .app.outpost .outpost-home-hub .outpost-hero {
-    gap: 20px;
-    grid-template-columns: 1fr 1fr;
-    padding-block: 30px;
-  }
-  .app.outpost .outpost-home-hub .outpost-hero h1 {
-    font-size: 44px;
-  }
-}
-@media (max-width: 700px) {
-  .app.outpost .outpost-home-hub .outpost-hero {
-    grid-template-columns: 1fr;
-    gap: 25px;
-    padding: 28px 0 0;
-    margin-bottom: 25px;
-  }
-  .app.outpost .outpost-home-hub .outpost-hero h1 {
-    font-size: clamp(36px, 8.5vw, 48px);
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -136,8 +136,7 @@
 /* Color state changes remain instantaneous to preserve contrast during transitions. */
 .app.outpost .button,
 .app.outpost button:not(.home-gear-slot),
-.app.outpost .tool-card,
-.app.outpost .build-preview-card {
+.app.outpost .tool-card {
   transition:
     box-shadow 190ms ease,
     border-color 160ms ease,
@@ -147,8 +146,7 @@
   .app.outpost .button:hover:not(:disabled) {
     transform: none;
   }
-  .app.outpost .tool-card:hover,
-  .app.outpost .build-preview-card:hover {
+  .app.outpost .tool-card:hover {
     transform: none;
     border-color: var(--accent-ink);
   }
@@ -158,18 +156,11 @@
 }
 .app.outpost .button:active:not(:disabled),
 .app.outpost button:active:not(:disabled),
-.app.outpost .tool-card:active,
-.app.outpost .build-preview-card:active {
+.app.outpost .tool-card:active {
   transform: none;
 }
 .app.outpost .button > svg {
   transition: transform 200ms var(--interaction-ease);
-}
-.app.outpost .outpost-hero {
-  background: #141211;
-}
-.app.outpost .outpost-hero h1 em {
-  color: #e8aa85;
 }
 /* Original Outpost emblems replace the unrelated equipment strips in the feature links. */
 @media (max-width: 1250px) {
@@ -227,10 +218,4 @@
 }
 .app.outpost.light {
   --metal: #80582e;
-}
-/* The wordmark image always fills its box; the box alone sets the size at each breakpoint */
-.app.outpost .outpost-wordmark .outpost-logo {
-  width: 100%;
-  min-width: 0;
-  height: auto;
 }

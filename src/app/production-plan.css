@@ -8,6 +8,10 @@
 .app.outpost .production-plan > * {
   margin: 0;
 }
+/* The panel head keeps its own bottom margin (panel-head.module.css) */
+.app.outpost .production-plan > :first-child {
+  margin-bottom: var(--space-4);
+}
 #production-plan-title {
   scroll-margin-top: 100px;
 }

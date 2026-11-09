@@ -1,8 +1,7 @@
 "use client";
 import { inter, barlowCondensed, barlowDisplay, geistMono } from "./fonts";
 import { SystemPage } from "@/components/system-page";
-import "./globals.css";
-import "./product-system.css";
+import "./global-styles";
 
 /** Shown when the root layout itself fails, so it brings its own document, fonts and backdrop. */
 export default function GlobalError({ retry }: { retry: () => void }) {

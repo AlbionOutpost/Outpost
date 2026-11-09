@@ -10,7 +10,13 @@ const config: NextConfig = {
   // OpenNext embeds each page's inline CSS in its manifest. Across all routes that adds
   // 13.9 MB of repeated manifest code (4.0 MiB compressed total Worker). Cloudflare serves
   // shared static stylesheets; the measured Node deployment keeps its inline-CSS behavior.
-  experimental: { inlineCss: process.env.OUTPOST_RUNTIME !== "cloudflare" },
+  experimental: {
+    inlineCss: process.env.OUTPOST_RUNTIME !== "cloudflare",
+    // Webpack (the Cloudflare build) only. Its default merges CSS modules into shared chunks of
+    // up to 100 KB, so every route loaded ≈ 150 KB of other routes' modules before its first
+    // paint. Turbopack (dev, the Node build) rejects `false`.
+    ...(process.env.OUTPOST_RUNTIME === "cloudflare" ? { cssChunking: false } : {}),
+  },
   ...(process.env.OUTPOST_RUNTIME === "cloudflare"
     ? ({
         serverExternalPackages: [],
