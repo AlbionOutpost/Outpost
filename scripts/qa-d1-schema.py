@@ -467,7 +467,7 @@ def catalog_read_indexes():
         assert {"OwnedLibrary_listed_likes", "OwnedLibrary_listed_weapon", "OwnedLibrary_comps_likes", "ItemMetadata_catalog_order", "ItemMetadata_search"} <= names
         catalog.execute("INSERT INTO \"CatalogRelease\"(id,version,sourceUrl,rightsReference,checksum,itemCount) VALUES('r','v','u','x','c',1)")
         for i in range(400):
-            catalog.execute("INSERT INTO \"ItemMetadata\"(id,name,slot,tier,enchantment,abilities,releaseId) VALUES(?,?,?,?,?,'[]','r')", (f"T{i % 8 + 1}_ITEM_{i}", f"Item {i}", "Main hand", i % 8 + 1, i % 5))
+            catalog.execute("INSERT INTO \"ItemMetadata\"(id,name,slot,tier,enchantment,abilities,recipe,releaseId) VALUES(?,?,?,?,?,'[]','{}','r')", (f"T{i % 8 + 1}_ITEM_{i}", f"Item {i}", "Main hand", i % 8 + 1, i % 5))
         listed = "kind = 'builds' AND json_extract(payload, '$.updatedAt') >= '2026' AND coalesce(json_extract(payload, '$.upvotes'), 0) >= 1"
         for i in range(400):
             payload = json.dumps({"updatedAt": "2026-01-01" if i % 3 else "2025-01-01", "upvotes": i % 4, "weaponName": f"W{i % 9}"})
