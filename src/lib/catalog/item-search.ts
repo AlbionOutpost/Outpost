@@ -27,10 +27,15 @@ function filter(q: CatalogQuery) {
     active: true,
     ...(q.slot ? { slot: q.slot } : {}),
     ...(q.enchantment !== undefined ? { enchantment: q.enchantment } : {}),
-    OR: [
-      { name: { contains: q.search, mode: "insensitive" as const } },
-      { id: { contains: q.search, mode: "insensitive" as const } },
-    ],
+    // An empty search matches every name and id, so it adds no term (and no full-table LIKE).
+    ...(q.search
+      ? {
+          OR: [
+            { name: { contains: q.search, mode: "insensitive" as const } },
+            { id: { contains: q.search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
   };
 }
 
@@ -73,13 +78,35 @@ export async function searchCatalogGrouped(q: CatalogQuery) {
 }
 
 /** Every catalog version of an item: its tiers and enchantments with their base IP. */
-export function catalogVariants(id: string) {
+export async function catalogVariants(id: string) {
   const ids = catalogVariantIds(id);
-  return ids.length
-    ? db.itemMetadata.findMany({
-        where: { id: { in: ids }, active: true },
-        select: { ...select, itemPower: true },
-        orderBy: [{ tier: "asc" }, { enchantment: "asc" }],
-      })
-    : Promise.resolve([]);
+  if (!ids.length) return [];
+  // Looked up by id alone: with `active` in the SQL, SQLite walks the whole active index instead.
+  const rows = await db.itemMetadata.findMany({
+    where: { id: { in: ids } },
+    select: { ...select, itemPower: true, active: true },
+    orderBy: [{ tier: "asc" }, { enchantment: "asc" }],
+  });
+  return rows.flatMap(({ active, ...row }) => (active ? [row] : []));
+}
+
+/** The ids among these that have an active catalog page, by id lookups only (as above). */
+export async function activeCatalogIds(ids: string[]) {
+  if (!ids.length) return new Set<string>();
+  const rows = await db.itemMetadata.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, active: true },
+  });
+  return new Set(rows.flatMap((row) => (row.active ? [row.id] : [])));
+}
+
+/** The equipment slots the active catalog has items in, A–Z: one indexed row per slot instead of
+ * reading every item for a distinct list (imports only accept these slots). */
+export async function catalogSlots() {
+  const found = await db.$transaction(
+    equipmentSlots.map((slot) =>
+      db.itemMetadata.findFirst({ where: { active: true, slot }, select: { slot: true } }),
+    ),
+  );
+  return found.flatMap((row) => (row ? [row.slot] : [])).sort();
 }

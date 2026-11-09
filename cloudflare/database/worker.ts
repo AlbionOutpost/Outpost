@@ -30,6 +30,7 @@ export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
 import { archiveList, archiveFind, archiveTotals } from "./archive";
+import { remember } from "./public-cache";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
 
 type QueryClient = {
@@ -227,15 +228,18 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
         throw new HttpError(400, "Mixed storage transaction unavailable");
       if (!publicQueries.length)
         return this.env.DATABASE.getByName("accounts-v1-eu").query(queries);
-      const client = catalogClient(this.env.CATALOG);
-      try {
-        const value = [];
-        // The reviewed catalog is immutable between explicitly activated releases. No private state.
-        for (const query of publicQueries) value.push(await executeQuery(client, query));
-        return { ok: true, value };
-      } finally {
-        await client.$disconnect();
-      }
+      // The reviewed catalog is immutable between explicitly activated releases. No private state.
+      const value = await remember(`catalog:${JSON.stringify(publicQueries)}`, async () => {
+        const client = catalogClient(this.env.CATALOG);
+        try {
+          const results = [];
+          for (const query of publicQueries) results.push(await executeQuery(client, query));
+          return results;
+        } finally {
+          await client.$disconnect();
+        }
+      });
+      return { ok: true, value };
     } catch (error) {
       return databaseFailure(error);
     }
@@ -295,12 +299,16 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
     );
   }
   archiveList(kind: string, input: LibraryQuery) {
-    return archiveList(this.env.CATALOG, kind, input);
+    return remember(`list:${kind}:${JSON.stringify(input)}`, () =>
+      archiveList(this.env.CATALOG, kind, input),
+    );
   }
   archiveFind(kind: string, keys: string[]) {
-    return archiveFind(this.env.CATALOG, kind, keys);
+    return remember(`find:${kind}:${JSON.stringify(keys)}`, () =>
+      archiveFind(this.env.CATALOG, kind, keys),
+    );
   }
   archiveTotals() {
-    return archiveTotals(this.env.CATALOG);
+    return remember("totals", () => archiveTotals(this.env.CATALOG));
   }
 }

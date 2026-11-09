@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## D1 reads cut about five-fold — 9 November 2026
+
+- Production D1 read 1.1 billion rows in 31 days, ≈ 2.8 k per query. The hot paths scanned whole tables: library lookups by id or slug read all 10.8 k stored builds, item variants and recipe links walked every item, the slot list read all 7.5 k items, and the library lists walked unlisted builds.
+- New D1-only migration `0017_catalog_reads.sql`: partial indexes over the 1.4 k listed builds and the comps, covering item indexes, `PRAGMA optimize`. Lookups by id or slug use two index searches; item variants and links look up by id only; slots are ten one-row reads; an empty item search adds no filter; a short first page of library results needs no separate count; the data Worker keeps public catalog and archive reads 5 min.
+- Measured locally on the real data: ≈ 2,700 → ≈ 530 rows per query on average, with every result identical (tests compare old and new queries on the staged archive). Numbers in [OPERATIONS.md § Cost guardrails](OPERATIONS.md#cost-guardrails).
+- Next: deploy, then apply `0017` (`node scripts/cloudflare-library-upvotes.mjs --apply`; the Library data workflow still needs a token with D1 Edit) and compare a week of D1 rows read. Then the item database's tier-band counts (precompute at import) and Market Explorer's grouped search.
+
 ## Cost guard — 9 November 2026
 
 - **Daily cost check:** a scheduled workflow reads Cloudflare's analytics for the billing period, projects Worker requests and CPU, Durable Object requests, duration, rows and storage, and D1 rows and storage to the period's end, and posts to Discord when a projection passes 80 % of an allowance or a day's rate would pass 100 % ([OPERATIONS.md § Daily cost check](OPERATIONS.md#daily-cost-check)).
