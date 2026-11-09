@@ -4,6 +4,11 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Domain email — 9 November 2026
+
+- **Zoho Mail (EU):** albionoutpost.com now receives and sends mail. One mailbox (admin@) with contact@, support@, security@ and privacy@ aliases, plus postmaster@ and abuse@ groups. SPF, DKIM and DMARC are set ([OPERATIONS.md](OPERATIONS.md)).
+- **security.txt** lists security@ first, then the private GitHub advisory form. The old no-mail DNS script is removed.
+
 ## One box style and a tools page with a lead — 9 November 2026
 
 - The ornate copper frame with its diamond gems now stays on the landing's teaser windows and tool showcase only. Tool cards, build and comp windows, comp members, kill cards, next-step cards, the market desk and the slot picker use the plain surface, and cards that lead somewhere light their edge and lift on hover and focus.

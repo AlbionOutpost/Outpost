@@ -27,7 +27,6 @@
     "data:audit": "node --import tsx scripts/audit-game-data.ts",
     "data:source": "node --import tsx scripts/sync-game-source.ts",
     "cloudflare:security": "node scripts/cloudflare-security.mjs",
-    "cloudflare:mail": "node scripts/cloudflare-mail.mjs",
     "cloudflare:dnssec": "node scripts/cloudflare-dnssec.mjs",
     "cloudflare:d1:schema": "node scripts/cloudflare-d1-schema.mjs",
     "cloudflare:d1:provision": "node scripts/cloudflare-d1-provision.mjs",
