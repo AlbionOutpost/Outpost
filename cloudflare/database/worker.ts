@@ -28,7 +28,7 @@ import accountSavesSchema from "../d1/migrations/0015_account_saves.sql";
 import giveawaysSchema from "../d1/migrations/0016_giveaways.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
-import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
+import { collectKillFeeds } from "../../src/lib/albion/combat-source";
 import { archiveList, archiveFind, archiveTotals } from "./archive";
 import { remember } from "./public-cache";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
@@ -285,17 +285,13 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
     return this.env.KILLS.getByName(region).recent();
   }
   /** Every two minutes: read each server's live kill feed and the weekly ranking into its shortlist
-   * and its window of newest fights. */
+   * and its window of newest fights. Fails when a server's feed is stale (`collectKillFeeds`). */
   async scheduled() {
-    await Promise.allSettled(
-      (["europe", "americas", "asia"] as const).map(async (region) => {
-        const { candidates, recent } = await fetchKillCandidates(region);
-        if (!candidates.length) return;
-        await this.env.KILLS.getByName(region).record(
-          candidates.map((kill) => ({ ...kill, raw: JSON.stringify(kill.raw) })),
-          recent,
-        );
-      }),
+    await collectKillFeeds(["europe", "americas", "asia"], (region, candidates, recent) =>
+      this.env.KILLS.getByName(region).record(
+        candidates.map((kill) => ({ ...kill, raw: JSON.stringify(kill.raw) })),
+        recent,
+      ),
     );
   }
   archiveList(kind: string, input: LibraryQuery) {

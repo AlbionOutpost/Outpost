@@ -1,0 +1,49 @@
+name: Cloudflare health check
+# Every 15 minutes: the last 30 minutes of Workers analytics from the Cloudflare GraphQL API, with
+# one Discord message when pages fail, the data Worker or a Durable Object errors, the kill
+# collector stops or fails, or traffic drops to zero, and one when it is over.
+# docs/OPERATIONS.md § Error alerts. Skips with a notice until the secrets exist.
+on:
+  schedule:
+    - cron: "4,19,34,49 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cloudflare-health-check
+  cancel-in-progress: false
+jobs:
+  health:
+    if: github.repository == 'AlbionOutpost/Outpost'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    # Reads vars.CLOUDFLARE_ACCOUNT_ID and the analytics token; no deploy token. A run every
+    # 15 minutes must not list itself as a deployment of the environment.
+    environment:
+      name: cloudflare-production
+      deployment: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      # Which problems are already reported: restored from the newest earlier run.
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .qa/health
+          key: health-state-${{ github.run_id }}
+          restore-keys: health-state-
+      - name: Check errors, the kill collector and traffic
+        env:
+          CLOUDFLARE_ANALYTICS_TOKEN: ${{ secrets.CLOUDFLARE_ANALYTICS_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          DISCORD_ALERTS_WEBHOOK_URL: ${{ secrets.DISCORD_ALERTS_WEBHOOK_URL }}
+          DISCORD_COST_WEBHOOK_URL: ${{ secrets.DISCORD_COST_WEBHOOK_URL }}
+        run: node scripts/cloudflare-health-check.mjs
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: success()
+        with:
+          path: .qa/health
+          key: health-state-${{ github.run_id }}-${{ github.run_attempt }}
