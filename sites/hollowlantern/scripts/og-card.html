@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hollow Lantern social card</title>
+    <style>
+      @font-face {
+        font-family: "Barlow Condensed";
+        font-weight: 800;
+        src: url("../public/assets/fonts/barlow-condensed-800.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Inter";
+        font-weight: 400 800;
+        src: url("../public/assets/fonts/inter-latin-400-800.woff2") format("woff2");
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+      body {
+        position: relative;
+        background:
+          radial-gradient(520px 420px at 862px 290px, #d9733b66, transparent 70%),
+          radial-gradient(900px 600px at 862px 300px, #d9733b24, transparent 70%),
+          linear-gradient(180deg, #16120f, #0d0e11);
+        color: #f3efe8;
+        font-family: Inter, sans-serif;
+      }
+      body::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("../public/assets/img/grain.png");
+        opacity: 0.05;
+      }
+      .copy {
+        position: absolute;
+        left: 88px;
+        top: 150px;
+        width: 620px;
+      }
+      .mark {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font:
+          600 22px/1 Inter,
+          sans-serif;
+        color: #c8c1b6;
+        margin-bottom: 36px;
+      }
+      .mark img {
+        width: 40px;
+        height: 40px;
+      }
+      h1 {
+        margin: 0;
+        font:
+          800 136px/0.88 "Barlow Condensed",
+          sans-serif;
+        text-transform: uppercase;
+        letter-spacing: -0.01em;
+      }
+      h1 span {
+        color: #f0a46e;
+      }
+      p {
+        margin: 32px 0 0;
+        font-size: 30px;
+        line-height: 1.35;
+        color: #d6d0c6;
+        max-width: 560px;
+      }
+      .lantern {
+        position: absolute;
+        right: 210px;
+        top: 70px;
+        width: 260px;
+        height: 390px;
+        transform: rotate(-3deg);
+        transform-origin: 50% 0;
+        filter: drop-shadow(0 24px 40px #000000aa);
+      }
+      .rope {
+        position: absolute;
+        right: 339px;
+        top: 0;
+        width: 2px;
+        height: 76px;
+        background: linear-gradient(#5a3a28, #9e5129);
+      }
+      .rule {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #d9733b, #f0a46e 50%, #8a4421);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rope"></div>
+    <img class="lantern" src="../public/assets/img/lantern.svg" alt="" />
+    <div class="copy">
+      <div class="mark"><img src="../public/favicon.svg" alt="" />hollowlantern.com</div>
+      <h1>Hollow<br /><span>Lantern</span></h1>
+      <p>An independent studio building tools and worlds for players.</p>
+    </div>
+    <div class="rule"></div>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+// Hollow Lantern company site: static assets only. There is no `main` script, so requests are
+// served straight from the asset store and never run billable Worker code.
+{
+  "name": "hollowlantern-site",
+  "compatibility_date": "2026-10-28",
+  "assets": {
+    "directory": "./public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "hollowlantern.com", "custom_domain": true },
+    { "pattern": "www.hollowlantern.com", "custom_domain": true },
+  ],
+}
