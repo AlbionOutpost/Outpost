@@ -247,8 +247,8 @@ export default async function Supporter({
                 id="supporter-ads"
                 as="h3"
                 emblem="fame"
-                title="Free, with no ads"
-                line="Outpost shows no advertising and takes no payment."
+                title="Free, no payment"
+                line="The launch grant costs nothing. Ads help keep Outpost free and stay on for launch Supporters."
               />
               <ul className="supporter-points">
                 <li className="well">No card, no checkout, no subscription</li>

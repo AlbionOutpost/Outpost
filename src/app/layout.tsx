@@ -1,6 +1,6 @@
 import { rootMetadata } from "@/lib/seo";
 import { AdsenseLoader } from "@/components/adsense-loader";
-import { isSupporter } from "@/lib/billing/plan";
+import { storedSupporter } from "@/lib/billing/plan";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
 import { getServerSession } from "next-auth";
@@ -64,7 +64,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <head>
         <AdsenseLoader
           nonce={(await headers()).get("x-nonce") ?? undefined}
-          supporter={isSupporter(user)}
+          supporter={storedSupporter(user)}
         />
       </head>
       <body

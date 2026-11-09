@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { HttpError } from "@/lib/http-error";
-import { isSupporter, launchOpen } from "./plan";
+import { isSupporter, launchOpen, storedSupporter } from "./plan";
 const entitlementSelect = {
   plan: true,
   supporterGiftUntil: true,
@@ -48,6 +48,13 @@ export const supporterMessage = {
 export async function userIsSupporter(userId: string) {
   const user = await db.user.findUnique({ where: { id: userId }, select: entitlementSelect });
   return isSupporter(user);
+}
+
+/** True when this user's ads are hidden: a stored plan or an admin gift. The launch grant does
+ * not hide ads (owner, 9 Nov 2026: everyone sees ads except Supporters). */
+export async function userIsAdFree(userId: string) {
+  const user = await db.user.findUnique({ where: { id: userId }, select: entitlementSelect });
+  return storedSupporter(user);
 }
 
 /** True when this user may create a workspace right now. */

@@ -248,8 +248,9 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
                   Gordon House, Barrow Street, Dublin 4, Irland). Anzeigen erscheinen höchstens
                   einmal pro Seite, nach der Liste einer Übersichtsseite oder nach einem Guide
                   beziehungsweise einem Bibliotheks-Build, nie in Rechnern, Editoren, Team-Bereichen
-                  oder Kontoseiten. Supporter sehen keine Werbung; das Werbeskript wird für sie
-                  nicht geladen.
+                  oder Kontoseiten. Supporter mit Abo oder geschenktem Supporter-Status sehen keine
+                  Werbung; das Werbeskript wird für sie nicht geladen. Der kostenlose
+                  Launch-Supporter-Status blendet Werbung nicht aus.
                 </p>
                 <p>
                   Besucher aus dem EWR, dem Vereinigten Königreich und der Schweiz sehen vor jeder
@@ -912,8 +913,9 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
                   Outpost is funded by advertising from Google AdSense (Google Ireland Limited,
                   Gordon House, Barrow Street, Dublin 4, Ireland). Ads appear at most once per page,
                   after the list on an overview page or after a guide or library build, never in
-                  calculators, editors, Team areas or account pages. Supporters see no ads; the ad
-                  script is not loaded for them.
+                  calculators, editors, Team areas or account pages. Supporters with a plan or a
+                  gifted Supporter status see no ads; the ad script is not loaded for them. The free
+                  launch Supporter status does not hide ads.
                 </p>
                 <p>
                   Visitors from the EEA, the United Kingdom and Switzerland see Google&apos;s
