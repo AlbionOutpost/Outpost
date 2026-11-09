@@ -93,7 +93,6 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        compact
         glyph="reference"
         scene="economy"
         title="Reference tables"

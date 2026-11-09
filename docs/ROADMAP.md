@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## One page width and one masthead — 8 November 2026
+
+- Every inner page shares one content width (`--page-width`, now 1376px) and one left edge, set once on the shell frame; the 1392px workspace width is gone. 1376px (a 1440 window less its gutters) is what the Market Explorer needs to keep every City orders column in view.
+- One masthead everywhere: the same emblem size, title size (`--masthead-title`), lede and short band on hubs, tools and calculators. The `compact` variant and the per-route padding overrides are gone. The guides hub now has its painted emblem (`strip-content`).
+- The landing's hero hides the account count below 100 (`MIN_SHOWN_COUNT`); a handful of accounts made the site look empty. The other figures stay centred.
+
 ## One kill card and a feed that stays current — 8 November 2026
 
 - The kill and death feeds use the landing's killboard card in full: the victim's inventory, "Show N participants" with each kit, and an "Item details" disclosure beside it in the same row of wells; a delayed fight's note sits under the card. The loading skeleton is the same card. One `KillCard` (`kill-card.tsx`), no feed-only foot.

@@ -9,7 +9,6 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        compact
         glyph="labor"
         scene="economy"
         title="Laborers calculator"

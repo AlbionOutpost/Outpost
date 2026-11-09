@@ -140,9 +140,21 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "href",
     "/signin?callbackUrl=%2Fdashboard&region=europe",
   );
-  const stats = page.getByRole("term");
-  await expect(stats).toContainText(["Accounts", "Builds", "Comps", "Guides", "Tools"]);
-  await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
+  // The account count shows only from 100 up (MIN_SHOWN_COUNT); a handful reads as an empty
+  // site. The library counts always show, and the row stays centred whatever it holds.
+  const labels = await page.getByRole("term").allTextContents();
+  expect(labels.filter((l) => l !== "Accounts")).toEqual(["Builds", "Comps", "Guides", "Tools"]);
+  const figures = await page.locator(".landing-stats dd").allTextContents();
+  for (const f of figures) expect(f).toMatch(/^[\d,]+$/);
+  if (labels.includes("Accounts"))
+    expect(Number(figures[0].replaceAll(",", ""))).toBeGreaterThanOrEqual(100);
+  const row = await page.evaluate(() => {
+    const stats = document.querySelector(".landing-stats")!;
+    const r = stats.getBoundingClientRect();
+    const p = stats.parentElement!.getBoundingClientRect();
+    return { left: r.left - p.left, right: p.right - r.right };
+  });
+  expect(Math.abs(row.left - row.right)).toBeLessThanOrEqual(2);
 
   // Windows: a public build on the board with its chosen abilities on the pieces, what a Team
   // does, and a comp read as a roster by weapon type.

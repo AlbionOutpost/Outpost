@@ -29,7 +29,6 @@ export default async function EditComposition({ params }: { params: Promise<{ id
   return (
     <div className={styles.workspace}>
       <WorkspaceHeading
-        compact
         glyph="composition"
         scene="comps"
         title="Edit comp"

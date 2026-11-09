@@ -7,13 +7,6 @@
   max-width: var(--page-width);
   margin-inline: auto;
 }
-/* Fits one screen: the masthead keeps its painting but drops the 300px band */
-:global(.app.outpost) .page > :global(.workspace-identity)[data-scene] {
-  min-height: 0;
-  margin-bottom: var(--space-4);
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-5);
-}
 
 /* ---------- Identity ---------- */
 /* The crest: the team's painted shield with its painted symbol on it, a little above centre

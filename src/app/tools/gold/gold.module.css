@@ -1,6 +1,6 @@
 /* Gold: a tool page, on the workspace measure like Market Explorer and the calculators */
 .page {
-  max-width: var(--workspace-width);
+  max-width: var(--page-width);
   margin-inline: auto;
 }
 /* One screen at 1440×900: with a week to draw, the latest/lowest/highest figures stand in a

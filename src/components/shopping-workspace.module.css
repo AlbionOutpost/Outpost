@@ -3,7 +3,7 @@
 :global(.app.outpost) .page.page {
   display: grid;
   gap: 26px;
-  width: min(100%, var(--workspace-width));
+  width: min(100%, var(--page-width));
   margin-inline: auto;
 }
 :global(.app.outpost) .page.page > :global(.workspace-identity) {

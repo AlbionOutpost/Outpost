@@ -22,7 +22,6 @@ export default async function NewBuild({
   return (
     <div className="build-editor-page">
       <WorkspaceHeading
-        compact
         glyph="builds"
         scene="builds"
         title="Create a build"

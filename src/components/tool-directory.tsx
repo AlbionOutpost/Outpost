@@ -99,7 +99,6 @@ export function ToolDirectory() {
   return (
     <div className="directory-page support-tools-directory">
       <WorkspaceHeading
-        compact
         glyph="craft"
         scene="economy"
         title="All tools"

@@ -3,7 +3,7 @@
    pill tabs, then one loadout view: cost · the shared loadout board · the selected piece's
    abilities, and a quiet delete row with the notes. */
 .app.outpost .build-editor-page {
-  max-width: var(--workspace-width);
+  max-width: var(--page-width);
   margin: 0 auto;
   min-width: 0;
 }
@@ -191,7 +191,7 @@
   position: fixed;
   z-index: 30;
   bottom: calc(12px + env(safe-area-inset-bottom));
-  inset-inline: max(16px, calc((100% - var(--workspace-width)) / 2));
+  inset-inline: max(16px, calc((100% - var(--page-width)) / 2));
   gap: var(--space-3);
   padding: 10px 12px 10px 20px;
   border: 1px solid color-mix(in srgb, var(--frame-rule) 58%, var(--border));

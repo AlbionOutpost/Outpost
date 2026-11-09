@@ -13,7 +13,6 @@ export default function Page() {
     <div className={styles.page}>
       <PageViews id="flip" initial="scan" hashViews={{ "#scenario": "trade", "#trade": "trade" }}>
         <WorkspaceHeading
-          compact
           glyph="trade"
           scene="market"
           title="Market flipping"

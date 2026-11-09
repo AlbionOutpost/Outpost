@@ -4,8 +4,6 @@
   --surface-card: var(--sidebar);
   --surface-raised: var(--elevated);
   --line-soft: color-mix(in srgb, var(--border) 72%, transparent);
-  --content-marketing: 1408px;
-  --content-workspace: 1600px;
   --content-reading: 840px;
   --control-height: 40px;
   --space-12: 48px;
@@ -20,7 +18,6 @@
 }
 .workspace-frame > main {
   width: 100%;
-  max-width: var(--content-workspace);
   min-width: 0;
   margin: 0 auto;
   padding: 32px;
@@ -30,11 +27,6 @@ main[data-width="board"] {
 }
 main[data-width="reading"] {
   max-width: var(--content-reading);
-}
-main[data-width="marketing"]:not([data-page="home"]) {
-  max-width: var(--content-marketing);
-  /* Capped marketing pages sit centred in the frame, not against its left edge */
-  margin-inline: auto;
 }
 .workspace-route .site-header {
   padding-inline: 28px;

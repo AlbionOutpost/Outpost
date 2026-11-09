@@ -11,7 +11,6 @@ export default function Page() {
   return (
     <div className={`${styles.page} ${marketPage.page}`}>
       <WorkspaceHeading
-        compact
         glyph="history"
         scene="market"
         title="Gold price"

@@ -16,7 +16,6 @@ export default async function Page({
     <div className={marketPage.page}>
       <MarketViewProvider>
         <WorkspaceHeading
-          compact
           glyph="market"
           scene="market"
           title="Market Explorer"
