@@ -70,11 +70,11 @@ test("populated five and twenty player fixtures remain editable and export a wid
         if (count === 5) {
           await page.goto(`/compositions/${comp.id}`);
           await expect(page.locator("[data-comp-member]")).toHaveCount(5);
-          // Every drawn piece stays inside its member's window.
+          // Every drawn board cell stays inside its member's window.
           const contained = await page.locator("[data-comp-member]").evaluateAll((cards) =>
             cards.every((card) => {
               const box = card.getBoundingClientRect();
-              return [...card.querySelectorAll(".build-card-loadout li")].every((cell) => {
+              return [...card.querySelectorAll(".loadout-board-cell")].every((cell) => {
                 const gear = cell.getBoundingClientRect();
                 return !gear.width || (gear.left >= box.left && gear.right <= box.right);
               });
