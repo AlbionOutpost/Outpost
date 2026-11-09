@@ -84,10 +84,11 @@ describe("advertising stays closed until the imprint is complete", () => {
     });
   });
 
-  it("the open launch grant makes every signed-in account a Supporter", async () => {
+  it("the open launch grant does not hide ads (only a plan or a gift does)", async () => {
     state.session.mockResolvedValue({ user: { id: "free-account" } });
     state.user.mockResolvedValue({ plan: "FREE", createdAt: new Date() });
-    expect(await AdSlot({ placement: "hub", offer: true })).toBeNull();
+    const html = renderToStaticMarkup(await AdSlot({ placement: "hub", offer: true }));
+    expect(html).toContain('href="/supporter"');
   });
 
   it("a claimed client/session plan cannot override the current server record", async () => {

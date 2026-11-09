@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Ads for everyone but Supporters — 9 November 2026
+
+- Owner decision: everyone sees ads except Supporters with a plan or an admin gift. The launch grant keeps every Supporter feature but no longer hides ads; the Supporter page and both privacy texts say so. Ads still switch on only once the Impressum is complete.
+
 ## Domain email — 9 November 2026
 
 - **Zoho Mail (EU):** albionoutpost.com now receives and sends mail. One mailbox (admin@) with contact@, support@, security@ and privacy@ aliases, plus postmaster@ and abuse@ groups. SPF, DKIM and DMARC are set ([OPERATIONS.md](OPERATIONS.md)).
