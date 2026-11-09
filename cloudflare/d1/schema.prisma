@@ -31,6 +31,8 @@ model User {
   /// Staff gifts are independent of Stripe and expire without a background job.
   supporterGiftUntil DateTime?
   supporterGiftPermanent Boolean @default(false)
+  /// The public Supporter badge shows beside this account's name (owner, 9 Nov 2026: optional, on by default).
+  showSupporterBadge Boolean @default(true)
   bannedAt DateTime?
   bannedUntil DateTime?
   createdAt DateTime @default(now())

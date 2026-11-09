@@ -20,6 +20,7 @@ export const GET = apiHandler("account.export", async () => {
       region: true,
       characterName: true,
       avatarFrame: true,
+      showSupporterBadge: true,
       createdAt: true,
       updatedAt: true,
       savedScenarios: true,
