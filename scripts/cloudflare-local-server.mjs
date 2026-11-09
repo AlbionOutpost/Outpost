@@ -22,7 +22,6 @@ const vars = {
   OUTPOST_RUNTIME: "cloudflare",
   NEXTAUTH_URL: "http://localhost:3000",
   NEXTAUTH_SECRET: randomBytes(48).toString("hex"),
-  OUTPOST_RENDER_SESSION_SECRET: randomBytes(48).toString("hex"),
 };
 if (process.env.DISCORD_CLIENT_ID) {
   vars.DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
@@ -129,7 +128,6 @@ const child = spawn(
 const redactions = [
   key,
   vars.NEXTAUTH_SECRET,
-  vars.OUTPOST_RENDER_SESSION_SECRET,
   vars.DISCORD_CLIENT_SECRET,
   process.env.DISCORD_CLIENT_SECRET,
 ].filter(Boolean);

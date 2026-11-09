@@ -8,12 +8,7 @@ const path = ".env.cloudflare-runtime",
 if (!stat.isFile() || stat.isSymbolicLink() || stat.mode & 0o077)
   throw new Error("Runtime credentials must remain owner-only");
 const values = parseEnv(readFileSync(path, "utf8"));
-const names = [
-  "NEXTAUTH_SECRET",
-  "DISCORD_CLIENT_SECRET",
-  "TURNSTILE_SECRET",
-  "OUTPOST_RENDER_SESSION_SECRET",
-];
+const names = ["NEXTAUTH_SECRET", "DISCORD_CLIENT_SECRET", "TURNSTILE_SECRET"];
 if (names.some((name) => !values[name])) throw new Error("Genuine runtime secrets missing");
 if (!process.argv.includes("--apply")) {
   console.log(JSON.stringify({ ready: true, secretNames: names, uploaded: false }));

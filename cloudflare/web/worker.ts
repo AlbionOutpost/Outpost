@@ -1,146 +1,27 @@
 import { DurableObject } from "cloudflare:workers";
 import app from "../../.open-next/worker.js";
-import type { OutpostDatabaseBinding } from "../database/web-driver";
 import { requestBudget, secureResponse } from "./request-budget";
 import { edgeCacheEntry } from "./edge-cache";
+import { boundedContext, withDeadline } from "./deadline";
 
-const lifetime = 30 * 60;
-const cookieName = "outpost-route";
-const bytes = new TextEncoder();
-const hex = (value: ArrayBuffer) =>
-  Array.from(new Uint8Array(value), (byte) => byte.toString(16).padStart(2, "0")).join("");
-async function identity(request: Request, secret: string) {
-  if (!secret || secret.length < 32) throw new Error("Render session secret missing");
-  const key = await crypto.subtle.importKey(
-    "raw",
-    bytes.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign", "verify"],
-  );
-  const value = request.headers
-    .get("Cookie")
-    ?.split(";")
-    .map((part) => part.trim())
-    .find((part) => part.startsWith(`${cookieName}=`))
-    ?.slice(cookieName.length + 1);
-  const match = /^([a-f0-9]{32})\.([0-9]{10})\.([a-f0-9]{64})$/.exec(value ?? "");
-  const now = Math.floor(Date.now() / 1000);
-  if (match && Number(match[2]) <= now && Number(match[2]) + lifetime > now) {
-    const signature = Uint8Array.from(match[3].match(/../g)!, (byte) => Number.parseInt(byte, 16));
-    if (await crypto.subtle.verify("HMAC", key, signature, bytes.encode(`${match[1]}.${match[2]}`)))
-      return { id: match[1], cookie: null };
-  }
-  const id = crypto.randomUUID().replaceAll("-", ""),
-    payload = `${id}.${now}`;
-  const signature = hex(await crypto.subtle.sign("HMAC", key, bytes.encode(payload)));
-  return {
-    id,
-    cookie: `${cookieName}=${payload}.${signature}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${lifetime}${new URL(request.url).protocol === "https:" ? "; Secure" : ""}`,
-  };
-}
+/* The edge gateway: www redirect, edge cache, per-address budgets, then the OpenNext app in this
+ * same Worker (CPU-billed). docs/ARCHITECTURE.md § albionoutpost-web. */
 
-/* Every render ends within RENDER_DEADLINE, streamed body included. A request that never
- * settles (a stalled upstream, a promise nothing resolves) would otherwise hold its session
- * object open for the platform's 15-minute limit and spend the daily Durable Object duration
- * allowance; past the deadline the client gets what has been sent, or a 504 if nothing has. */
-const RENDER_DEADLINE = 30_000;
-const BACKGROUND_DEADLINE = 10_000;
-async function withDeadline(work: Promise<Response>): Promise<Response> {
-  let expire: () => void = () => {};
-  const expired = new Promise<"expired">((resolve) => {
-    expire = () => resolve("expired");
-  });
-  const timer = setTimeout(() => expire(), RENDER_DEADLINE);
-  const first = await Promise.race([work, expired]);
-  if (first === "expired") {
-    // The render keeps no reference to us; let it fail quietly when it finally settles.
-    work.then((late) => late.body?.cancel()).catch(() => {});
-    return new Response("Outpost took too long to answer. Please try again.", {
-      status: 504,
-      headers: { "Cache-Control": "private, no-store", "Retry-After": "5" },
-    });
-  }
-  const response = first;
-  if (!response.body) {
-    clearTimeout(timer);
-    return response;
-  }
-  const reader = response.body.getReader();
-  const body = new ReadableStream<Uint8Array>({
-    async pull(controller) {
-      const next = await Promise.race([reader.read(), expired]);
-      if (next === "expired") {
-        reader.cancel("Render deadline").catch(() => {});
-        controller.close();
-        return;
-      }
-      if (next.done) {
-        clearTimeout(timer);
-        controller.close();
-        return;
-      }
-      controller.enqueue(next.value);
-    },
-    cancel(reason) {
-      clearTimeout(timer);
-      return reader.cancel(reason);
-    },
-  });
-  return new Response(body, response);
-}
-
-/** A browser-session render actor with an in-memory request budget.
- * Each signed browser session has its own object, never one global renderer. Nothing is written
- * to actor storage: the 30-minute lifetime is enforced by the signed route cookie, and the
- * per-minute budget lives in memory (an evicted object simply starts a fresh window). That keeps
- * every page view free of Durable Object storage writes. NextAuth and the database services still
- * authorize each request against current records.
- * This deliberately uses the Free SQLite DO CPU allowance for the framework's heavy rendering.
- */
+/** Retired 9 Nov 2026: nothing routes here and no binding reaches it. The class stays exported
+ * for one release so this deploy needs no Durable Object migration and can still be rolled back;
+ * the next release deletes it with a `deleted_classes` migration (docs/OPERATIONS.md). It never
+ * stored anything; the alarm clears any schedule an old object may still hold. */
 export class OutpostSession extends DurableObject<OutpostWebEnv> {
-  private window = 0;
-  private count = 0;
-  async fetch(request: Request) {
-    const now = Date.now();
-    if (now - this.window >= 60_000) {
-      this.window = now;
-      this.count = 0;
-    }
-    if (++this.count > 240)
-      return new Response("Request budget exhausted. Retry shortly.", {
-        status: 429,
-        headers: { "Retry-After": "60", "Cache-Control": "private, no-store" },
-      });
-    return withDeadline(app.fetch(request, this.env, this.boundedContext()));
+  async fetch() {
+    return new Response("Gone", { status: 410, headers: { "Cache-Control": "no-store" } });
   }
-  /* Background work the framework hands to waitUntil (cache writes, after() callbacks) keeps the
-   * invocation billed until it settles; a promise that never settles kept requests open for
-   * the full 15 minutes after their response had been delivered. Each one now gets ten seconds. */
-  private boundedContext() {
-    const ctx = this.ctx;
-    const waitUntil = (promise: Promise<unknown>) =>
-      ctx.waitUntil(
-        Promise.race([
-          Promise.resolve(promise).catch(() => {}),
-          new Promise((resolve) => setTimeout(resolve, BACKGROUND_DEADLINE)),
-        ]),
-      );
-    return new Proxy(ctx, {
-      get(target, property) {
-        if (property === "waitUntil") return waitUntil;
-        const value = Reflect.get(target, property, target);
-        return typeof value === "function" ? value.bind(target) : value;
-      },
-    });
-  }
-  // Objects created before this change may still hold a scheduled cleanup.
   async alarm() {
     await this.ctx.storage.deleteAll();
   }
 }
+
 const worker = {
-  async fetch(request: Request, env: OutpostWebEnv, ctx?: ExecutionContext) {
+  async fetch(request: Request, env: OutpostWebEnv, ctx: ExecutionContext) {
     const url = new URL(request.url);
     if (url.hostname === "www.albionoutpost.com") {
       url.hostname = "albionoutpost.com";
@@ -150,7 +31,7 @@ const worker = {
     }
     const entry = edgeCacheEntry(request);
     const cache = entry && typeof caches !== "undefined" ? caches.default : null;
-    // A cache hit is answered before the rate-limit object: it costs no Durable Object request.
+    // A cache hit is answered before the rate limit and the app: it costs almost no CPU.
     if (cache && entry) {
       const hit = await cache.match(entry.key).catch(() => undefined);
       if (hit) {
@@ -160,16 +41,17 @@ const worker = {
         return secureResponse(answer, request);
       }
     }
-    const denial = await requestBudget(
-      request,
-      env.OUTPOST_DATA as unknown as OutpostDatabaseBinding,
-    );
+    const denial = await requestBudget(request, {
+      requests: env.EDGE_REQUESTS,
+      search: env.EDGE_SEARCH,
+      itemPrices: env.EDGE_ITEM_PRICES,
+      market: env.EDGE_MARKET,
+    });
     if (denial) {
       denial.headers.set("Cache-Control", "private, no-store");
       return secureResponse(denial, request);
     }
-    const session = await identity(request, env.OUTPOST_RENDER_SESSION_SECRET);
-    const response = await env.SESSIONS.getByName(session.id).fetch(request);
+    const response = await withDeadline(app.fetch(request, env, boundedContext(ctx)));
     const result = new Response(response.body, response);
     // An answer with a failed part (`X-Outpost-Partial`) is served but never kept.
     if (cache && entry && response.status === 200 && !response.headers.has("X-Outpost-Partial")) {
@@ -180,10 +62,8 @@ const worker = {
           "Cache-Control": `public, max-age=${entry.ttl}`,
         },
       });
-      const put = cache.put(entry.key, stored).catch(() => {});
-      if (ctx) ctx.waitUntil(put);
+      ctx.waitUntil(cache.put(entry.key, stored).catch(() => {}));
     }
-    if (session.cookie) result.headers.append("Set-Cookie", session.cookie);
     result.headers.set("Cache-Control", "private, no-store");
     return secureResponse(result, request);
   },

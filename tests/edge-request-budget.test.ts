@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, it, expect, vi } from "vitest";
 import { requestBudget, secureResponse } from "../cloudflare/web/request-budget";
 import { addressBucket } from "../src/lib/client-address";
@@ -6,23 +7,58 @@ const req = (path = "/", address = "203.0.113.1", extra: Record<string, string> 
   new Request(`https://albionoutpost.com${path}`, {
     headers: { "cf-connecting-ip": address, ...extra },
   });
+// The Rate Limiting bindings in wrangler.jsonc, simulated with exact counters.
+const limits = { requests: 240, search: 30, itemPrices: 20, market: 20 } as const;
 function budgets() {
   const counts = new Map<string, number>();
-  return {
-    rateLimit: vi.fn(async (key: string, limit: number) => {
-      const count = (counts.get(key) || 0) + 1;
-      counts.set(key, count);
-      return count <= limit;
+  const limiter = (name: keyof typeof limits) => ({
+    limit: vi.fn(async ({ key }: { key: string }) => {
+      const count = (counts.get(`${name}:${key}`) || 0) + 1;
+      counts.set(`${name}:${key}`, count);
+      return { success: count <= limits[name] };
     }),
+  });
+  return {
+    requests: limiter("requests"),
+    search: limiter("search"),
+    itemPrices: limiter("itemPrices"),
+    market: limiter("market"),
   };
 }
+const failing = () => {
+  const limit = vi.fn(async (): Promise<{ success: boolean }> => {
+    throw Error("private failure detail");
+  });
+  return { requests: { limit }, search: { limit }, itemPrices: { limit }, market: { limit } };
+};
 describe("trusted edge request budgets", () => {
-  it("cannot renew rendering capacity by dropping or tampering with routing cookies", async () => {
+  it("matches the limits configured on the Worker's rate-limit bindings", () => {
+    const config = JSON.parse(
+      readFileSync("wrangler.jsonc", "utf8")
+        .replace(/^\s*\/\/.*$/gm, "")
+        .replace(/,\s*([}\]])/g, "$1"),
+    );
+    const configured = Object.fromEntries(
+      config.ratelimits.map((r: { name: string; simple: { limit: number; period: number } }) => [
+        r.name,
+        r.simple,
+      ]),
+    );
+    expect(configured).toEqual({
+      EDGE_REQUESTS: { limit: limits.requests, period: 60 },
+      EDGE_SEARCH: { limit: limits.search, period: 60 },
+      EDGE_ITEM_PRICES: { limit: limits.itemPrices, period: 60 },
+      EDGE_MARKET: { limit: limits.market, period: 60 },
+    });
+    // Pages render in the Worker; no session object is bound any more.
+    expect(config.durable_objects).toBeUndefined();
+  });
+  it("cannot renew capacity by dropping or tampering with cookies", async () => {
     const binding = budgets();
     for (let i = 0; i < 240; i++)
       expect(
         await requestBudget(
-          req("/", undefined, i % 2 ? { Cookie: "outpost-route=tampered" } : {}),
+          req("/", undefined, i % 2 ? { Cookie: "next-auth.session-token=tampered" } : {}),
           binding,
         ),
       ).toBeNull();
@@ -80,11 +116,7 @@ describe("trusted edge request budgets", () => {
     expect(denied?.status).toBe(429);
     expect(denied?.headers.get("Retry-After")).toBe("60");
     expect((await denied!.json()).error).toMatch(/Too many price requests/);
-    expect(binding.rateLimit).not.toHaveBeenCalledWith(
-      expect.stringMatching(/^edge:market:/),
-      expect.anything(),
-      expect.anything(),
-    );
+    expect(binding.market.limit).not.toHaveBeenCalled();
     // The market budget is untouched, and another server has its own allowance.
     expect(await requestBudget(req("/api/market?region=europe"), binding)).toBeNull();
     expect(
@@ -118,15 +150,7 @@ describe("trusted edge request budgets", () => {
         )
       )?.status,
     ).toBe(503);
-    expect(
-      (
-        await requestBudget(req(), {
-          rateLimit: async () => {
-            throw Error("offline");
-          },
-        })
-      )?.status,
-    ).toBe(503);
+    expect((await requestBudget(req(), failing()))?.status).toBe(503);
   });
   it("rejects duplicate server parameters and budgets encoded price paths consistently", async () => {
     const binding = budgets();
@@ -152,11 +176,7 @@ describe("trusted edge request budgets", () => {
     });
   });
   it("keeps limiter failure closed with JSON for APIs and readable text for page requests", async () => {
-    const binding = {
-      rateLimit: vi.fn(async () => {
-        throw Error("private failure detail");
-      }),
-    };
+    const binding = failing();
     const api = (await requestBudget(req("/api/market"), binding))!;
     expect(api.status).toBe(503);
     expect(await api.json()).toEqual({
