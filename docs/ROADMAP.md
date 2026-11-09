@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Build cards lead with the weapon; the item database shows prices — 8 November 2026
+
+- Build cards (Builds, Favorites, item pages, comp members, a Team's shared builds, the editor preview and the landing teaser) show the weapon first: main and off hand large with their chosen abilities, the rest of the gear in a smaller row. Slots nothing was recorded for are no longer drawn as grey wells; one "+n empty" note names them. Nearly every library build lacks a bag and a mount, so most cards used to carry two to four empty wells.
+- Card titles show in full on two lines over the activity chip and ♥ count, and the bars, loadouts and feet line up across a row of cards. The build page and the editor keep the full board.
+- `/items` opens on the grid (an address `view` or the visitor's last choice wins). Each card shows the item's render, tier chip, name, slot, its ID small and muted, and the cheapest current sell order with its city and age, normal quality, on the chosen server. A stale order shows its age in amber with the stale mark; no order is "— No recent price".
+- One request per page through the new `GET /api/items/prices` (at most 30 items, edge-cached 2 min for signed-out visitors, its own 20/min allowance so browsing never spends the market budget).
+
 ## Market Explorer gets quieter — 8 November 2026
 
 - Prices seen within the hour no longer carry an age; older ones show a short amber age ("6 h") and prices over a day old are dimmed ("2 d"). The exact UTC time stays on hover and for screen readers; the stale rings and "Lowest"/"Highest" pills are gone (a small accent dot marks the best price).

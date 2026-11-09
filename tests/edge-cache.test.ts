@@ -95,6 +95,24 @@ describe("edge cache for signed-out public answers", () => {
     const cookie = { headers: { Cookie: "next-auth.session-token=abc" } };
     expect(key("/api/market?region=europe&item=T4_BAG&quality=1", cookie)).toBeNull();
   });
+  it("keys the item database's prices by server and the sorted page of items", () => {
+    expect(key("/api/items/prices?items=T5_BAG,T4_BAG%401&region=europe&utm=x")).toBe(
+      "https://albionoutpost.com/api/items/prices?region=europe&items=T4_BAG@1,T5_BAG",
+    );
+    expect(key("/api/items/prices?region=europe&items=T4_BAG%401,T5_BAG")).toBe(
+      key("/api/items/prices?region=europe&items=T5_BAG,T4_BAG%401"),
+    );
+    expect(edgeCacheEntry(req("/api/items/prices?region=asia&items=T4_BAG"))!.ttl).toBe(120);
+    const page = Array.from({ length: 30 }, (_, i) => `T4_TEST${i}`);
+    expect(key(`/api/items/prices?region=europe&items=${page.join(",")}`)).not.toBeNull();
+    expect(key(`/api/items/prices?region=europe&items=${[...page, "T4_X"].join(",")}`)).toBeNull();
+    expect(key("/api/items/prices?region=europe&items=T4_BAG,T4_BAG")).toBeNull();
+    expect(key("/api/items/prices?region=europe&items=t4_bag")).toBeNull();
+    expect(key("/api/items/prices?region=europe&items=")).toBeNull();
+    expect(key("/api/items/prices?region=mars&items=T4_BAG")).toBeNull();
+    const cookie = { headers: { Cookie: "next-auth.session-token=abc" } };
+    expect(key("/api/items/prices?region=europe&items=T4_BAG", cookie)).toBeNull();
+  });
   it("never caches per-account likes", () => {
     expect(key("/api/library-likes?items=build:axe")).toBeNull();
     expect(key("/api/library-likes/build/axe")).toBeNull();

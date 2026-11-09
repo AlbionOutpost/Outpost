@@ -226,3 +226,89 @@ test("an item page shows recorded spells from the build library and every build 
   await all.click();
   await expect(page.locator(".ecosystem-results-subline")).toContainText(`${total}`);
 });
+
+test("the item database opens on the grid with each item's cheapest current sell order", async ({
+  page,
+}) => {
+  const asked: string[][] = [];
+  const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString().slice(0, 19);
+  await page.route("**/api/items/prices?*", (route) => {
+    const url = new URL(route.request().url());
+    const items = url.searchParams.get("items")!.split(",");
+    asked.push(items);
+    const order = (item: string, city: string, price: number, minutes: number) => ({
+      item,
+      city,
+      price,
+      observedAt: minutesAgo(minutes),
+    });
+    return route.fulfill({
+      json: {
+        region: url.searchParams.get("region"),
+        quality: 1,
+        fetchedAt: new Date().toISOString(),
+        source: "Albion Online Data Project",
+        orders: [
+          // A cheaper stale order never beats a current one.
+          order("T4_2H_ARCANESTAFF", "Lymhurst", 900, 300),
+          order("T4_2H_ARCANESTAFF", "Martlock", 12_345, 5),
+          order("T4_2H_ARCANESTAFF", "Thetford", 15_000, 10),
+          // Only a stale order: shown with its age and the stale mark, never as current.
+          order("T4_2H_ARCANESTAFF@1", "Bridgewatch", 40_000, 300),
+        ].filter((o) => items.includes(o.item)),
+      },
+    });
+  });
+  await page.goto("/items?q=Great%20Arcane&tier=4&region=europe");
+  await expect(page.locator(".item-catalog-grid")).toBeVisible();
+  const card = (id: string) => page.locator(`.item-catalog-row:has(a[href^="/items/${id}?"])`);
+  const fresh = card("T4_2H_ARCANESTAFF");
+  await expect(fresh.locator('[data-price="fresh"]')).toContainText("12,345");
+  await expect(fresh.locator('[data-price="fresh"]')).toContainText("Martlock");
+  await expect(fresh.locator('[data-price="fresh"]')).toContainText("5 min ago");
+  await expect(fresh).toContainText("T4.0");
+  const stale = card("T4_2H_ARCANESTAFF@1");
+  await expect(stale.locator('[data-price="stale"]')).toContainText("40,000");
+  await expect(stale.locator('[data-price="stale"]')).toContainText("Bridgewatch");
+  await expect(stale.locator('[data-price="stale"]')).toContainText("5 h ago");
+  await expect(stale.locator('[data-price="stale"]')).toContainText("Stale");
+  await expect(card("T4_2H_ARCANESTAFF@2").locator('[data-price="missing"]')).toContainText(
+    "No recent price",
+  );
+  // One request for the whole page, never more than a page of items.
+  expect(asked).toHaveLength(1);
+  expect(asked[0].length).toBeLessThanOrEqual(30);
+  expect(asked[0]).toContain("T4_2H_ARCANESTAFF@1");
+});
+
+test("item prices that fail to load say so once and can be retried", async ({ page }) => {
+  let calls = 0;
+  await page.route("**/api/items/prices?*", (route) => {
+    calls++;
+    return route.fulfill({ status: 503, json: { error: "Market observations unavailable." } });
+  });
+  await page.goto("/items?q=Great%20Arcane&tier=4&region=europe");
+  await expect(page.getByRole("status").filter({ hasText: "Prices could not load" })).toBeVisible();
+  await expect(page.locator('[data-price="missing"]').first()).toContainText("Price unavailable");
+  await expect(page.locator('[data-price="fresh"], [data-price="stale"]')).toHaveCount(0);
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect.poll(() => calls).toBe(2);
+});
+
+test("the item database remembers list or grid, and the address wins", async ({ page }) => {
+  await page.route("**/api/items/prices?*", (route) =>
+    route.fulfill({ status: 503, json: { error: "unavailable" } }),
+  );
+  await page.goto("/items");
+  await expect(page.locator(".item-catalog-grid")).toBeVisible();
+  await page.getByRole("button", { name: "List", exact: true }).click();
+  await expect(page).toHaveURL(/[?&]view=list/);
+  await page.goto("/items");
+  await expect(page.getByRole("button", { name: "List", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.locator(".item-catalog-grid")).toHaveCount(0);
+  await page.goto("/items?view=grid");
+  await expect(page.locator(".item-catalog-grid")).toBeVisible();
+});

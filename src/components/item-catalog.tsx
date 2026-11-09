@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, LayoutGrid, List, RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
@@ -15,10 +15,25 @@ import { catalogSearchResponse } from "@/lib/catalog/search";
 import { z } from "zod";
 import styles from "./item-catalog.module.css";
 import { SearchInput } from "./field";
+import { ItemPriceLine, useItemPrices } from "./item-price-line";
 const responseSchema = catalogSearchResponse.extend({
   total: z.number().int().nonnegative(),
   page: z.number().int().positive(),
 });
+/** Grid unless the address or this browser's last choice says list. */
+type View = "list" | "grid";
+const VIEW_KEY = "outpost:items-view";
+const viewParam = (value: string | null): View | null =>
+  value === "list" || value === "grid" ? value : null;
+/** The view this browser last chose; storage can be blocked, which is the same as no choice. */
+function rememberedView() {
+  try {
+    return viewParam(localStorage.getItem(VIEW_KEY));
+  } catch {
+    return null;
+  }
+}
+const noSubscription = () => () => {};
 /** Phones show this many rows before "Show all", so the next step is not 30 rows down. */
 const PHONE_ROWS = 12;
 const tierLabel = (id: string) => {
@@ -53,9 +68,16 @@ function fromAddress(params: URLSearchParams, categories: string[]): Filters {
   };
 }
 /** The same filters in the page address: `/items?q=claymore&tier=6`, so Back and links keep them. */
-function syncAddress({ search, category, tier, enchantment, page }: Filters) {
+function syncAddress({ search, category, tier, enchantment, page }: Filters, view: View) {
   const url = new URL(window.location.href);
-  const values = { q: search, category, tier, enchantment, page: page > 1 ? String(page) : "" };
+  const values = {
+    q: search,
+    category,
+    tier,
+    enchantment,
+    page: page > 1 ? String(page) : "",
+    view: view === "list" ? view : "",
+  };
   for (const [key, value] of Object.entries(values))
     if (value) url.searchParams.set(key, value);
     else url.searchParams.delete(key);
@@ -75,9 +97,14 @@ export function ItemCatalog({
 }) {
   // The address wins over the server's rows: Back can restore this page from the router cache
   // with rows for an older address, and the filters must match the address the player sees.
-  const address = fromAddress(useSearchParams(), categories);
+  const searchParams = useSearchParams();
+  const address = fromAddress(searchParams, categories);
+  const addressView = viewParam(searchParams.get("view"));
   const [page, setPage] = useState(address.page);
-  const [view, setView] = useState<"list" | "grid">("list");
+  const remembered = useSyncExternalStore(noSubscription, rememberedView, () => null);
+  const [chosen, setChosen] = useState<View | null>(null);
+  // A choice made here, then the address, then this browser's last choice, then the grid.
+  const view = chosen ?? addressView ?? remembered ?? "grid";
   const [more, setMore] = useState(false);
   const [search, setSearch] = useState(address.search);
   const [tier, setTier] = useState(address.tier);
@@ -94,9 +121,15 @@ export function ItemCatalog({
   // A failed refresh of the page the server already rendered keeps showing those rows.
   const error = errorKey === `${requestKey}#${retry}` && requestKey !== result.key;
   const busy = requestKey !== result.key && !error;
+  const choose = (next: View) => {
+    setChosen(next);
+    try {
+      localStorage.setItem(VIEW_KEY, next);
+    } catch {}
+  };
   useEffect(() => {
-    syncAddress({ search, category, tier, enchantment, page });
-  }, [search, category, tier, enchantment, page]);
+    syncAddress({ search, category, tier, enchantment, page }, view);
+  }, [search, category, tier, enchantment, page, view]);
   useEffect(() => {
     // The server already rendered the rows for the address it was given.
     if (requestKey === result.key) return;
@@ -119,6 +152,11 @@ export function ItemCatalog({
     };
   }, [requestKey, retry, result.key]);
   const region = useOutpostRegion();
+  const prices = useItemPrices(
+    region,
+    result.items.map((i) => i.id),
+    !busy && !error,
+  );
   const shortcuts = items.filter(
     (i) =>
       (i.name + " " + i.id).toLowerCase().includes(search.toLowerCase()) &&
@@ -236,7 +274,7 @@ export function ItemCatalog({
             line={
               filtered
                 ? "Matching your search and filters."
-                : "T4 and up first, by tier and enchantment, then T1–T3. Open one for its prices."
+                : "T4 and up first, then T1–T3. Each shows its cheapest sell order (normal quality) on this server."
             }
             actions={
               <>
@@ -249,7 +287,7 @@ export function ItemCatalog({
                   <button
                     type="button"
                     aria-pressed={view === "list"}
-                    onClick={() => setView("list")}
+                    onClick={() => choose("list")}
                   >
                     <List size={15} aria-hidden="true" />
                     List
@@ -257,7 +295,7 @@ export function ItemCatalog({
                   <button
                     type="button"
                     aria-pressed={view === "grid"}
-                    onClick={() => setView("grid")}
+                    onClick={() => choose("grid")}
                   >
                     <LayoutGrid size={15} aria-hidden="true" />
                     Grid
@@ -294,6 +332,15 @@ export function ItemCatalog({
           />
         ) : (
           <>
+            {prices.failed && (
+              <p className={styles.priceNote} role="status">
+                Prices could not load. Items still open as usual.
+                <button type="button" className="pill-link is-small" onClick={prices.retry}>
+                  <RotateCw size={14} aria-hidden="true" />
+                  Try again
+                </button>
+              </p>
+            )}
             <ul
               className={`${view === "grid" ? `item-catalog-grid ${styles.grid}` : styles.rows}${more ? ` ${styles.expanded}` : ""}`}
             >
@@ -306,13 +353,16 @@ export function ItemCatalog({
                     <span className={styles.well}>
                       <ItemIcon id={item.id} size={view === "grid" ? 64 : 36} />
                     </span>
+                    {view === "grid" && <span className={styles.tier}>{tierLabel(item.id)}</span>}
                     <span className={styles.copy}>
                       <strong>{item.name}</strong>
                       <small>
                         {item.slot}
                         {view === "list" && <code> · {item.id}</code>}
                       </small>
+                      {view === "grid" && <code className={styles.id}>{item.id}</code>}
                     </span>
+                    <ItemPriceLine state={prices.state(item.id)} />
                     {view === "list" && (
                       <>
                         <span className={styles.tier}>{tierLabel(item.id)}</span>

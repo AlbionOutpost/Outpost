@@ -144,17 +144,20 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(stats).toContainText(["Accounts", "Builds", "Comps", "Guides", "Tools"]);
   await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
 
-  // Windows: a public build on the board with its chosen abilities on the pieces, what a Team
-  // does, and a comp read as a roster by weapon type.
+  // Windows: a public build as every build card shows it (the weapon first with its chosen
+  // abilities, the rest smaller, empty slots folded into one note), what a Team does, and a comp
+  // read as a roster by weapon type.
   const windows = page.locator(".landing-window");
   await expect(windows).toHaveCount(3);
-  const board = windows.nth(0).locator(".loadout-board");
-  await expect(board.getByRole("listitem")).toHaveCount(10);
-  await expect(board.locator('[data-slot="Main hand"] .loadout-board-abilities img')).toHaveCount(
-    3,
+  const loadout = windows.nth(0).locator(".build-card-loadout");
+  await expect(loadout.locator('[data-slot="Main hand"] [data-albion-spell]')).toHaveCount(3);
+  await expect(loadout.locator('[data-slot="Helmet"] img[data-albion-icon]')).toHaveCount(1);
+  // No empty well is drawn for an unrecorded slot; the note names them instead.
+  await expect(loadout.locator('[data-slot="Bag"]')).toHaveCount(0);
+  await expect(loadout.locator("[data-empty-slots]")).toHaveAttribute(
+    "data-empty-slots",
+    /\bBag\b/,
   );
-  await expect(board.locator('[data-slot="Helmet"] .loadout-board-abilities img')).toHaveCount(2);
-  await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
   const heart = windows.nth(0).locator(".heart-chip");
   await expect(heart).toBeDisabled();
   await expect(heart).toHaveAttribute("aria-pressed", "false");
@@ -434,7 +437,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
       .first()
       .evaluate((card) => {
         const outer = card.getBoundingClientRect();
-        return [...card.querySelectorAll(".loadout-board-cell")].filter((cell) => {
+        return [...card.querySelectorAll(".build-card-loadout li")].filter((cell) => {
           const rect = cell.getBoundingClientRect();
           return rect.left < outer.left || rect.right > outer.right;
         }).length;

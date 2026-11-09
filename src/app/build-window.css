@@ -1,23 +1,37 @@
 /* What a build card adds to the landing's window (landing-window.css, windows.module.css):
-   a heading inside the title link, the weapon and owner's menu in the foot, a saved summary in
-   place of the board, the ♥ pill without a ring, and the grids the cards sit in. */
+   the full title over its chips, the weapon and owner's menu in the foot, a saved summary in
+   place of the loadout, the ♥ pill without a ring, and the grids the cards sit in. */
 .app.outpost .build-window-slot {
   display: contents;
 }
+/* The bar: the whole title (two lines at most, the rest on hover) over the chip row, so a long
+   title is never cut to make room for the activity chip and ♥ count */
+.app.outpost .build-window .landing-window-bar.landing-window-bar {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 8px;
+}
 .app.outpost .build-window .landing-window-title {
-  flex: 1 1 auto;
+  align-items: flex-start;
+  min-height: 0;
+  white-space: normal;
 }
 .app.outpost .build-window .landing-window-title :is(h2, h3) {
+  display: -webkit-box;
   min-width: 0;
   margin: 0;
   overflow: hidden;
   font: inherit;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 /* A comp member's place in the party, in the muted mono of the roster rows */
 .app.outpost .build-window-n {
   flex: none;
+  align-self: center;
   margin-right: 8px;
   color: var(--muted);
   font: 700 12px/1 var(--font-mono, var(--font-ui));
@@ -30,8 +44,9 @@
   border-radius: 4px;
 }
 .app.outpost .build-window .landing-chips {
-  flex: none;
-  max-width: 62%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  min-width: 0;
 }
 .app.outpost .build-window .landing-chips > .landing-chip {
   min-width: 0;
@@ -119,6 +134,30 @@
   box-shadow: var(--well-inset);
   color: var(--muted);
 }
+/* In a grid of cards, each window spans three rows of the grid and shares them (subgrid): bars,
+   loadouts and feet line up across a row whether a title takes one line or two */
+.app.outpost
+  :is(.account-build-grid, .ecosystem-build-grid, .item-build-grid, .device-favorites-grid)
+  > .build-window-slot
+  > .build-window.build-window {
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+}
+.app.outpost
+  :is(.account-build-grid, .ecosystem-build-grid, .item-build-grid, .device-favorites-grid)
+  > .build-window-slot
+  > .build-window
+  > .landing-window-bar {
+  align-self: stretch;
+}
+.app.outpost
+  :is(.builds-ecosystem.view-list, .device-favorites-grid.is-list)
+  .build-window-slot
+  > .build-window.build-window {
+  grid-row: auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
 /* Window grids: the landing's 24px gap, three across, two to 1100px, one on phones */
 .app.outpost
   :is(.builds-ecosystem, .build-detail-page)
@@ -172,4 +211,18 @@
   .app.outpost .builds-ecosystem.view-list .account-build-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+/* A list row is wide enough for the title and its chips on one line */
+.app.outpost
+  .builds-ecosystem.view-list
+  .account-build-grid
+  .build-window
+  .landing-window-bar.landing-window-bar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.app.outpost .builds-ecosystem.view-list .account-build-grid .build-window .landing-chips {
+  flex: none;
+  flex-wrap: nowrap;
 }

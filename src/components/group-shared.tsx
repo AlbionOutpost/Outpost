@@ -6,7 +6,7 @@ import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { EquipmentStrip } from "./equipment-strip";
 import { ItemIcon } from "./item-icon";
-import { LoadoutBoard } from "./loadout-board";
+import { BuildCardLoadout } from "./build-card-loadout";
 import { RosterRows } from "./comp-roster";
 import { CompGrid, CompWindow } from "./comp-window";
 import { SectionHeading } from "./section-heading";
@@ -215,7 +215,8 @@ function GroupComps({ ctx }: { ctx: TeamContext }) {
   );
 }
 
-/** A shared build snapshot as the landing's build window: the loadout board and its main hand. */
+/** A shared build snapshot as a build window: the full title, the loadout weapon first and its
+ * main hand in the foot. */
 function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: ReactNode }) {
   const main = build.equipment.find((e) => e.slot === "Main hand");
   return (
@@ -224,7 +225,7 @@ function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: R
       data-scene="build"
       data-team-build=""
     >
-      <div className={`landing-window-bar ${windows.bar}`}>
+      <div className={`landing-window-bar ${windows.bar} ${styles.windowBar}`}>
         <h3 className={`landing-window-title ${styles.windowTitle}`} title={build.title}>
           {build.title}
         </h3>
@@ -234,9 +235,8 @@ function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: R
       </div>
       <div className={`landing-window-body ${windows.body}`}>
         {build.equipment.length ? (
-          <LoadoutBoard
+          <BuildCardLoadout
             pieces={build.equipment}
-            size="card"
             abilities={false}
             label={`${build.title} loadout`}
           />
