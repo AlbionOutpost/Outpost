@@ -164,6 +164,86 @@ export function alertMessage(rows, period) {
   return lines.join("\n").slice(0, 1900);
 }
 
+/** Plain-English names and Workers Paid overage prices (USD per unit) for the Discord embed. */
+const FRIENDLY = {
+  workerRequests: ["Worker requests", "visits and API calls the Worker answers", 0.3 / 1e6],
+  workerCpuMs: ["Worker CPU time", "milliseconds spent building pages", 0.02 / 1e6],
+  doRequests: ["Small-server requests", "calls to Durable Objects", 0.15 / 1e6],
+  doGbSeconds: ["Small-server awake time", "Durable Object GB-seconds", 12.5 / 1e6],
+  doRowsRead: ["Private store reads", "Durable Object SQLite rows read", 0.001 / 1e6],
+  doRowsWritten: ["Private store writes", "Durable Object SQLite rows written", 1 / 1e6],
+  doStorageBytes: ["Private store size", "Durable Object SQLite storage", 0.2 / GB],
+  d1RowsRead: ["Database reads", "D1 rows read", 0.001 / 1e6],
+  d1RowsWritten: ["Database writes", "D1 rows written", 1 / 1e6],
+  d1StorageBytes: ["Database size", "D1 storage", 0.2 / GB],
+  kvReads: ["KV reads", "KV keys read", 0.5 / 1e6],
+  kvWrites: ["KV writes", "KV keys written", 5 / 1e6],
+  r2ClassA: ["R2 writes", "R2 Class A operations", 4.5 / 1e6],
+  r2ClassB: ["R2 reads", "R2 Class B operations", 0.36 / 1e6],
+};
+const RED = 0xe5484d;
+const AMBER = 0xf2a03d;
+/** Status of one allowance for the embed: over (projected past 100 %), close (80 % or more), ok. */
+const status = (row) =>
+  !row.available
+    ? "unknown"
+    : row.share >= 1
+      ? "over"
+      : row.share >= WARN_PROJECTED
+        ? "close"
+        : "ok";
+const ICON = { over: "❌", close: "⚠️", ok: "✅", unknown: "❔" };
+/** Estimated overage in USD for one allowance at its projection (storage: at its current size). */
+export function overage(row) {
+  if (!row.available) return 0;
+  const used = row.stored ? row.current : row.projected;
+  return Math.max(0, used - row.included) * (FRIENDLY[row.key]?.[2] ?? 0);
+}
+const dollars = (value) => (value < 0.01 ? "$0" : `$${value.toFixed(2)}`);
+
+/** The Discord embed, or null when nothing needs attention: what is heading past the $5 plan,
+ * in plain words, with an estimated extra cost and a short status list of every allowance. */
+export function alertEmbed(rows, period, now = Date.now()) {
+  const flagged = rows.filter((row) => row.alerts.length);
+  if (!flagged.length) return null;
+  const extra = rows.reduce((total, row) => total + overage(row), 0);
+  const fields = flagged.slice(0, 20).map((row) => {
+    const [name, plain] = FRIENDLY[row.key] ?? [row.label, row.label];
+    const lines = row.stored
+      ? [`Using **${bytes(row.current)}** of **${fmt(row)}** included (${pct(row.share)})`]
+      : [
+          `Used **${compact(row.period)}** so far of **${fmt(row)}** included`,
+          `On pace for **${compact(row.projected)}** this period (${pct(row.share)})`,
+          `Yesterday alone: ${compact(row.day)} (pace ${pct(row.dayShare)})`,
+        ];
+    const cost = overage(row);
+    if (cost >= 0.01) lines.push(`Estimated extra: **~${dollars(cost)}**`);
+    return { name: `${ICON[status(row)]} ${name}`, value: `${lines.join("\n")}\n-# ${plain}` };
+  });
+  const list = rows
+    .map((row) => {
+      const [name] = FRIENDLY[row.key] ?? [row.label];
+      return `${ICON[status(row)]} ${name} — ${row.available ? pct(row.share) : "unavailable"}`;
+    })
+    .join("\n");
+  fields.push({ name: "Everything at a glance", value: list.slice(0, 1024) });
+  const over = flagged.some((row) => status(row) === "over");
+  return {
+    title: over ? "Cloudflare bill is heading past $5" : "Cloudflare usage is getting close to $5",
+    description: [
+      `Day **${Math.floor(period.elapsedDays)}** of **${period.days}** · billing period ${period.start} → ${period.end}`,
+      `Estimated bill: **$5 plan + ~${dollars(extra)} extra**`,
+      "Projections assume the rest of the period runs at this period's average pace.",
+    ].join("\n"),
+    color: over ? RED : AMBER,
+    fields,
+    footer: {
+      text: "What to do: docs/OPERATIONS.md › Cost guardrails · Emergency: OUTPOST_SAVE_MODE=1",
+    },
+    timestamp: new Date(now).toISOString(),
+  };
+}
+
 const sum = (rows, read) =>
   (rows ?? []).reduce((total, row) => total + (Number(read(row)) || 0), 0);
 
@@ -393,11 +473,17 @@ export function validWebhook(url) {
   );
 }
 
-async function postDiscord(url, content, fetcher) {
+async function postDiscord(url, content, embed, fetcher) {
   const response = await fetcher(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content, allowed_mentions: { parse: [] } }),
+    body: JSON.stringify({
+      username: "Outpost costs",
+      // The title doubles as the notification preview; the plain text stays when there is no embed.
+      content: embed ? embed.title : content,
+      ...(embed ? { embeds: [embed] } : {}),
+      allowed_mentions: { parse: [] },
+    }),
     redirect: "error",
     signal: AbortSignal.timeout(20_000),
   });
@@ -473,7 +559,7 @@ export async function main(env = process.env, fetcher = fetch) {
     return 1;
   }
   try {
-    await postDiscord(webhook, message, fetcher);
+    await postDiscord(webhook, message, alertEmbed(rows, period), fetcher);
     console.log("Alert posted to Discord.");
     return 0;
   } catch (error) {
