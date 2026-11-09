@@ -6,7 +6,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Supporter plan ready for go-live — 9 November 2026
 
-- Owner decision: Supporter is €2.99 a month (price from Stripe) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys, `/legal` stays unpublished and the launch grant stays open. Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
+- Owner decision: Supporter is €4.99 a month (price from Stripe; raised from €2.99 the same day) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys, `/legal` stays unpublished and the launch grant stays open. Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
 - Supporter badge beside names on builds, comps, comments, Team rosters, the player profile and the account menu (plan or gift only, derived on the server).
 - Owner decision: the badge is optional, on by default. "Show Supporter badge" in Settings hides it everywhere (new `User.showSupporterBadge`, Postgres and private-store migration step 16).
 - German consumer-law pieces: the order box on `/supporter` (required facts, two unticked consents, "Zahlungspflichtig bestellen"), consent time stored in Stripe metadata, the § 312k cancellation page `/supporter/cancel` linked from every footer and Settings, `POST /api/billing/cancel`, and draft terms, cancellation policy and model withdrawal form in `/legal`.
