@@ -4,6 +4,11 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Next.js 16.4.6 security update — 10 November 2026
+
+- Next.js 16.4.3 → 16.4.6 for the seven advisories of 3 November 2026 (fixed in 16.4.5): HttpOnly cookie exposure through an internal header on Edge-runtime routes, image-optimizer SVG bypass, response desync behind HTTP/1.1 proxies, and four `use cache` / Cache Components cache leaks. Outpost uses none of the affected features (no Edge-runtime routes, no `use cache`, images unoptimized on Cloudflare), so this is defence in depth, not an incident.
+- Not affected: the October image-optimization RCE (fixed in 16.4.1) and React's October Server Components advisories (installed `react` 19.3.1; Next bundles its own patched server runtime).
+
 ## Landing in the first paint and lighter CSS — 9 November 2026
 
 - Lab Lighthouse on the local Cloudflare build (median of 3, interleaved with the old build): home mobile 74 → 97 (LCP 5.9 → 2.1 s, FCP 2.6 → 2.1 s), desktop 98 → 100 (LCP 1.1 → 0.3 s). Market Explorer and Crafting mobile 79 → 83; builds 63 → 65 (its LCP waits on its loading boundary). Render-blocking CSS on these pages 65–87 → 36–55 KB transferred.

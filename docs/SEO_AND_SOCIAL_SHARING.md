@@ -96,7 +96,7 @@ Fixture sessions are local test evidence, not real Discord OAuth. No production 
 
 ## Primary references
 
-Implementation used the installed Next 16.4.3 metadata/OG/robots guides, including async page parameters and blocking heads for HTML-limited bots.
+Implementation used the installed Next 16 metadata/OG/robots guides, including async page parameters and blocking heads for HTML-limited bots.
 
 - [Next metadata and Open Graph](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)
 - [Google canonicalization](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
