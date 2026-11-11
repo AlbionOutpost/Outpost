@@ -23,6 +23,7 @@ vi.mock("../src/lib/grind-library", () => ({
 import {
   canonicalUrl,
   metadataForPage,
+  noindexPages,
   privateMetadata,
   publicOrigin,
   publicPages,
@@ -141,7 +142,7 @@ describe("public metadata identity and social previews", () => {
       "Solo Mists builds — Albion Online",
     );
   });
-  it.each(Object.keys(publicPages))(
+  it.each(Object.keys(publicPages).filter((path) => !noindexPages.has(path)))(
     "has a distinct route canonical and complete share metadata for %s",
     (path) => {
       const metadata = metadataForPage(path, { region: "asia", utm_source: "x" });
@@ -150,6 +151,12 @@ describe("public metadata identity and social previews", () => {
       expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
     },
   );
+  it("keeps the giveaways board reachable but out of the index", () => {
+    const metadata = metadataForPage("/giveaways");
+    expect(metadata.robots).toEqual({ index: false, follow: true });
+    expect(metadata.alternates?.canonical).toBeNull();
+    expect(metadata.description?.length).toBeGreaterThan(40);
+  });
   it("opens /compositions on comps by activity and keeps the list a distinct page", () => {
     expect(metadataForPage("/compositions").title).toBe("Albion Online comps by activity");
     const list = metadataForPage("/compositions", { view: "all", region: "asia" });
@@ -308,6 +315,35 @@ describe("public archive and active catalog metadata", () => {
     expect(metadata.robots).toEqual({ index: false, follow: true });
     expect(metadata.alternates?.canonical).toBeNull();
   });
+  const archivedComp = {
+    slug: "seven-man-dive",
+    title: "7-man Unstoppable Dive",
+    author: "Dog",
+    category: "ZVZ",
+    description: "Dive the enemy backline. If versus Kite/Clap wait for them to hit first.",
+    updatedAt: "2026-03-01",
+    upvotes: 1,
+    members: ["a", "b", "c", "d", "e", "f", "g"],
+    optional: [],
+  };
+  it("indexes a recorded comp that clears the quality bar", async () => {
+    mocks.archiveComp.mockResolvedValue(archivedComp);
+    const metadata = await archiveShareMetadata("composition", "seven-man-dive");
+    expect(metadata.title).toBe("7-man Unstoppable Dive — ZvZ comp");
+    expect(metadata.robots).toMatchObject({ index: true });
+    expect(metadata.alternates?.canonical).toBe(
+      "https://albionoutpost.com/compositions/library/seven-man-dive",
+    );
+  });
+  it.each([{ upvotes: 0 }, { description: "" }, { title: "testedeclap" }])(
+    "keeps a thin or test comp out of the index, links still followed (%o)",
+    async (change) => {
+      mocks.archiveComp.mockResolvedValue({ ...archivedComp, ...change });
+      const metadata = await archiveShareMetadata("composition", "seven-man-dive");
+      expect(metadata.robots).toEqual({ index: false, follow: true });
+      expect(metadata.alternates?.canonical).toBeNull();
+    },
+  );
   it("does not fall back from missing archive entries to authored/private records", async () => {
     mocks.archiveBuild.mockResolvedValue(undefined);
     expect(await archiveShareMetadata("build", "private-record-id")).toEqual(
@@ -349,12 +385,34 @@ describe("public discovery output", () => {
           JSON.stringify([
             {
               slug: `public-${kind}`,
+              title: "Seven-man dive",
+              description: "Dive the backline after the tanks engage, then reset to the healer.",
+              members: ["a", "b", "c"],
               updatedAt: "2026-11-04T00:00:00Z",
               upvotes: 1,
               category: "MISTS_SOLO",
             },
             // Not listed by the library (no likes): its page is noindex, so it stays out.
             { slug: `unliked-${kind}`, updatedAt: "2026-11-04T00:00:00Z", category: "ZVZ" },
+            // Liked, but a comp needs the author's own description too.
+            {
+              slug: `bare-${kind}`,
+              title: "Bare comp",
+              members: ["a", "b"],
+              updatedAt: "2026-11-04T00:00:00Z",
+              upvotes: 2,
+              category: "MISTS_SOLO",
+            },
+            // A test copy stays out whatever its likes and notes.
+            {
+              slug: `test-${kind}`,
+              title: "testedeclap",
+              description: "Dive the backline after the tanks engage, then reset to the healer.",
+              members: ["a", "b", "c"],
+              updatedAt: "2026-11-04T00:00:00Z",
+              upvotes: 4,
+              category: "MISTS_SOLO",
+            },
           ]),
         );
       const result = spawnSync(
@@ -394,9 +452,17 @@ describe("public discovery output", () => {
       expect(urls.some((url) => url.pathname === "/builds/library/unliked-builds")).toBe(false);
       // An activity without a listed build is an empty list.
       expect(urls.some((url) => url.searchParams.get("category") === "ZVZ")).toBe(false);
-      expect(
-        urls.some((url) => url.pathname === "/compositions/library/unliked-compositions"),
-      ).toBe(true);
+      for (const slug of ["unliked", "bare", "test"])
+        expect(
+          urls.some((url) => url.pathname === `/compositions/library/${slug}-compositions`),
+        ).toBe(false);
+      expect(urls.some((url) => url.pathname === "/compositions/library/public-compositions")).toBe(
+        true,
+      );
+      expect(urls.some((url) => url.pathname === "/builds/library/bare-builds")).toBe(true);
+      expect(urls.some((url) => url.pathname === "/builds/library/test-builds")).toBe(false);
+      // The giveaways board is too thin for the index.
+      expect(urls.some((url) => url.pathname === "/giveaways")).toBe(false);
       // robots.txt is a static file too; nothing the sitemap lists may be disallowed in it.
       const robots = readFileSync(join(directory, "public/robots.txt"), "utf8");
       expect(robots).toContain("Sitemap: https://albionoutpost.com/sitemap.xml");

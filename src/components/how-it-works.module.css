@@ -1,0 +1,61 @@
+/* A calculator's "How it works" block, below the tool: a quiet reading section on the page
+   background (no panel), split from the tool by one rule. Two columns from 900px. */
+:global(.app.outpost) .how.how {
+  display: grid;
+  gap: var(--space-5);
+  width: min(100%, var(--page-width));
+  margin: var(--space-10) auto 0;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+:global(.app.outpost) .head.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+}
+:global(.app.outpost) .lead.lead {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 72ch;
+}
+:global(.app.outpost) .how.how h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 650;
+  color: var(--text);
+}
+:global(.app.outpost) .how.how h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 650;
+  color: var(--text);
+}
+:global(.app.outpost) .how.how p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-base);
+  line-height: 1.65;
+}
+:global(.app.outpost) .lead.lead p {
+  color: var(--text);
+}
+:global(.app.outpost) .columns.columns {
+  display: grid;
+  gap: var(--space-6);
+}
+:global(.app.outpost) .columns.columns > div {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  max-width: 72ch;
+}
+@media (min-width: 900px) {
+  :global(.app.outpost) .columns.columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-10);
+  }
+}

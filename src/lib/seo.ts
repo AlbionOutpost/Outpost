@@ -155,6 +155,17 @@ export function publicMetadata(
   };
 }
 
+/**
+ * A real page that is not worth a search result (thin, or a scratch copy): players can open it,
+ * crawlers follow its links, but it is not indexed, has no canonical and stays out of the sitemap.
+ */
+export function noindexFollow(metadata: Metadata): Metadata {
+  return { ...metadata, robots: { index: false, follow: true }, alternates: { canonical: null } };
+}
+/** Public pages that are useful to players but too thin to index (the giveaways board is a short
+ * list of entries that changes daily). */
+export const noindexPages = new Set(["/giveaways"]);
+
 export const publicPages: Record<string, [string, string]> = {
   "/": ["Albion Online tools, builds & calculators", defaultDescription],
   "/tools": [
@@ -288,7 +299,7 @@ export function metadataForPage(path: string, query: SeoQuery = {}) {
   const metadata = publicMetadata(title, page[1], path, query);
   if (path === "/")
     metadata.title = { absolute: "Outpost | Albion Online tools, builds & calculators" };
-  return metadata;
+  return noindexPages.has(path) ? noindexFollow(metadata) : metadata;
 }
 
 export function rootMetadata(): Metadata {

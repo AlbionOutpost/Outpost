@@ -7,13 +7,28 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { tools } from "../src/lib/tool-directory";
 import { canonicalUrl, publicOrigin } from "../src/lib/seo";
 import { activityBackgrounds } from "../src/lib/activity-backgrounds";
-import { indexedBuild, listedBuild } from "../src/lib/library-scope";
+import { indexedBuild, indexedComposition, listedBuild } from "../src/lib/library-scope";
 const base = publicOrigin();
 const read = <T>(name: string): T =>
   JSON.parse(readFileSync(`public/library/grind-${name}.json`, "utf8"));
 type Entry = { path: string; lastModified?: string; changeFrequency: string; priority: number };
-type Build = { slug: string; updatedAt: string; upvotes?: number; category?: string };
-// Only builds a player liked are indexable (src/lib/library-scope.ts); the rest render noindex.
+type Build = {
+  slug: string;
+  updatedAt: string;
+  upvotes?: number;
+  category?: string;
+  title?: string;
+};
+type Composition = {
+  slug: string;
+  updatedAt: string;
+  title?: string;
+  description?: string;
+  upvotes?: number;
+  members?: unknown[];
+};
+// Only builds a player liked and comps that clear the quality bar (a like, a real description,
+// a real title) are indexable (src/lib/library-scope.ts); the rest render noindex, follow.
 // An activity list shows listed builds only, and one with none of them is an empty page.
 const allBuilds = read<Build[]>("builds");
 const builds = allBuilds.filter(indexedBuild);
@@ -29,7 +44,6 @@ const entries: Entry[] = [
   { path: "/guides", changeFrequency: "weekly", priority: 0.8 },
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },
   { path: "/market-data", changeFrequency: "monthly", priority: 0.5 },
-  { path: "/giveaways", changeFrequency: "daily", priority: 0.6 },
   // Impressum, privacy policy and terms (both languages on one address, hreflang by ?lang).
   { path: "/legal", changeFrequency: "monthly", priority: 0.3 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.2 },
@@ -59,12 +73,14 @@ const entries: Entry[] = [
     changeFrequency: "monthly",
     priority: 0.5,
   })),
-  ...read<{ slug: string; updatedAt: string }[]>("compositions").map((comp) => ({
-    path: `/compositions/library/${encodeURIComponent(comp.slug)}`,
-    lastModified: comp.updatedAt,
-    changeFrequency: "monthly",
-    priority: 0.5,
-  })),
+  ...read<Composition[]>("compositions")
+    .filter(indexedComposition)
+    .map((comp) => ({
+      path: `/compositions/library/${encodeURIComponent(comp.slug)}`,
+      lastModified: comp.updatedAt,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    })),
 ];
 const seen = new Set<string>();
 const escape = (value: string) =>
@@ -130,7 +146,7 @@ const blocked = disallow.map(
     ),
 );
 const noindex =
-  /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|premium|supporter)(\/|\?|$)|^\/tools\/death-feed|^\/(builds|compositions)\/library(\?|$)|[?&](q|mine|region)=|[?&]view=saved/;
+  /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|premium|supporter|giveaways)(\/|\?|$)|^\/tools\/death-feed|^\/(builds|compositions)\/library(\?|$)|[?&](q|mine|region)=|[?&]view=saved/;
 for (const path of seen) {
   if (blocked.some((rule) => rule.test(path))) throw new Error(`robots.txt blocks ${path}`);
   if (noindex.test(path))

@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { db } from "./db";
 import { findLibraryBuild, findLibraryComposition, findLibraryGuide } from "./grind-library";
 import { activityName, type LibraryBuild } from "./grind-library-types";
-import { indexedBuild } from "./library-scope";
+import { indexedBuild, indexedComposition } from "./library-scope";
 import { brandCopy } from "./brand-copy";
 import { equipmentName } from "./albion/equipment-catalog";
-import { privateMetadata, publicMetadata, seoText, type SeoQuery } from "./seo";
+import { noindexFollow, privateMetadata, publicMetadata, seoText, type SeoQuery } from "./seo";
 
 /** Metadata never borrows the viewer's permissions. No cookies, sessions or shared private cache. */
 export async function authoredShareMetadata(
@@ -82,17 +82,13 @@ export async function archiveShareMetadata(
       query,
     );
     // Unliked builds stay reachable for the comps that link them, out of the index and sitemap.
-    if (!indexedBuild(build)) {
-      metadata.robots = { index: false, follow: true };
-      metadata.alternates = { canonical: null };
-    }
-    return metadata;
+    return indexedBuild(build) ? metadata : noindexFollow(metadata);
   }
   if (kind === "composition") {
     const composition = await findLibraryComposition(slug);
     if (!composition) return privateMetadata("Composition not found");
     const activity = activityName(composition.category);
-    return publicMetadata(
+    const metadata = publicMetadata(
       activity && !composition.title.toLowerCase().includes(activity.toLowerCase())
         ? `${composition.title} — ${activity} comp`
         : composition.title,
@@ -102,6 +98,8 @@ export async function archiveShareMetadata(
       `/compositions/library/${encodeURIComponent(composition.slug)}`,
       query,
     );
+    // Comps below the quality bar stay reachable for players, out of the index and sitemap.
+    return indexedComposition(composition) ? metadata : noindexFollow(metadata);
   }
   const guide = await findLibraryGuide(slug);
   if (!guide) return privateMetadata("Guide not found");

@@ -4,7 +4,8 @@ import { createTestDb } from "./support/db";
 
 /**
  * Tool and workspace pages fit one screen at 1440×900 (DESIGN.md "Inner pages fit one screen"):
- * the page's own content ends within the first viewport; only the site footer is below it.
+ * the page's own content ends within the first viewport; only a calculator's server-rendered
+ * "How it works" block and the site footer are below it.
  * Market prices, history and scans answer with nothing so every page is in a stable state.
  */
 const db = createTestDb();
@@ -16,7 +17,11 @@ async function contentBottom(page: Page) {
   return page.evaluate(() => {
     scrollTo(0, 0);
     const main = document.querySelector("main")!;
-    return Math.max(...[...main.children].map((el) => el.getBoundingClientRect().bottom));
+    return Math.max(
+      ...[...main.children]
+        .filter((el) => !el.hasAttribute("data-how-it-works"))
+        .map((el) => el.getBoundingClientRect().bottom),
+    );
   });
 }
 

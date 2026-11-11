@@ -5,29 +5,33 @@ import { FishingCalculator } from "@/components/fishing-calculator";
 import { libraryFishing } from "@/lib/grind-library";
 import Link from "@/components/link";
 import styles from "@/components/calculator-shell.module.css";
+import { HowItWorks } from "@/components/how-it-works";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/fishing", await searchParams);
 }
 export default async function Page({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
   return (
-    <div className={styles.page}>
-      <WorkspaceHeading
-        glyph="fish"
-        scene="economy"
-        title="Fishing calculator"
-        accent="Fishing"
-        description="See whether your catch is worth more chopped or whole, or what a fishing fame target costs."
-        actions={
-          <Link className="pill-link" href="/guides/fishing-leveling-guide">
-            Fishing guide <ArrowRight size={15} aria-hidden="true" />
-          </Link>
-        }
-      />
-      <FishingCalculator
-        fish={await libraryFishing()}
-        initialMode={mode === "leveling" ? "leveling" : "chopping"}
-      />
-    </div>
+    <>
+      <div className={styles.page}>
+        <WorkspaceHeading
+          glyph="fish"
+          scene="economy"
+          title="Fishing calculator"
+          accent="Fishing"
+          description="See whether your catch is worth more chopped or whole, or what a fishing fame target costs."
+          actions={
+            <Link className="pill-link" href="/guides/fishing-leveling-guide">
+              Fishing guide <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          }
+        />
+        <FishingCalculator
+          fish={await libraryFishing()}
+          initialMode={mode === "leveling" ? "leveling" : "chopping"}
+        />
+      </div>
+      <HowItWorks path="/tools/fishing" />
+    </>
   );
 }
