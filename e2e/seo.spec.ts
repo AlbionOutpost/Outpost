@@ -216,3 +216,36 @@ test("social metadata never borrows owner permissions or discloses private, unli
     await db.user.deleteMany({ where: { id: userId } });
   }
 });
+
+test("content pages send their text in the first HTML, with no loading skeleton", async ({
+  request,
+}) => {
+  // What an ad or search crawler reads without running scripts: `<main>` itself, not a streamed
+  // `<div hidden id="S:…">` swapped in later.
+  const crawler = { "user-agent": "Mediapartners-Google" };
+  const main = (html: string) => html.match(/<main[\s\S]*?<\/main>/)?.[0] ?? "";
+  for (const [path, heading, text] of [
+    ["/guides/hellgates-guide", "Hellgates", "What changed since 2025"],
+    ["/tools/crafting", "Crafting", "How it works"],
+    ["/tools/farming", "Farming", "The math"],
+    ["/guides", "guides", "Hellgates"],
+    ["/tools", "tools", "Market Explorer"],
+    ["/builds/library/battleaxe-mist-build", "", ""],
+  ]) {
+    const response = await request.get(path, { headers: crawler });
+    expect(response.status(), path).toBe(200);
+    const html = await response.text();
+    const body = main(html);
+    expect(body, path).not.toContain("Loading page");
+    expect(html, path).not.toContain('<div hidden id="S:');
+    expect(body.match(/<h1[\s\S]*?<\/h1>/)?.[0] ?? "", path).toContain(heading);
+    expect(body, path).toContain(text);
+    expect(
+      body
+        .replace(/<[^>]+>/g, " ")
+        .split(/\s+/)
+        .filter(Boolean).length,
+      path,
+    ).toBeGreaterThan(200);
+  }
+});

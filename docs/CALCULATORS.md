@@ -6,6 +6,8 @@ Every calculator is a pure function in `src/lib/albion` with a Zod schema, used 
 
 **Price sides.** Instant buy uses `sell_price_min`; instant sale uses `buy_price_max`; listing uses the destination `sell_price_min`. A Black Market price is never a purchase source.
 
+**How it works blocks.** Each calculator page ends with a server-rendered summary of what it computes, the inputs and the key formula in words (`src/lib/tool-explainers.ts`, rendered by `src/components/how-it-works.tsx`). It restates the formulas below and the game constants they use (return bonus 18 / +15 / +40 / daily +10 or +20 / focus +59, the enchanting counts, 4 % and 8 % tax), never prices. Change it in the same PR as a formula; `tests/tool-explainers.test.ts` checks the return-rate constants against `production-bonuses.json` and that each linked guide exists.
+
 ## Trade / flipping — `calculations.ts` → `trade()`
 
 Inputs: buy price, buy mode (instant / buy order), buy-order fee %, sell price, quantity Q, tax %, setup fee %, transport.

@@ -4,6 +4,16 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Content pages fully rendered, a tighter sitemap and calculator explanations — 11 November 2026
+
+AdSense turned the site down as low-value content ("Minderwertige Inhalte"). Fetched as Mediapartners-Google, every page but the landing had only "Loading page…" in `<main>`; the sitemap listed 682 comps, most of them a member list under a template sentence or a test title, and `/giveaways` with about 60 words.
+
+- **First HTML (owner decision):** guides, tools and calculators, the build and comp libraries and detail pages, items and market data help have no `loading.tsx` boundary any more; their headings and text are in `<main>` of the first HTML (a guide ≈ 1,300 words, crafting ≈ 1,000, a library build ≈ 780). The editors and the personal and live routes keep the skeleton. No new data calls: the same page renders, just not behind a boundary. `e2e/seo.spec.ts` fetches six pages as the crawler.
+- **Lab cost (Node production build, Lighthouse median of 3, before → after):** hellgates guide mobile perf 68 → 61, LCP 4.98 → 4.64 s, TBT 538 → 1,090 ms; crafting mobile 80 → 69, LCP 4.50 → 3.82 s, TBT 216 → 811 ms; a library build mobile 81 → 75, LCP 3.79 → 4.01 s, TBT 322 → 450 ms; desktop 99 → 93–98, LCP ≈ 1 s either way; TTFB 25–60 ms either way. FCP is unchanged. The page now hydrates in one task instead of the boundary's idle-time slices, which is the TBT rise; wrapping the page in its own `<Suspense>` doesn't help (it suspends on client chunks and hides the text again).
+- **Sitemap:** comps need a like, a real description (≥ 40 characters, 6 words), a real title (no "test…", at least three letters) and two members; the rest render `noindex, follow`. Builds already needed a like; a test-like title now also keeps one out (none today). `/giveaways` is `noindex, follow` and out. 3,530 → 2,890 URLs (comps 682 → 43). The 404 page's head is now generic and nosnippet, since private and missing records render it directly.
+- **Calculators:** each of the 13 calculators ends with a server-rendered **How it works** block (what it computes, what you enter, the formula in words, the matching guide), below the tool so the tool still fits 1440×900.
+- Next: ask AdSense for a new review after deploy; resubmit the sitemap; consider trimming hydration cost on the guide and calculator pages (TBT).
+
 ## Impressum, privacy policy and contact form published — 11 November 2026
 
 - `/legal` is live and indexable (German and English, hreflang, in the sitemap and `llms.txt`): the Impressum names the operator (Hollow Lantern, Inhaber Rotenda Sino, Einzelunternehmen, the c/o service address of Impressumservice Dein-Impressum, contact@albionoutpost.com, the person responsible under § 18 Abs. 2 MStV) and the consumer dispute resolution statement. The draft banner and every open marker are gone; the privacy policy names the controller, says no data protection officer is appointed and describes the contact form, retention (30-day point-in-time recovery, Cloudflare's short log retention) and third-country transfers. The operator details are constants in `scripts/cloudflare-release-config.mjs`.
