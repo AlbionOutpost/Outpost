@@ -30,7 +30,7 @@ export function turnstileConfiguration(): Configuration {
 /** Siteverify is authoritative: no successful-token cache, IP-header trust or client bypass. */
 export async function verifyTurnstile(
   token: string | null,
-  action: "community_write",
+  action: "community_write" | "contact",
   config = turnstileConfiguration(),
   send: typeof fetch = fetch,
 ) {

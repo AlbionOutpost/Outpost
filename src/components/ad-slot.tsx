@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { userIsAdFree } from "@/lib/billing/gate";
 import { adsActive } from "@/components/adsense-loader";
 import { AdUnit } from "@/components/ad-unit";
+import { legalPublished } from "@/lib/legal";
 
 const slotIds = {
   hub: () => process.env.NEXT_PUBLIC_ADSENSE_SLOT_HUB,
@@ -34,7 +35,15 @@ export async function AdSlot({
   if (client && slot)
     return (
       <aside className={`ad-slot is-${placement}`} aria-label="Advertisement">
-        <span className="ad-slot-label">Advertisement</span>
+        <span className="ad-slot-label">
+          Advertisement
+          {legalPublished && (
+            <>
+              {" · "}
+              <Link href="/legal#advertising">Ads &amp; privacy</Link>
+            </>
+          )}
+        </span>
         <AdUnit client={client} slot={slot} />
       </aside>
     );

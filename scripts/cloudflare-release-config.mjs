@@ -29,6 +29,15 @@ web.vars = {
   OUTPOST_OWNER_DISCORD_ID: "303585687460904970",
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: sitekey,
   TURNSTILE_HOSTNAMES: "albionoutpost.com,www.albionoutpost.com",
+  // The operator as /legal names it (Impressum, privacy policy, terms). Public by law, so plain
+  // constants here: a dashboard var would be overwritten by the next deploy. With all three of
+  // name, address and email set, ads may load (adsActive, src/components/adsense-loader.tsx).
+  // OPERATOR_SMALL_BUSINESS stays unset until the operator's tax registration says otherwise.
+  OPERATOR_NAME: "Hollow Lantern, Inhaber Rotenda Sino",
+  OPERATOR_ADDRESS:
+    "c/o Impressumservice Dein-Impressum\nStettiner Str. 41\n35410 Hungen\nDeutschland",
+  OPERATOR_EMAIL: "contact@albionoutpost.com",
+  OPERATOR_EDITOR: "Rotenda Sino",
   // Emergency save mode (docs/OPERATIONS.md § Save mode): longer edge-cache lives. A dashboard
   // flip lasts until the next deploy; the repository variable keeps it across deploys.
   ...(values.OUTPOST_SAVE_MODE === "1" ? { OUTPOST_SAVE_MODE: "1" } : {}),
@@ -51,6 +60,9 @@ web.vars = {
       }
     : {}),
 };
+// The contact form (/contact) mails the operator's support mailbox and nobody else: the binding
+// can only send to this verified Email Routing destination.
+web.send_email = [{ name: "CONTACT_EMAIL", destination_address: "support@albionoutpost.com" }];
 // The binding-only mutation service must protect the configured owner even before signup.
 data.vars = { ...data.vars, OUTPOST_OWNER_DISCORD_ID: web.vars.OUTPOST_OWNER_DISCORD_ID };
 // Domain attachment is managed separately. Routine releases preserve the existing owned domains.

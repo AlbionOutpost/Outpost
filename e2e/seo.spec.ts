@@ -47,8 +47,9 @@ test("public metadata has route-specific canonical/social heads and a real stati
   const xml = await sitemap.text();
   expect(xml).not.toContain("<loc>https://albionoutpost.com/supporter</loc>");
   expect(xml).toContain("https://albionoutpost.com/builds?source=library&amp;category=MISTS_SOLO");
+  // The Impressum and privacy policy are published and indexable (11 Nov 2026).
+  expect(xml).toContain("<loc>https://albionoutpost.com/legal</loc>");
   for (const excluded of [
-    "/legal",
     "/premium",
     "/groups",
     "/builds/new",

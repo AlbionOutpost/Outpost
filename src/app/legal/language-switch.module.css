@@ -1,0 +1,29 @@
+/* The English/Deutsch pill on /legal and /contact: two links, the current one in ember. */
+.switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--illustration-bg) 70%, transparent);
+}
+:global(.app.outpost) .switch a {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  font: 600 13px/1 var(--font-ui);
+  text-decoration: none;
+}
+:global(.app.outpost) .switch a[aria-current="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .switch a:hover {
+  color: var(--text);
+}

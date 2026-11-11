@@ -29,7 +29,7 @@ Every new mutation uses the existing authenticated, exact-Origin and per-account
 
 Ban state is checked before sign-in, during atomic session creation and on current-session resolution. Session creation serializes with bans, covering the account-creation/sign-in race. Banning and unbanning delete all linked sessions. A denied or expired session is removed when encountered; an old token cannot become usable again when a ban expires. A newly issued session is required after access returns. Revoking sessions does not invalidate a request that already authenticated before the revocation committed.
 
-Persistent `DiscordBan` identities survive account deletion to prevent deletion/recreation from evading a ban. Minimal `AdminAudit` actor/target identifiers and reasons also survive deletion. Neither table has an automatic retention/purge job. Operator/legal retention decisions remain open and are explicitly disclosed in the EN/DE draft legal copy; these implementation notes do not establish legal approval.
+Persistent `DiscordBan` identities survive account deletion to prevent deletion/recreation from evading a ban. Minimal `AdminAudit` actor/target identifiers and reasons also survive deletion. Neither table has an automatic retention/purge job. The published privacy policy (`/legal#retention`) says they are kept as long as abuse prevention and accountability for administrative decisions need them, with no automatic deletion period.
 
 ## Data upgrade and recovery
 

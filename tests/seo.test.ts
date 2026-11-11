@@ -378,7 +378,7 @@ describe("public discovery output", () => {
         expect(url.hash).toBe("");
         expect(url.username + url.password).toBe("");
         expect(url.pathname).not.toMatch(
-          /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|legal|premium)(\/|$)/,
+          /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|premium)(\/|$)/,
         );
         expect(url.pathname).not.toMatch(/^\/(builds|compositions)\/(new|[^/]+\/edit)(\/|$)/);
         expect(url.pathname).not.toBe("/tools/death-feed");
@@ -386,6 +386,9 @@ describe("public discovery output", () => {
           expect(["source", "category", ...(value === "all" ? ["view"] : [])]).toContain(key);
       }
       expect(urls.some((url) => url.pathname === "/supporter")).toBe(false);
+      // The Impressum, privacy policy and contact form are published and indexable.
+      expect(urls.some((url) => url.pathname === "/legal")).toBe(true);
+      expect(urls.some((url) => url.pathname === "/contact")).toBe(true);
       expect(urls.some((url) => url.searchParams.get("category") === "MISTS_SOLO")).toBe(true);
       expect(urls.some((url) => url.pathname === "/builds/library/public-builds")).toBe(true);
       expect(urls.some((url) => url.pathname === "/builds/library/unliked-builds")).toBe(false);

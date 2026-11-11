@@ -42,7 +42,7 @@
   margin-left: 8px;
 }
 /* Footer, in the landing's language: the brand and where the numbers come from, four labelled
-   link columns, then a bottom bar with ©, Privacy & terms and Back to top. Muted 12px labels over
+   link columns, then a bottom bar with ©, Impressum, Datenschutz, Kontakt and Back to top. Muted 12px labels over
    14px links; columns form a 2 × 2 grid on phones, every link a 44px row. */
 .app.outpost .main > footer.site-footer {
   position: relative;
@@ -224,7 +224,8 @@
     min-height: 44px;
   }
 }
-/* The narrowest phones: © over Privacy & terms, Back to top beside both, never on a line alone */
+/* The narrowest phones: © over the legal links in one column, Back to top beside them, never on a
+   line alone */
 @media (max-width: 360px) {
   .app.outpost .site-footer-legal {
     display: grid;
@@ -235,6 +236,9 @@
     min-height: 32px;
     align-content: center;
     display: grid;
+  }
+  .app.outpost .site-footer-legal > a {
+    grid-column: 1;
   }
   .app.outpost .site-footer-top {
     grid-row: 1 / span 2;

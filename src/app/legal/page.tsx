@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { resolveLegalLocale } from "@/lib/legal-language";
 import { legalCopy } from "./legal-copy";
@@ -10,7 +10,7 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { NextStepCards } from "@/components/next-step-cards";
 import styles from "./legal.module.css";
 import { notFound } from "next/navigation";
-import { legalPublished, smallBusiness } from "@/lib/legal";
+import { legalOperator, legalPublished } from "@/lib/legal";
 
 export const dynamic = "force-dynamic";
 type Query = { lang?: string | string[]; region?: string | string[] };
@@ -20,19 +20,22 @@ async function language(query: Query) {
 }
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   if (!legalPublished) notFound();
-  const locale = await language(await searchParams);
+  const query = await searchParams;
+  const locale = await language(query);
+  const explicit = query.lang === "de" || query.lang === "en";
   return {
     title:
       locale === "de"
         ? "Impressum, Datenschutz & Nutzungsbedingungen"
-        : "Privacy, terms & legal information",
+        : "Legal notice, privacy & terms",
     description:
       locale === "de"
-        ? "Betreiberangaben, Datenschutz, Nutzungsregeln und Zahlungshinweise für Outpost. Entwurf mit gekennzeichneten offenen Angaben."
-        : "Outpost operator information, privacy, terms and payment details. A draft with clearly marked information still to be completed.",
-    robots: { index: false, follow: true },
-    // The page serves English and German from ?lang; declared so the pair is understood once indexing is enabled.
+        ? "Impressum (Anbieterkennzeichnung nach § 5 DDG), Datenschutzerklärung, Cookies und Nutzungsbedingungen von Outpost."
+        : "Outpost’s legal notice (Impressum under section 5 DDG), privacy policy, cookies and terms of use.",
+    // Indexable in both languages: each explicit language is its own canonical; the plain
+    // address follows the browser language and is the x-default.
     alternates: {
+      canonical: explicit ? `/legal?lang=${locale}` : "/legal",
       languages: { en: "/legal?lang=en", de: "/legal?lang=de", "x-default": "/legal" },
     },
   };
@@ -43,17 +46,7 @@ export default async function Legal({ searchParams }: Props) {
   const locale = await language(query);
   const de = locale === "de";
   const billing = billingEnabled();
-  const copy = legalCopy(
-    locale,
-    {
-      name: process.env.OPERATOR_NAME?.trim(),
-      address: process.env.OPERATOR_ADDRESS?.trim(),
-      email: process.env.OPERATOR_EMAIL?.trim(),
-      smallBusiness: smallBusiness(),
-    },
-    billing,
-    !!adsActive(),
-  );
+  const copy = legalCopy(locale, legalOperator(), billing, !!adsActive());
   const region =
     typeof query.region === "string" && ["europe", "americas", "asia"].includes(query.region)
       ? query.region
@@ -87,16 +80,6 @@ export default async function Legal({ searchParams }: Props) {
           {contents}
         </nav>
         <div className={`raised ${styles.document}`}>
-          <aside className={styles.status} role="note">
-            <details>
-              <summary>
-                <Info size={17} aria-hidden="true" />
-                <strong>{copy.draftTitle}</strong>
-                <ChevronDown size={16} aria-hidden="true" />
-              </summary>
-              <p>{copy.draftBody}</p>
-            </details>
-          </aside>
           <details className={styles.mobileContents}>
             <summary>
               {copy.contentsLabel}

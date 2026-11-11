@@ -718,7 +718,19 @@ export function Shell({
                   </nav>
                   <div className="site-footer-legal">
                     <span>© {new Date().getFullYear()} Outpost</span>
-                    {legalPublished && <Link href="/legal">Privacy &amp; terms</Link>}
+                    {legalPublished && (
+                      <>
+                        <Link href="/legal" lang="de">
+                          Impressum<span lang="en"> · Legal</span>
+                        </Link>
+                        <Link href="/legal#privacy" lang="de">
+                          Datenschutz<span lang="en"> · Privacy</span>
+                        </Link>
+                        <Link href="/contact" lang="de">
+                          Kontakt<span lang="en"> · Contact</span>
+                        </Link>
+                      </>
+                    )}
                     {billing && (
                       <Link href="/supporter/cancel" lang="de">
                         Verträge hier kündigen

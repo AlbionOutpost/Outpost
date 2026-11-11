@@ -4,6 +4,15 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Impressum, privacy policy and contact form published — 11 November 2026
+
+- `/legal` is live and indexable (German and English, hreflang, in the sitemap and `llms.txt`): the Impressum names the operator (Hollow Lantern, Inhaber Rotenda Sino, Einzelunternehmen, the c/o service address of Impressumservice Dein-Impressum, contact@albionoutpost.com, the person responsible under § 18 Abs. 2 MStV) and the consumer dispute resolution statement. The draft banner and every open marker are gone; the privacy policy names the controller, says no data protection officer is appointed and describes the contact form, retention (30-day point-in-time recovery, Cloudflare's short log retention) and third-country transfers. The operator details are constants in `scripts/cloudflare-release-config.mjs`.
+- Setting them turns ads on with the next deploy (`adsActive()`): Google's certified consent message first in the EEA/UK/CH, the US-state opt-out link, no ads or ad script for Supporters. The policy's advertising section describes exactly that, and each ad unit's label links to it.
+- `/contact` is the Impressum's second contact channel: name, email, topic and message, Turnstile, 3 per 10 minutes and 20 a day per address, one plain-text mail through the `CONTACT_EMAIL` `send_email` binding to support@, nothing stored. It works in place with JavaScript and as a plain form post (303 back to the result).
+- Footer: Impressum · Legal, Datenschutz · Privacy and Kontakt · Contact on every page; Settings links the privacy policy and now has the `#account-data` / `#account-delete` anchors the policy links to.
+- Billing stays off: the payment and Supporter terms sections say the plan is not offered yet.
+- Next: owner confirms the support@ destination in Cloudflare Email Routing; Discord portal Terms/Privacy URLs; ask AdSense for a new review; a legal review of the Supporter terms before selling.
+
 ## Next.js 16.4.6 security update — 10 November 2026
 
 - Next.js 16.4.3 → 16.4.6 for the seven advisories of 3 November 2026 (fixed in 16.4.5): HttpOnly cookie exposure through an internal header on Edge-runtime routes, image-optimizer SVG bypass, response desync behind HTTP/1.1 proxies, and four `use cache` / Cache Components cache leaks. Outpost uses none of the affected features (no Edge-runtime routes, no `use cache`, images unoptimized on Cloudflare), so this is defence in depth, not an incident.
@@ -21,7 +30,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Supporter plan ready for go-live — 9 November 2026
 
-- Owner decision: Supporter is €4.99 a month (price from Stripe; raised from €2.99 the same day) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys, `/legal` stays unpublished and the launch grant stays open. Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
+- Owner decision: Supporter is €4.99 a month (price from Stripe; raised from €2.99 the same day) for no ads, a public Supporter badge and creating Teams; launch accounts keep Team rights for life. Nothing is live: billing stays off without Stripe keys and the launch grant stays open (`/legal` was published on 11 Nov). Go-live checklist in [OPERATIONS.md](OPERATIONS.md#go-live-checklist).
 - Supporter badge beside names on builds, comps, comments, Team rosters, the player profile and the account menu (plan or gift only, derived on the server).
 - Owner decision: the badge is optional, on by default. "Show Supporter badge" in Settings hides it everywhere (new `User.showSupporterBadge`, Postgres and private-store migration step 16).
 - German consumer-law pieces: the order box on `/supporter` (required facts, two unticked consents, "Zahlungspflichtig bestellen"), consent time stored in Stripe metadata, the § 312k cancellation page `/supporter/cancel` linked from every footer and Settings, `POST /api/billing/cancel`, and draft terms, cancellation policy and model withdrawal form in `/legal`.
@@ -181,7 +190,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Legal page unpublished — 8 November 2026
 
-- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.
+- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically. (Published again 11 Nov 2026, above.)
 
 ## Teams, guide reader and comp weapons — 8 November 2026
 

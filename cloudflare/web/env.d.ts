@@ -9,6 +9,8 @@ interface __BaseEnv_OutpostWebEnv {
   ASSETS: Fetcher;
   OUTPOST_RUNTIME: "cloudflare";
   OUTPOST_DATA: Fetcher /* albionoutpost-data */;
+  /* Added by scripts/cloudflare-release-config.mjs (support@albionoutpost.com only); absent locally. */
+  CONTACT_EMAIL?: SendEmail;
 }
 declare namespace Cloudflare {
   interface GlobalProps {

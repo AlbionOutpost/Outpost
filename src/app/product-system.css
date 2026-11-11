@@ -2002,6 +2002,14 @@
   color: var(--muted);
   font-size: 12px;
 }
+.app.outpost .ad-slot-label a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.app.outpost .ad-slot-label a:hover {
+  color: var(--text);
+}
 .app.outpost .ad-slot-unit {
   display: block;
   min-height: 250px;
