@@ -29,10 +29,14 @@ const config: NextConfig = {
             [resolve("src/lib/grind-library.ts"), resolve("cloudflare/database/library-web.ts")],
             [resolve("src/lib/inflight-cache.ts"), resolve("cloudflare/database/inflight-web.ts")],
             [resolve("src/lib/kill-board.ts"), resolve("cloudflare/database/kill-board-web.ts")],
+            [
+              resolve("src/lib/contact-mailer.ts"),
+              resolve("cloudflare/database/contact-mailer-web.ts"),
+            ],
           ]);
           config.plugins.push(
             new webpack.NormalModuleReplacementPlugin(
-              /database-driver|prisma-runtime|inflight-cache|kill-board|(?:^|\/)redis(?:\.ts)?$|grind-library(?:\.ts)?$/,
+              /database-driver|prisma-runtime|inflight-cache|kill-board|contact-mailer|(?:^|\/)redis(?:\.ts)?$|grind-library(?:\.ts)?$/,
               (resource: { request: string; context: string }) => {
                 const request = resource.request.startsWith("@/")
                   ? resolve("src", resource.request.slice(2))

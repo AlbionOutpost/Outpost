@@ -30,6 +30,9 @@ const entries: Entry[] = [
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },
   { path: "/market-data", changeFrequency: "monthly", priority: 0.5 },
   { path: "/giveaways", changeFrequency: "daily", priority: 0.6 },
+  // Impressum, privacy policy and terms (both languages on one address, hreflang by ?lang).
+  { path: "/legal", changeFrequency: "monthly", priority: 0.3 },
+  { path: "/contact", changeFrequency: "yearly", priority: 0.2 },
   ...tools
     .filter(
       (tool) =>
@@ -127,7 +130,7 @@ const blocked = disallow.map(
     ),
 );
 const noindex =
-  /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|legal|premium|supporter)(\/|\?|$)|^\/tools\/death-feed|^\/(builds|compositions)\/library(\?|$)|[?&](q|mine|region)=|[?&]view=saved/;
+  /^\/(api|admin|dashboard|settings|favorites|shopping-list|timers|signin|groups|invitations|players|premium|supporter)(\/|\?|$)|^\/tools\/death-feed|^\/(builds|compositions)\/library(\?|$)|[?&](q|mine|region)=|[?&]view=saved/;
 for (const path of seen) {
   if (blocked.some((rule) => rule.test(path))) throw new Error(`robots.txt blocks ${path}`);
   if (noindex.test(path))

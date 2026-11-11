@@ -1,38 +1,20 @@
 import Link from "@/components/link";
-import type { LegalLocale, LegalOperator } from "./legal-copy";
-import styles from "./legal.module.css";
+import type { LegalOperator } from "@/lib/legal";
+import type { LegalLocale } from "@/lib/legal-language";
+import { Provider } from "./operator";
 
 /*
- * DRAFT — needs legal review before `legalPublished` is switched on (src/lib/legal.ts).
  * Terms of service (AGB) for the Supporter plan, the cancellation policy (Widerrufsbelehrung,
  * after the statutory model for services in Anlage 1 zu Art. 246a § 1 Abs. 2 EGBGB, with the
  * owner's full-refund rule in place of compensation and early expiry) and the model withdrawal
- * form (Anlage 2). Both languages come from one structure so they stay in step.
- * Operator details come only from the OPERATOR_* settings; missing ones stay marked as missing.
+ * form (Anlage 2). Both languages come from one structure so they stay in step. While billing is
+ * off they say so first: nothing can be ordered, so they describe the plan, not an offer.
  */
 
 const de = (locale: LegalLocale) => locale === "de";
 /** Billing pages 404 while billing is off, so the terms name them without a link then. */
 const page = (billing: boolean, href: string, label: string) =>
   billing ? <Link href={href}>{label}</Link> : label;
-
-/** The provider as the policy addresses it: name, address and email, or the open markers. */
-function Provider({ locale, operator }: { locale: LegalLocale; operator: LegalOperator }) {
-  const missing = (en: string, german: string) => (
-    <span className={styles.open}>{de(locale) ? german : en}</span>
-  );
-  return (
-    <>
-      {operator.name || missing("Provider name missing", "Name des Anbieters fehlt")},{" "}
-      {operator.address || missing("Address missing", "Anschrift fehlt")},{" "}
-      {operator.email ? (
-        <a href={`mailto:${operator.email}`}>{operator.email}</a>
-      ) : (
-        missing("Email missing", "E-Mail fehlt")
-      )}
-    </>
-  );
-}
 
 /** How the price reads in the terms: a § 19 UStG note only when the operator set the flag. */
 const vatLine = (locale: LegalLocale, operator: LegalOperator) =>
@@ -55,6 +37,18 @@ export function supporterTermsSection(
     title: g ? "AGB für den Supporter-Plan" : "Terms of service for the Supporter plan",
     body: (
       <>
+        {!billing && (
+          <p>
+            <strong>
+              {g
+                ? "Der Supporter-Plan wird derzeit nicht angeboten."
+                : "The Supporter plan is not offered at present."}
+            </strong>{" "}
+            {g
+              ? "Diese Bedingungen gelten für Bestellungen, sobald er auf der Supporter-Seite bestellt werden kann."
+              : "These terms apply to orders once it can be ordered on the Supporter page."}
+          </p>
+        )}
         <h3>{g ? "1. Geltung und Anbieter" : "1. Scope and provider"}</h3>
         <p>
           {g
@@ -129,10 +123,10 @@ export function supporterTermsSection(
             ? "Die Haftung richtet sich nach den gesetzlichen Vorschriften. Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts; zwingende Verbraucherschutzvorschriften des Staates, in dem Sie Ihren gewöhnlichen Aufenthalt haben, bleiben unberührt."
             : "Liability follows the statutory rules. German law applies, excluding the UN Convention on Contracts for the International Sale of Goods; mandatory consumer protection rules of the country where you normally live are unaffected."}
         </p>
-        <p className={styles.open}>
+        <p>
           {g
-            ? "Entwurf, vor Veröffentlichung zu prüfen: Anbieterangaben, Steuerstatus, Teilnahme an Verbraucherschlichtung (§ 36 VSBG) und die Wirksamkeit dieser Klauseln."
-            : "Draft, to be reviewed before publication: provider details, tax status, participation in consumer dispute resolution (section 36 VSBG) and the validity of these clauses."}
+            ? "Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen."
+            : "We are neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board."}
         </p>
       </>
     ),
@@ -208,11 +202,6 @@ export function withdrawalSection(locale: LegalLocale, operator: LegalOperator, 
           {g
             ? "). Kontolöschung ist weder das eine noch das andere."
             : "). Deleting your account is neither."}
-        </p>
-        <p className={styles.open}>
-          {g
-            ? "Entwurf, vor Veröffentlichung zu prüfen: der Verzicht auf Wertersatz und vorzeitiges Erlöschen (Erstattung immer in voller Höhe), die Gestaltung der Widerrufsfunktion nach § 356a BGB und die Eingangsbestätigung auf einem dauerhaften Datenträger (die Erstattungs-E-Mail von Stripe)."
-            : "Draft, to be reviewed before publication: waiving compensation and early expiry (refunds are always in full), the design of the withdrawal function under section 356a BGB and the confirmation of receipt on a durable medium (Stripe's refund email)."}
         </p>
       </>
     ),

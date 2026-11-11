@@ -15,9 +15,16 @@ declare global {
 export function TurnstileChallenge({
   onToken,
   attempt,
+  action = "community_write",
+  label = "Bot verification",
+  unavailable = "Verification could not load. Please retry or check your connection.",
 }: {
   onToken: (token: string) => void;
   attempt: number;
+  /** The siteverify action the server expects (`verifyTurnstile`). */
+  action?: "community_write" | "contact";
+  label?: string;
+  unavailable?: string;
 }) {
   const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const container = useRef<HTMLDivElement>(null);
@@ -28,7 +35,7 @@ export function TurnstileChallenge({
     const turnstile = window.turnstile;
     const id = turnstile.render(container.current, {
       sitekey,
-      action: "community_write",
+      action,
       theme: "auto",
       size: "flexible",
       callback: (token: string) => {
@@ -38,21 +45,19 @@ export function TurnstileChallenge({
       "expired-callback": () => onToken(""),
       "error-callback": () => {
         onToken("");
-        setError("Verification could not load. Please retry or check your connection.");
+        setError(unavailable);
       },
     });
     return () => turnstile.remove(id);
-  }, [sitekey, ready, attempt, onToken]);
+  }, [sitekey, ready, attempt, onToken, action, unavailable]);
   if (!sitekey) return null;
   return (
-    <div className="section" aria-label="Bot verification">
+    <div className="section" aria-label={label}>
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"
         onReady={() => setReady(true)}
-        onError={() =>
-          setError("Verification could not load. Please retry or check your connection.")
-        }
+        onError={() => setError(unavailable)}
       />
       <div ref={container} />
       {error && <p role="status">{error}</p>}

@@ -14,6 +14,7 @@ import {
   supporterSource,
 } from "@/lib/billing/plan";
 import { billingEnabled } from "@/lib/billing/stripe";
+import { legalPublished } from "@/lib/legal";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
@@ -28,19 +29,27 @@ export const metadata = privateMetadata("Settings");
 /** One settings group: its name and a line on the left, the controls in a panel on the right. */
 function Group({
   id,
+  anchor,
   title,
   line,
   danger,
   children,
 }: {
   id: string;
+  /** The section's own fragment (`/settings#account-data`), as the privacy policy links it. */
+  anchor?: string;
   title: string;
   line: string;
   danger?: boolean;
   children: ReactNode;
 }) {
   return (
-    <section className={styles.group} aria-labelledby={id} data-danger={danger || undefined}>
+    <section
+      id={anchor}
+      className={styles.group}
+      aria-labelledby={id}
+      data-danger={danger || undefined}
+    >
       <div className={styles.groupHead}>
         <h2 id={id}>{title}</h2>
         <p>{line}</p>
@@ -120,6 +129,7 @@ export default async function Settings({
         </Group>
         <Group
           id="account-title"
+          anchor="account-data"
           title="Sign-in & data"
           line="Outpost signs you in with Discord and keeps no password."
         >
@@ -176,6 +186,17 @@ export default async function Settings({
               </a>
             }
           />
+          {legalPublished && (
+            <Line
+              title="Privacy & legal notice"
+              line="What Outpost stores, who processes it, your rights and who runs the site."
+              action={
+                <Link className="button secondary" href="/legal#privacy">
+                  Privacy policy
+                </Link>
+              }
+            />
+          )}
         </Group>
         {staff && (
           <Group
@@ -203,6 +224,7 @@ export default async function Settings({
         )}
         <Group
           id="delete-title"
+          anchor="account-delete"
           title="Close your account"
           line="Deletes your account, its sign-in records and sessions for good. Hand over or delete the Teams you own first."
           danger

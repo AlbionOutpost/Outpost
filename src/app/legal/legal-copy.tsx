@@ -1,22 +1,17 @@
 import type { ReactNode } from "react";
 import Link from "@/components/link";
+import type { LegalOperator } from "@/lib/legal";
+import type { LegalLocale } from "@/lib/legal-language";
 import styles from "./legal.module.css";
+import { Address, Email, Missing, Provider } from "./operator";
 import { supporterTermsSection, withdrawalFormSection, withdrawalSection } from "./supporter-legal";
 
-export type LegalLocale = "en" | "de";
-export type LegalOperator = {
-  name?: string;
-  address?: string;
-  email?: string;
-  /** `OPERATOR_SMALL_BUSINESS`: the terms say no VAT is charged (§ 19 UStG). */
-  smallBusiness?: boolean;
-};
+export type { LegalLocale } from "@/lib/legal-language";
+export type { LegalOperator } from "@/lib/legal";
 export type LegalCopy = {
   title: string;
   description: string;
   updated: string;
-  draftTitle: string;
-  draftBody: string;
   contentsLabel: string;
   contentsAria: string;
   sections: { id: string; title: string; body: ReactNode }[];
@@ -26,7 +21,10 @@ export type LegalCopy = {
 const supporterLink = (billing: boolean, label: string) =>
   billing ? <Link href="/supporter">{label}</Link> : label;
 
-/** Faithful bilingual draft; translation does not establish legal approval or activate services. */
+/**
+ * The published Impressum, privacy policy and terms in German and English (same structure, same
+ * links). The privacy policy describes what the code does; nothing here switches a service on.
+ */
 export function legalCopy(
   locale: LegalLocale,
   operator: LegalOperator,
@@ -43,94 +41,88 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
     title: "Rechtliches bei Outpost",
     description:
       "Wer hinter dem Projekt steht, welche Daten verarbeitet werden und was für die Nutzung gilt.",
-    updated: "Dokumentstand: 4. November 2026 · Deutsche Fassung",
-    draftTitle: "Entwurf: Betreiberangaben und rechtliche Freigabe noch offen.",
-    draftBody:
-      "Diese Seite legt den geprüften Funktionsstand offen. Gekennzeichnete offene Angaben sind keine vollständige Anbieterkennzeichnung. Vor einem kostenpflichtigen Angebot müssen Betreiber, Vertragstexte und Verbraucherfunktionen vervollständigt und geprüft werden. Diese Veröffentlichung bestätigt keine rechtliche Konformität.",
+    updated: "Dokumentstand: 11. November 2026 · Deutsche Fassung",
     contentsLabel: "Auf dieser Seite",
     contentsAria: "Rechtliche Themen",
     sections: [
       {
         id: "operator",
-        title: "Impressum & Kontakt",
+        title: "Impressum",
         body: (
           <>
             <p>
+              Angaben gemäß <a href="https://www.gesetze-im-internet.de/ddg/__5.html">§ 5 DDG</a>.
               Outpost ist ein unabhängiges Community-Projekt zu Albion Online. Es besteht keine
-              Verbindung zu oder Empfehlung durch Sandbox Interactive. „Outpost“ ist eine
-              Projektbezeichnung und ersetzt nicht die Identität des verantwortlichen Anbieters.
+              Verbindung zu oder Empfehlung durch Sandbox Interactive.
             </p>
             <dl className={styles.details}>
-              <dt>Anbieter / Verantwortlicher</dt>
-              <dd>
-                {operator.name || <span className={styles.open}>Vollständiger Name fehlt</span>}
-              </dd>
+              <dt>Anbieter</dt>
+              <dd>{operator.name || <Missing locale="de" />}</dd>
+              <dt>Rechtsform</dt>
+              <dd>Einzelunternehmen</dd>
               <dt>Ladungsfähige Anschrift</dt>
-              <dd>{operator.address || <span className={styles.open}>Anschrift fehlt</span>}</dd>
-              <dt>E-Mail / Kontakt</dt>
               <dd>
-                {operator.email ? (
-                  <a href={`mailto:${operator.email}`}>{operator.email}</a>
+                <Address operator={operator} locale="de" />
+              </dd>
+              <dt>E-Mail</dt>
+              <dd>
+                <Email operator={operator} locale="de" />
+              </dd>
+              <dt>Kontaktformular</dt>
+              <dd>
+                <Link href="/contact">albionoutpost.com/contact</Link>
+              </dd>
+              <dt>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</dt>
+              <dd>
+                {operator.editor ? (
+                  `${operator.editor}, Anschrift wie oben`
                 ) : (
-                  <span className={styles.open}>Kontakt-E-Mail fehlt</span>
+                  <Missing locale="de" />
                 )}
               </dd>
-              <dt>Register / Kennnummern</dt>
-              <dd className={styles.open}>Anwendbarkeit offen</dd>
-              <dt>Weitere Pflichtangaben</dt>
-              <dd className={styles.open}>Prüfung offen</dd>
             </dl>
+            <h3>Verbraucherstreitbeilegung</h3>
             <p>
-              Zu ergänzen sind der vollständige Name, gegebenenfalls Rechtsform und
-              Vertretungsberechtigte, eine ladungsfähige Anschrift mit Straße, Hausnummer,
-              Postleitzahl, Ort und Staat sowie eine erreichbare Kontakt-E-Mail und gegebenenfalls
-              ein weiterer unmittelbarer Kontaktweg. Register und Registernummer, Umsatzsteuer- oder
-              Wirtschafts-Identifikationsnummer sind nur anzugeben, soweit vorhanden und
-              erforderlich; die Anwendbarkeit ist noch ungeklärt. Berufsrechtliche Angaben,
-              zuständige Zulassungsbehörde und journalistisch-redaktionelle Verantwortlichkeit sind
-              zu prüfen, soweit einschlägig.
-            </p>
-            <p>
-              Die Gewerbe- beziehungsweise Unternehmensorganisation ist noch nicht abschließend
-              eingerichtet. Das beseitigt mögliche Informationspflichten für einen bereits
-              betriebenen Dienst nicht. Maßgeblich sind die tatsächliche Tätigkeit und unter anderem{" "}
-              <a href="https://www.gesetze-im-internet.de/ddg/__5.html">§ 5 DDG</a>.
+              Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+              Verbraucherschlichtungsstelle teilzunehmen.
             </p>
           </>
         ),
       },
       {
         id: "privacy",
-        title: "Datenschutz & Verarbeitungszwecke",
+        title: "Datenschutzerklärung",
         body: (
           <>
             <p>
-              Datenschutzrechtlich verantwortlich ist der oben zu benennende Anbieter. Ein
-              gegebenenfalls erforderlicher Datenschutzbeauftragter und seine Kontaktdaten sind noch
-              zu prüfen. Die folgende Übersicht beschreibt den vorhandenen Code; fehlende
-              Betreiberentscheidungen zu Rechtsgrundlagen, Interessenabwägung, Auftragsverarbeitung
-              und Fristen sind ausdrücklich offen.
+              Verantwortlich für die Verarbeitung personenbezogener Daten auf albionoutpost.com ist{" "}
+              <Provider locale="de" operator={operator} />. Ein Datenschutzbeauftragter ist nicht
+              benannt, weil dafür keine gesetzliche Pflicht besteht. Diese Erklärung beschreibt,
+              welche Daten Outpost tatsächlich verarbeitet, wofür und auf welcher Rechtsgrundlage.
             </p>
-            <h3>Besuch und Schutz des Dienstes</h3>
+            <h3>Besuch der Website und Schutz des Dienstes</h3>
             <p>
-              Bei Seiten- und API-Aufrufen werden technisch notwendige Verbindungsdaten verarbeitet,
-              insbesondere IP-Adresse, Zeitpunkt, angeforderte URL, HTTP-Status und
-              Browserinformationen. Cloudflare stellt die Website bereit und verarbeitet
-              entsprechende Netzwerk- und Sicherheitsdaten. Anwendungsseitige Schutzmechanismen
-              begrenzen Anfragen nach Netzwerk- oder Kontobezug. Fehler- und Betriebsprotokolle
-              können technische Ereignisse enthalten; konkrete Protokollfelder und Löschfristen der
-              eingesetzten Dienste müssen noch abschließend dokumentiert werden.
+              Bei jedem Seiten- und API-Aufruf werden technisch notwendige Verbindungsdaten
+              verarbeitet: IP-Adresse, Zeitpunkt, angeforderte Adresse, HTTP-Status und
+              Browserangaben. Cloudflare liefert die Website aus, schützt sie vor Angriffen und
+              verarbeitet dabei diese Daten. Um Missbrauch zu begrenzen, zählt Outpost Anfragen je
+              IP-Adresse oder Konto in Zeitfenstern von höchstens einem Tag; danach verfallen die
+              Zähler. Outposts eigene Protokolleinträge enthalten nur Ereignis, Status, Dauer und
+              Fehlercode. Für eine Stichprobe der Aufrufe erstellt Cloudflare Betriebsprotokolle,
+              die nach wenigen Tagen automatisch gelöscht werden. Rechtsgrundlage ist Art. 6 Abs. 1
+              lit. f DSGVO; unser berechtigtes Interesse ist ein sicherer, stabiler und
+              missbrauchsfreier Betrieb.
             </p>
             <h3>Discord-Anmeldung und Profil</h3>
             <p>
-              Öffentliche Werkzeuge benötigen grundsätzlich kein Konto. Wenn Sie Discord zur
-              Anmeldung wählen, werden die Berechtigungen „identify“ und „email“ angefragt. Outpost
-              verarbeitet Discord-Kennung, Anzeigenamen, Profilbild und – soweit von Discord
-              bereitgestellt – E-Mail-Adresse, außerdem Kontoverknüpfung und Sitzung. Die
-              Kontodatenstruktur sieht OAuth-Zugriffs- und Aktualisierungstoken vor; soweit Discord
-              diese liefert, werden sie serverseitig verarbeitet. Ihr Discord-Passwort wird Outpost
-              nicht übermittelt. Es werden hierdurch keine privaten Discord-Nachrichten oder
-              vollständigen Serverlisten angefordert.
+              Öffentliche Werkzeuge benötigen kein Konto. Wenn Sie Discord zur Anmeldung wählen,
+              werden die Berechtigungen „identify“ und „email“ angefragt. Outpost verarbeitet
+              Discord-Kennung, Anzeigenamen, Profilbild und – soweit von Discord bereitgestellt –
+              E-Mail-Adresse, außerdem Kontoverknüpfung und Sitzung. Die Kontodatenstruktur sieht
+              OAuth-Zugriffs- und Aktualisierungstoken vor; soweit Discord diese liefert, werden sie
+              serverseitig verarbeitet. Ihr Discord-Passwort wird Outpost nicht übermittelt. Es
+              werden keine privaten Discord-Nachrichten oder vollständigen Serverlisten angefordert.
+              Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (das von Ihnen gewünschte Konto).
             </p>
             <p>
               Optionale Angaben wie Albion-Charaktername und Region sowie Erstellungs- und
@@ -147,42 +139,57 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               hinzu. Als öffentlich freigegebene Inhalte können andere Besucher sie lesen.
               Gruppenbezogene Inhalte werden nach den jeweiligen Zugriffsrechten angezeigt;
               veröffentlichen Sie dort keine unnötigen personenbezogenen Daten Dritter.
+              Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.
             </p>
-            <h3>Zwecke und vorgesehene Rechtsgrundlagen</h3>
+            <h3>Kontaktformular und E-Mail</h3>
             <p>
-              Für angeforderte Konto-, Speicher- und Vertragsfunktionen kommt Art. 6 Abs. 1 Buchst.
-              b DSGVO in Betracht, für erforderliche gesetzliche Pflichten Buchst. c und für
-              verhältnismäßigen Betrieb, Missbrauchsschutz und Fehleranalyse Buchst. f. Dafür sind
-              die konkreten berechtigten Interessen und eine Interessenabwägung vom Verantwortlichen
-              festzulegen. Nicht erforderliche Werbung beziehungsweise Tracking benötigen die
-              jeweils einschlägige Einwilligung. Die Zuordnung ist vor Freigabe durch den
-              Verantwortlichen zu bestätigen; diese Seite ersetzt sie nicht durch eine pauschale
-              Einwilligung.
+              Wenn Sie uns über das <Link href="/contact">Kontaktformular</Link> schreiben,
+              verarbeiten wir Ihren Namen, Ihre E-Mail-Adresse, das gewählte Thema und Ihre
+              Nachricht, um Ihre Anfrage zu bearbeiten und zu beantworten. Gegen Missbrauch zählt
+              Outpost Absendungen je IP-Adresse (höchstens drei in zehn Minuten und 20 am Tag), und
+              Cloudflare Turnstile prüft, dass ein Mensch absendet (siehe Empfänger). Outpost selbst
+              speichert die Nachricht nicht: Der E-Mail-Versand von Cloudflare stellt sie in unser
+              Postfach bei Zoho (Rechenzentrum in der EU) zu. Dasselbe Postfach empfängt E-Mails,
+              die Sie uns direkt schreiben. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, soweit
+              Ihre Anfrage einen Vertrag oder dessen Anbahnung betrifft, sonst Art. 6 Abs. 1 lit. f
+              DSGVO; unser berechtigtes Interesse ist, Anfragen zu beantworten. Wir löschen die
+              Nachricht, sobald Ihre Anfrage erledigt ist, es sei denn, gesetzliche
+              Aufbewahrungspflichten stehen dem entgegen.
+            </p>
+            <h3>Rechtsgrundlagen und Herkunft der Daten</h3>
+            <p>
+              Konto-, Speicher-, Team- und Vertragsfunktionen beruhen auf Art. 6 Abs. 1 lit. b
+              DSGVO, gesetzliche Pflichten wie Aufbewahrungspflichten auf lit. c, sicherer Betrieb,
+              Missbrauchsabwehr und Fehleranalyse auf lit. f (unser berechtigtes Interesse an einem
+              sicheren, funktionsfähigen Dienst). Werbung und die dafür nötigen Speicherzugriffe
+              beruhen auf Ihrer Einwilligung nach lit. a und § 25 Abs. 1 TDDDG. Sie müssen uns keine
+              Daten bereitstellen; ohne Anmeldung können Sie die öffentlichen Werkzeuge nutzen, aber
+              nichts im Konto speichern.
             </p>
             <p>
-              Daten erhalten wir von Ihnen, bei der Anmeldung von Discord und – soweit Sie Inhalte
-              anderer Personen aufrufen – aus deren veröffentlichten Beiträgen beziehungsweise den
-              genannten öffentlichen Spiel- und Community-Quellen. Soweit personenbezogene Daten
-              nicht direkt bei Betroffenen erhoben werden, sind auch die Informationspflichten nach
-              Art. 14 DSGVO zu prüfen. Es ist keine automatisierte Entscheidung mit rechtlicher oder
-              vergleichbar erheblicher Wirkung nach Art. 22 DSGVO vorgesehen; das technische
-              Sortieren von Spielpreisen ist keine Bonitätsbewertung.
+              Daten erhalten wir von Ihnen, bei der Anmeldung von Discord und aus öffentlichen
+              Quellen: Marktpreise aus dem Albion Online Data Project und öffentliche Spielerdaten
+              (Charakter- und Gildennamen, Kills und Tode) aus der öffentlichen Spiel-API von Albion
+              Online, die Outpost im Kill-Feed und auf Spielerseiten zeigt. Eine automatisierte
+              Entscheidung im Einzelfall nach Art. 22 DSGVO findet nicht statt; das technische
+              Sortieren von Spielpreisen ist keine Bewertung von Personen.
             </p>
           </>
         ),
       },
       {
         id: "cookies",
-        title: "Cookies & Gerätespeicher",
+        title: "Cookies, Gerätespeicher & Werbung",
         body: (
           <>
             <p>
-              Cookies und localStorage sind unterschiedliche Speicherformen.{" "}
-              <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">§ 25 TDDDG</a> erfasst
-              grundsätzlich das Speichern oder Auslesen von Informationen auf Ihrem Gerät. Ob eine
-              Ausnahme für eine ausdrücklich gewünschte, unbedingt erforderliche Funktion greift,
-              muss je Zweck geprüft werden; „first party“ allein macht einen Speicherzugriff nicht
-              einwilligungsfrei.
+              Outpost speichert auf Ihrem Gerät nur, was für die von Ihnen genutzten Funktionen
+              unbedingt erforderlich ist; dafür ist nach{" "}
+              <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">
+                § 25 Abs. 2 Nr. 2 TDDDG
+              </a>{" "}
+              keine Einwilligung nötig. Speicherzugriffe für Werbung erfolgen nur mit Ihrer
+              Einwilligung.
             </p>
             <div
               className={styles.tableScroll}
@@ -249,7 +256,7 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
             </p>
             {ads ? (
               <>
-                <h3>Werbung mit Google AdSense</h3>
+                <h3 id="advertising">Werbung mit Google AdSense</h3>
                 <p>
                   Outpost finanziert sich über Werbung von Google AdSense (Google Ireland Limited,
                   Gordon House, Barrow Street, Dublin 4, Irland). Anzeigen erscheinen höchstens
@@ -274,54 +281,51 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
                   Mit Ihrer Einwilligung verarbeiten Google und die angezeigten Werbepartner
                   Cookies, Gerätekennungen, IP-Adresse und Besuchsdaten für Auslieferung, Messung,
                   Betrugsabwehr und – soweit gewählt – personalisierte Werbung (Art. 6 Abs. 1 lit. a
-                  DSGVO, § 25 Abs. 1 TDDDG). Dabei können Daten in die USA übermittelt werden;
-                  Google ist nach dem EU-US Data Privacy Framework zertifiziert. Die jeweils
-                  beteiligten Partner und ihre Speicherdauern nennt das Einwilligungsfenster unter
-                  „Manage options“.
+                  DSGVO, § 25 Abs. 1 TDDDG). Google ist dafür eigenständig verantwortlich. Dabei
+                  können Daten in die USA übermittelt werden; Google ist nach dem EU-US Data Privacy
+                  Framework zertifiziert. Die jeweils beteiligten Partner und ihre Speicherdauern
+                  nennt das Einwilligungsfenster unter „Manage options“.
                 </p>
               </>
             ) : (
               <>
-                <h3>Keine Werbung</h3>
+                <h3 id="advertising">Keine Werbung</h3>
                 <p>
                   Outpost zeigt derzeit keine Werbung und lädt keine Werbe- oder
                   Einwilligungsskripte. Ein gegebenenfalls ausgegebenes
                   Google-Kontoverifizierungs-Metatag enthält nur die Publisher-Zuordnung und lädt
-                  selbst kein Google-Skript. Bevor Werbung eingeschaltet wird, beschreibt dieser
-                  Abschnitt Anbieter, Zwecke, Cookies und Ihre Wahlmöglichkeiten.
+                  selbst kein Google-Skript.
                 </p>
               </>
             )}
             <p>
-              Google erläutert die{" "}
-              <a href="https://support.google.com/adsense/answer/13554116?hl=de">
-                Anforderungen an Einwilligungsplattformen im EWR, Vereinigten Königreich und der
-                Schweiz
+              Outpost setzt keine Analyse- oder Trackingdienste wie Google Analytics ein. Google
+              erläutert,{" "}
+              <a href="https://support.google.com/adsense/answer/1348695">
+                wie Cookies für Anzeigen eingesetzt werden
               </a>{" "}
-              und die{" "}
-              <a href="https://support.google.com/adsense/answer/1348695?hl=de">
-                Cookies für Anzeigen
+              und{" "}
+              <a href="https://policies.google.com/technologies/partner-sites">
+                wie Google Daten von Websites seiner Partner verwendet
               </a>
-              . Eine Einwilligung muss freiwillig, informiert und widerrufbar sein; Ablehnung darf
-              nicht durch eine bloße Weiterbenutzung ersetzt werden. Zusätzliche Analyseprodukte wie
-              Google Analytics werden im geprüften Anwendungscode nicht eingebunden; mögliche
-              Einstellungen außerhalb des Repositorys sind nicht damit geprüft.
+              .
             </p>
           </>
         ),
       },
       {
         id: "providers",
-        title: "Empfänger & internationale Übermittlungen",
+        title: "Empfänger & Übermittlungen in Drittländer",
         body: (
           <>
             <ul>
               <li>
-                <strong>Cloudflare:</strong> Auslieferung und Schutz über Workers, öffentliche
-                Katalog-/Inhaltsdaten in D1, Konto- und Zusammenarbeitsdaten in SQLite-basierten
-                Durable Objects. Je nach Konfiguration kommt Turnstile bei Community-Beiträgen
-                hinzu; dabei erhält Cloudflare technische Geräte-/Verbindungsdaten und prüft ein
-                Token.{" "}
+                <strong>Cloudflare:</strong> Auslieferung und Schutz der Website über Workers,
+                öffentliche Katalog- und Inhaltsdaten in D1, Konto- und Zusammenarbeitsdaten in
+                SQLite-basierten Durable Objects sowie der Versand der Nachrichten aus dem
+                Kontaktformular. Beim Absenden von Community-Beiträgen und des Kontaktformulars
+                prüft Cloudflare Turnstile ein Token und erhält dafür technische Geräte- und
+                Verbindungsdaten. Cloudflare ist unser Auftragsverarbeiter.{" "}
                 <a href="https://www.cloudflare.com/privacypolicy/">Datenschutz bei Cloudflare</a>,{" "}
                 <a href="https://www.cloudflare.com/cloudflare-customer-dpa/">
                   Auftragsverarbeitungsbedingungen
@@ -340,20 +344,25 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
                 <strong>Sandbox Interactive / Albion-Renderer:</strong> Gegenstandsbilder werden
                 teilweise unmittelbar von render.albiononline.com geladen. Dadurch erhält dieser
                 Server die für den Bildabruf nötigen Verbindungsdaten, einschließlich Ihrer
-                IP-Adresse. Bei Fehlern kann ein eigener Bild-Proxy einspringen. Ein externer
-                Bildabruf ist kein rein lokales Bild.
+                IP-Adresse. Bei Fehlern kann ein eigener Bild-Proxy einspringen. Rechtsgrundlage ist
+                Art. 6 Abs. 1 lit. f DSGVO (Anzeige der Original-Spielgrafiken).
               </li>
               <li>
                 <strong>Albion Online Data Project und öffentliche Inhaltsquellen:</strong> Outpost
-                fragt Spielpreise überwiegend serverseitig ab. Server- und Browserabrufe sind zu
-                unterscheiden; externe Links und einzelne eingebundene Medien können zu direkten
-                Verbindungen führen.
+                fragt Spielpreise überwiegend serverseitig ab. Externe Links und einzelne
+                eingebundene Medien können zu direkten Verbindungen Ihres Browsers mit Dritten
+                führen.
               </li>
               <li>
-                <strong>Stripe, falls Zahlungen eingerichtet werden:</strong> das in die
-                Supporter-Seite eingebettete Zahlungsformular von Stripe (Stripe.js) und das
-                Kundenportal, Name/E-Mail und eine interne Kundenreferenz, Zahlungs- und
-                Abonnementvorgänge. Outpost verarbeitet Zuordnungskennungen, Status,
+                <strong>Zoho:</strong> unser E-Mail-Postfach (Rechenzentrum in der EU) für
+                Nachrichten aus dem Kontaktformular und E-Mails an uns. Zoho ist unser
+                Auftragsverarbeiter.
+              </li>
+              <li>
+                <strong>Stripe{configuredBilling ? "" : " (derzeit nicht aktiv)"}:</strong> bei
+                Zahlungen das in die Supporter-Seite eingebettete Zahlungsformular von Stripe
+                (Stripe.js) und das Kundenportal, Name/E-Mail und eine interne Kundenreferenz,
+                Zahlungs- und Abonnementvorgänge. Outpost verarbeitet Zuordnungskennungen, Status,
                 Ablauf-/Verlängerungsangaben und Webhook-Ereignisse, keine Eingabefelder für
                 vollständige Karten- oder Bankdaten. Stripe verarbeitet Zahlungsdaten in seinen
                 eigenen Eingabefeldern (iframes von Stripe) und Oberflächen; Stripe.js wird erst
@@ -364,23 +373,22 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
                 <a href="https://stripe.com/legal/dpa">DPA</a>.
               </li>
               <li>
-                <strong>Google / Werbepartner, sofern AdSense geladen wird:</strong> siehe den
-                Abschnitt zu Werbung. Empfängerkreis, konkrete Partner und Einwilligungszustände
-                sind vor Einsatz in der tatsächlichen Konfiguration zu dokumentieren.
+                <strong>Google (AdSense) und Werbepartner:</strong> nur solange Werbung aktiv ist
+                und nie für Supporter; siehe <a href="#advertising">Werbung</a>.
               </li>
             </ul>
-            <p className={styles.open}>
-              Offen: genaue vertragliche Anbieter-Gesellschaften, Auftragsverarbeitungsverträge,
-              Unterauftragnehmer, tatsächliche Speicherorte und Drittlandgarantien. Eine
-              ausschließlich deutsche oder europäische Speicherung wird nicht zugesichert.
+            <p>
+              Cloudflare, Discord, Stripe und Google können Daten auch in den USA und anderen
+              Drittländern verarbeiten. Übermittlungen in die USA stützen sich auf den
+              Angemessenheitsbeschluss der EU-Kommission zum EU-US Data Privacy Framework, soweit
+              der Empfänger zertifiziert ist, und im Übrigen auf die EU-Standardvertragsklauseln in
+              den Datenschutz- und Auftragsverarbeitungsbedingungen der Anbieter (Art. 46 Abs. 2
+              lit. c DSGVO). Eine Kopie dieser Garantien finden Sie in den verlinkten Bedingungen
+              oder erhalten Sie auf Anfrage bei uns.
             </p>
             <p>
-              Bei Verarbeitung außerhalb des EWR sind die Voraussetzungen von Art. 44 ff. DSGVO
-              einzuhalten, etwa ein einschlägiger Angemessenheitsbeschluss oder geeignete Garantien
-              einschließlich erforderlicher Zusatzmaßnahmen. Wir behaupten ohne konkrete Prüfung
-              weder eine Teilnahme aller Empfänger am EU-US Data Privacy Framework noch den
-              Abschluss bestimmter Standardvertragsklauseln. Der Verantwortliche muss die
-              einschlägigen Grundlagen und den Zugang zu einer Kopie der Garantien ergänzen.
+              Eine ausschließlich deutsche oder europäische Speicherung sichern wir nicht zu:
+              Cloudflare betreibt Workers, D1 und Durable Objects in seinem weltweiten Netz.
             </p>
           </>
         ),
@@ -396,25 +404,25 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               Discord-Kennungen, Beginn und gegebenenfalls Ablauf sowie den Grund und die handelnde
               Administration in einem Zugriffsprotokoll. Geschenke ändern keine Stripe-Abonnements.
               Aktive Sperren widerrufen Sitzungen und verhindern weitere Anmeldungen. Sperrkennungen
-              und minimale Administrationsprotokolle werden zur Missbrauchsabwehr getrennt von
-              löschbaren Profilen aufbewahrt; die konkreten, erforderlichen Aufbewahrungsfristen
-              sind noch vom Betreiber festzulegen.
+              und minimale Administrationsprotokolle bewahren wir getrennt von löschbaren Profilen
+              auf, solange sie zur Abwehr von Missbrauch und zur Nachvollziehbarkeit von
+              Administrationsentscheidungen erforderlich sind; eine automatische Löschfrist gibt es
+              dafür nicht.
             </p>
             <p>
-              Serverseitige Kontoinhalte bleiben grundsätzlich für die jeweils genutzten Funktionen
-              gespeichert, bis sie gelöscht werden oder der Zweck entfällt. Eine vollständige
-              freigegebene Fristenliste für Konten, Revisionen, Moderation, Betriebsprotokolle,
-              Backups und Abrechnungsunterlagen liegt noch nicht vor. Gesetzliche
-              Aufbewahrungspflichten können einzelne Daten länger betreffen; konkrete Kategorien und
-              Fristen sind nach Einrichtung des Betriebs zu ergänzen. Für Backups wird keine
-              sofortige vollständige Entfernung zugesichert.
+              Kontoinhalte speichern wir, bis Sie sie oder Ihr Konto löschen. Eine Anmeldung endet
+              serverseitig nach 14 Tagen ohne Erneuerung. Nach einer Löschung können Daten noch bis
+              zu 30 Tage in der Wiederherstellungsfunktion der Datenbank bei Cloudflare
+              (Point-in-Time-Recovery) enthalten sein und werden danach überschrieben. Soweit
+              gesetzliche Aufbewahrungspflichten bestehen, etwa für Abrechnungsunterlagen nach
+              Handels- und Steuerrecht, bewahren wir die betroffenen Daten für diese Fristen auf.
             </p>
             <p>
               Unter <Link href="/settings#account-data">Einstellungen → Ihre Daten</Link> können
               angemeldete Personen einen Export der hierfür bereitgestellten Kontodaten anfordern.
-              Er enthält keine OAuth-Geheimnisse und keinen pauschalen Export fremder Teamdaten. Die
-              technische Exportfunktion ersetzt nicht den vollständigen datenschutzrechtlichen
-              Auskunftsanspruch.
+              Er enthält keine OAuth-Geheimnisse und keinen pauschalen Export fremder Teamdaten. Ihr
+              Auskunftsrecht nach Art. 15 DSGVO können Sie darüber hinaus jederzeit per E-Mail
+              geltend machen.
             </p>
             <p>
               Die <Link href="/settings#account-delete">Kontolöschung</Link> verlangt eine
@@ -423,9 +431,8 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               unbezahlte Bestellung wird dabei storniert. Die Prüfung kann bei nicht erreichbarem
               Zahlungsanbieter blockieren. Die Kontolöschung kündigt kein Abonnement automatisch und
               löscht keine eigenständigen Datenbestände bei Discord, Stripe oder Empfängern
-              veröffentlichter Inhalte. Ein gesetzlicher Löschungsantrag kann unabhängig von diesen
-              Bedienoberflächen gestellt werden; die gesetzlichen Voraussetzungen und Ausnahmen sind
-              individuell zu prüfen.
+              veröffentlichter Inhalte. Einen Löschungsantrag nach Art. 17 DSGVO können Sie auch per
+              E-Mail stellen.
             </p>
           </>
         ),
@@ -444,29 +451,27 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               Rechtmäßigkeit der früheren Verarbeitung entfällt.
             </p>
             <p>
-              Wenden Sie sich hierfür an den <a href="#operator">oben genannten Verantwortlichen</a>
-              . Solange die Kontaktangabe fehlt, ist dieser Entwurf an diesem wesentlichen Punkt
-              unvollständig. Die Bearbeitungsfristen richten sich nach Art. 12 DSGVO; grundsätzlich
-              beträgt die Antwortfrist einen Monat, mit gesetzlich geregelten
-              Verlängerungsmöglichkeiten. Identitätsnachweise dürfen nur soweit erforderlich
-              verlangt werden.
+              Wenden Sie sich dafür an den <a href="#operator">im Impressum genannten Anbieter</a>,
+              am einfachsten per E-Mail an <Email operator={operator} locale="de" />. Wir antworten
+              innerhalb eines Monats (Art. 12 DSGVO); in gesetzlich geregelten Fällen kann sich die
+              Frist verlängern. Einen Identitätsnachweis verlangen wir nur, soweit er erforderlich
+              ist.
             </p>
             <p>
-              Sie können sich bei einer Datenschutzaufsichtsbehörde beschweren, insbesondere am Ort
-              Ihres gewöhnlichen Aufenthalts, Arbeitsplatzes oder eines vermuteten Verstoßes. Eine
-              bestimmte deutsche Landesbehörde wird hier mangels geklärtem Betreibersitz nicht als
-              zuständig behauptet. Grundlage der Informations- und Betroffenenrechte ist die{" "}
+              Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren,
+              insbesondere im Mitgliedstaat Ihres gewöhnlichen Aufenthalts, Ihres Arbeitsplatzes
+              oder des mutmaßlichen Verstoßes (Art. 77{" "}
               <a href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32016R0679">
                 DSGVO
               </a>
-              .
+              ).
             </p>
           </>
         ),
       },
       {
         id: "terms",
-        title: "Nutzungsbedingungen – vorläufiger Stand",
+        title: "Nutzungsbedingungen",
         body: (
           <>
             <h3>Leistung und technische Voraussetzungen</h3>
@@ -492,32 +497,30 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               keine fremden Zugangsdaten, personenbezogenen Daten ohne Rechtsgrundlage,
               rechtswidrigen Inhalte oder Inhalte, die Rechte Dritter verletzen. Manipulation von
               Berechtigungen, missbräuchliche automatisierte Abfragen und Angriffe auf den Dienst
-              sind nicht vorgesehen. Öffentliche Beiträge bleiben mit ihrem Autor beziehungsweise
-              ihrer Quelle verknüpft; Teamrollen bestimmen die jeweiligen Bearbeitungsrechte.
+              sind untersagt. Öffentliche Beiträge bleiben mit ihrem Autor beziehungsweise ihrer
+              Quelle verknüpft; Teamrollen bestimmen die jeweiligen Bearbeitungsrechte.
             </p>
             <p>
-              Mit dem Einstellen fremder Werke dürfen keine weitergehenden Rechte behauptet werden,
-              als tatsächlich vorliegen. Ein allgemeiner unwiderruflicher Rechteverzicht oder eine
-              pauschale Übertragung aller Rechte wird durch diese Seite nicht erklärt. Konkrete
-              Veröffentlichungs-/Nutzungsrechte für eigene Beiträge, Moderationsverfahren,
-              Beschwerdewege und etwaige Einschränkungen sind vor endgültiger Einbeziehung dieser
-              Nutzungsbedingungen noch verbindlich auszugestalten.
+              Ihre Rechte an eigenen Beiträgen behalten Sie. Mit dem Veröffentlichen erlauben Sie
+              Outpost, den Beitrag auf der Website anzuzeigen, solange er veröffentlicht ist.
+              Stellen Sie keine fremden Werke ein, an denen Sie keine Rechte haben. Beiträge, die
+              gegen diese Regeln oder geltendes Recht verstoßen, können wir ausblenden und Konten
+              sperren. Hinweise darauf senden Sie über die Meldefunktion am Beitrag, das{" "}
+              <Link href="/contact">Kontaktformular</Link> oder per E-Mail.
             </p>
             <h3>Verantwortung und gesetzliche Rechte</h3>
             <p>
               Für offizielle Spielregeln und Spieleinhalte ist der jeweilige Rechteinhaber
-              verantwortlich. Verlinkte oder eingebundene Fremdinhalte können sich ändern. Diese
-              Hinweise enthalten keinen vollständigen Haftungsausschluss: insbesondere Ansprüche
-              wegen Vorsatz, grober Fahrlässigkeit, Verletzung von Leben, Körper oder Gesundheit und
-              sonstige zwingende Rechte werden nicht ausgeschlossen. Eine abschließende, rechtlich
-              geprüfte Haftungsregelung ist noch offen.
+              verantwortlich. Verlinkte oder eingebundene Fremdinhalte können sich ändern; für sie
+              ist ihr jeweiliger Anbieter verantwortlich. Werden uns Rechtsverletzungen bekannt,
+              entfernen wir den betreffenden Link oder Inhalt umgehend.
             </p>
-            <p className={styles.open}>
-              Offen bleiben insbesondere Anbieteridentität, Vertragsschluss und Einbeziehung, Umgang
-              mit Minderjährigen, verbindlicher Leistungsumfang, Moderations-/Beschwerdeverfahren
-              und gegebenenfalls Bedingungen kostenpflichtiger Leistungen. Keine rückwirkende
-              Zustimmung oder automatische Vertragsänderung wird aus der bloßen Veröffentlichung
-              dieses Entwurfs abgeleitet.
+            <p>
+              Die Haftung richtet sich nach den gesetzlichen Vorschriften; zwingende Rechte,
+              insbesondere bei Vorsatz, grober Fahrlässigkeit und der Verletzung von Leben, Körper
+              oder Gesundheit, bleiben unberührt. Es gilt deutsches Recht; zwingende
+              Verbraucherschutzvorschriften des Staates Ihres gewöhnlichen Aufenthalts bleiben
+              unberührt.
             </p>
           </>
         ),
@@ -528,53 +531,39 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
         body: (
           <>
             <p>
-              <strong>Technischer Stand dieser Umgebung:</strong>{" "}
+              <strong>Aktueller Stand:</strong>{" "}
               {configuredBilling
-                ? "Eine Stripe-Anbindung ist konfiguriert. Das belegt keine rechtliche Freigabe des Angebots."
-                : "Die Stripe-Abrechnung ist nicht vollständig konfiguriert. Die technische Oberfläche bietet dann kein eingerichtetes Kaufangebot."}
+                ? "Die Zahlungsabwicklung über Stripe ist eingerichtet. Ob der Supporter-Plan bestellt werden kann und zu welchem Preis, zeigt die Supporter-Seite."
+                : "Outpost verkauft derzeit nichts. Die Zahlungsabwicklung ist nicht eingerichtet, und der Supporter-Plan kann nicht bestellt werden."}
             </p>
             <p>
-              Die vorhandene Integration ist für ein wiederkehrendes Supporter-Abonnement
-              vorgesehen. Dazu gehören laut Produktdarstellung werbefreie Anzeigenplätze, ein
+              Der Supporter-Plan ist ein monatliches Abonnement. Er umfasst werbefreie Seiten, ein
               öffentlich sichtbares Supporter-Abzeichen und das Recht, Teams zu erstellen;
-              Mitglieder können kostenlos beitreten. Aktuelle Eigenschaften und Verfügbarkeit sind
-              auf der {supporterLink(configuredBilling, "Supporter-Seite")} beschrieben. Supporter
-              sehen keine Werbung (siehe Abschnitt zu Cookies und Werbung).
+              Mitglieder können Teams kostenlos beitreten. Aktuelle Eigenschaften und Verfügbarkeit
+              sind auf der {supporterLink(configuredBilling, "Supporter-Seite")} beschrieben.
+              Supporter sehen keine Werbung (siehe Abschnitt zu Cookies und Werbung).
             </p>
             <p>
-              Bei aktivierter Abrechnung geben Sie Ihre Zahlungsdaten in ein Formular von Stripe
-              ein, das auf der Supporter-Seite eingebettet ist; die Eingaben gehen direkt an Stripe.
+              Wird der Plan angeboten, geben Sie Ihre Zahlungsdaten in ein Formular von Stripe ein,
+              das auf der Supporter-Seite eingebettet ist; die Eingaben gehen direkt an Stripe.
               Outpost übermittelt dazu die Kundenzuordnung und, soweit vorhanden, Name/E-Mail.
               Stripe meldet Zahlungen und Abonnementstatus serverseitig zurück. Ein Rücksprung mit
               einer Erfolgsmeldung allein schaltet keine bezahlte Berechtigung frei. Zahlungsdaten
-              erreichen Outpost nicht. Welche Zahlungsmittel tatsächlich angeboten werden, hängt von
-              der dortigen Konfiguration ab.
+              erreichen Outpost nicht. Welche Zahlungsmittel angeboten werden, hängt von der
+              Konfiguration bei Stripe ab.
             </p>
             <p>
-              Preis, Währung und Abrechnungsintervall werden technisch aus der hinterlegten
-              Stripe-Preiskonfiguration gelesen. In diesem Entwurf wird kein fester Preis, keine
-              Mindestlaufzeit, Kündigungsfrist, Steuerbehandlung oder Erstattungsregel erfunden.
-              Gesamtpreis einschließlich anwendbarer Steuern, Kosten je Abrechnungsperiode,
-              Laufzeit, Verlängerung, Fälligkeit und Leistungsbeginn müssen vor einer
-              zahlungspflichtigen Bestellung klar feststehen. Eine bloße Verlinkung dieser Seite
-              ersetzt nicht die gesetzlich erforderlichen Informationen und die eindeutige
-              Bestellsituation.
+              Preis, Währung und Abrechnungsintervall stammen aus der Preiskonfiguration bei Stripe.
+              Gesamtpreis einschließlich etwaiger Umsatzsteuer, Laufzeit, Verlängerung und Kündigung
+              zeigt die Bestellseite vor der Bestellung. Es gelten die AGB, die Widerrufsbelehrung
+              und das Muster-Widerrufsformular unten.
             </p>
             <p>
-              Ein eingerichtetes {supporterLink(configuredBilling, "Kundenportal")} kann je nach
-              Stripe-Einstellung Zahlungsmittel, Rechnungen und Kündigungen verwalten. Die
-              Vertragspartei für die Outpost-Leistung bleibt der zu benennende Anbieter; Stripe ist
-              nicht allein dadurch Verkäufer der Outpost-Leistung. Die bereitgestellte Integration
-              enthält keinen Nachweis eines bestimmten, bereits freigegebenen
-              Portal-Kündigungstermins oder aller gesetzlichen Verbraucherfunktionen.
-            </p>
-            <p className={styles.open}>
-              Vor Verkaufsfreigabe offen: konkrete Anbieter-/Steuerdaten, rechtliche Prüfung der AGB
-              und der Widerrufsbelehrung unten, Vertragsbestätigung auf dauerhaftem Datenträger
-              sowie ein Verfahren für Beschwerden. Bestellseite (Pflichtangaben, Zustimmung,
-              „Zahlungspflichtig bestellen“), Kündigungsbutton und Widerrufsbutton (mit voller
-              Erstattung) sind technisch vorbereitet. Die gesetzlichen Rechte bei digitalen
-              Produkten und Dienstleistungen bleiben unberührt.
+              Im {supporterLink(configuredBilling, "Kundenportal")} von Stripe können Sie
+              Zahlungsmittel und Rechnungen verwalten und kündigen. Vertragspartner für die
+              Outpost-Leistung ist der im Impressum genannte Anbieter; Stripe wickelt nur die
+              Zahlung ab. Die gesetzlichen Rechte bei digitalen Produkten und Dienstleistungen
+              bleiben unberührt.
             </p>
           </>
         ),
@@ -620,10 +609,8 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               werden dürfen.
             </p>
             <p>
-              Die Transparenzpflichten aus Art. 50 der EU-KI-Verordnung hängen unter anderem von
-              Anbieter-/Betreiberrolle, Art des Systems und Art des Inhalts ab. Ein allgemeiner
-              Hinweis ist kein Nachweis der Erfüllung sämtlicher Kennzeichnungs- oder
-              Rechtepflichten. Maßgeblich sind die{" "}
+              Dieser Hinweis dient der Transparenz über KI-erzeugte Inhalte. Zu den
+              Transparenzpflichten nach Art. 50 der EU-KI-Verordnung siehe die{" "}
               <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50">
                 amtliche Darstellung von Art. 50
               </a>{" "}
@@ -631,7 +618,7 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               <a href="https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations">
                 Leitlinien der Europäischen Kommission
               </a>
-              ; betroffene konkrete Medien und Metadaten sind gesondert zu prüfen.
+              .
             </p>
           </>
         ),
@@ -655,8 +642,8 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               jeweiligen Rechteinhabern. Community-Beiträge und Illustrationen können gesonderten
               Nutzungsrechten unterliegen. Die Verfügbarkeit auf dieser Website ist keine pauschale
               Lizenz für Weiterveröffentlichung. Hinweise auf mögliche Rechtsverletzungen richten
-              Sie bitte an den im Impressum zu ergänzenden Kontakt und benennen Sie die betroffene
-              URL sowie den beanstandeten Inhalt.
+              Sie bitte an die im Impressum genannte E-Mail-Adresse oder über das Kontaktformular
+              und benennen Sie die betroffene URL sowie den beanstandeten Inhalt.
             </p>
           </>
         ),
@@ -670,91 +657,83 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
     title: "Legal information at Outpost",
     description:
       "Who runs the project, how data is processed and which rules apply when you use it.",
-    updated: "Document updated: 4 November 2026 · English version",
-    draftTitle: "Draft: operator details and legal approval are still pending.",
-    draftBody:
-      "This page describes the reviewed functionality. Marked missing information does not constitute a complete provider notice. Before any paid offer, the operator details, contract documents and consumer features must be completed and reviewed. Publishing this page does not confirm legal compliance.",
+    updated: "Document updated: 11 November 2026 · English version",
     contentsLabel: "On this page",
     contentsAria: "Legal topics",
     sections: [
       {
         id: "operator",
-        title: "Provider details & contact",
+        title: "Legal notice (Impressum)",
         body: (
           <>
             <p>
-              Outpost is an independent community project for Albion Online. It is not affiliated
-              with or endorsed by Sandbox Interactive. “Outpost” is a project name and does not
-              replace the identity of the responsible provider.
+              Information under{" "}
+              <a href="https://www.gesetze-im-internet.de/ddg/__5.html">section 5 DDG</a>. Outpost
+              is an independent community project for Albion Online. It is not affiliated with or
+              endorsed by Sandbox Interactive.
             </p>
             <dl className={styles.details}>
-              <dt>Provider / data controller</dt>
-              <dd>{operator.name || <span className={styles.open}>Full name pending</span>}</dd>
-              <dt>Address for legal service</dt>
-              <dd>{operator.address || <span className={styles.open}>Address pending</span>}</dd>
-              <dt>Email / contact</dt>
+              <dt>Provider</dt>
+              <dd>{operator.name || <Missing locale="en" />}</dd>
+              <dt>Legal form</dt>
+              <dd>Sole proprietorship (Einzelunternehmen)</dd>
+              <dt>Address for service</dt>
               <dd>
-                {operator.email ? (
-                  <a href={`mailto:${operator.email}`}>{operator.email}</a>
-                ) : (
-                  <span className={styles.open}>Contact email pending</span>
-                )}
+                <Address operator={operator} locale="en" />
               </dd>
-              <dt>Registers / identification numbers</dt>
-              <dd className={styles.open}>Applicability under review</dd>
-              <dt>Other required information</dt>
-              <dd className={styles.open}>Review pending</dd>
+              <dt>Email</dt>
+              <dd>
+                <Email operator={operator} locale="en" />
+              </dd>
+              <dt>Contact form</dt>
+              <dd>
+                <Link href="/contact">albionoutpost.com/contact</Link>
+              </dd>
+              <dt>Responsible for content under section 18(2) MStV</dt>
+              <dd>
+                {operator.editor ? `${operator.editor}, address as above` : <Missing locale="en" />}
+              </dd>
             </dl>
+            <h3>Consumer dispute resolution</h3>
             <p>
-              The full name and, where applicable, legal form and authorised representatives must be
-              supplied, together with an address for legal service including street, house number,
-              postcode, town/city and country, an accessible contact email and, where applicable,
-              another direct means of contact. Register and registration numbers, VAT or business
-              identification numbers must be stated only where they exist and are required; their
-              applicability has not yet been determined. Professional rules, the competent licensing
-              authority and responsibility for journalistic or editorial content must be assessed
-              where relevant.
-            </p>
-            <p>
-              The business or company organisation has not yet been fully established. This does not
-              remove possible information duties for a service that is already operating. The actual
-              activity and, among other provisions,{" "}
-              <a href="https://www.gesetze-im-internet.de/ddg/__5.html">section 5 DDG</a> are
-              relevant.
+              We are neither willing nor obliged to take part in dispute resolution proceedings
+              before a consumer arbitration board.
             </p>
           </>
         ),
       },
       {
         id: "privacy",
-        title: "Privacy & processing purposes",
+        title: "Privacy policy",
         body: (
           <>
             <p>
-              The provider to be identified above is the data controller. Whether a data protection
-              officer is required and, if so, their contact details still need to be assessed. The
-              following overview describes the existing code; operator decisions on legal bases,
-              balancing of interests, processing agreements and retention periods remain explicitly
-              unresolved.
+              The controller responsible for processing personal data on albionoutpost.com is{" "}
+              <Provider locale="en" operator={operator} />. No data protection officer is appointed
+              because there is no legal obligation to appoint one. This policy describes which data
+              Outpost actually processes, for what purpose and on which legal basis.
             </p>
-            <h3>Visiting and protecting the service</h3>
+            <h3>Visiting the website and protecting the service</h3>
             <p>
-              Page and API requests involve the processing of technically necessary connection data,
-              particularly IP address, time, requested URL, HTTP status and browser information.
-              Cloudflare delivers the website and processes corresponding network and security data.
-              Application safeguards limit requests by network or account context. Error and
-              operational logs may contain technical events; the precise log fields and deletion
-              periods of the services in use still need to be fully documented.
+              Every page and API request involves technically necessary connection data: IP address,
+              time, requested address, HTTP status and browser information. Cloudflare delivers the
+              website, protects it against attacks and processes this data in doing so. To limit
+              abuse, Outpost counts requests per IP address or account in windows of at most one
+              day; the counters then expire. Outpost’s own log entries contain only the event,
+              status, duration and error code. For a sample of requests Cloudflare keeps operational
+              logs, which are deleted automatically after a few days. The legal basis is Article
+              6(1)(f) GDPR; our legitimate interest is secure, stable operation free of abuse.
             </p>
             <h3>Discord sign-in and profile</h3>
             <p>
-              Public tools generally do not require an account. If you choose Discord sign-in, the
-              “identify” and “email” permissions are requested. Outpost processes your Discord ID,
-              display name, profile image and, where supplied by Discord, email address, as well as
-              account linkage and session information. The account data structure provides for OAuth
-              access and refresh tokens; where Discord supplies them, they are processed on the
-              server. Your Discord password is not sent to Outpost. This does not request private
-              Discord messages or complete server lists.
+              Public tools do not require an account. If you choose Discord sign-in, the “identify”
+              and “email” permissions are requested. Outpost processes your Discord ID, display
+              name, profile image and, where supplied by Discord, email address, as well as account
+              linkage and session information. The account data structure provides for OAuth access
+              and refresh tokens; where Discord supplies them, they are processed on the server.
+              Your Discord password is not sent to Outpost. No private Discord messages or complete
+              server lists are requested. The legal basis is Article 6(1)(b) GDPR (the account you
+              asked for).
             </p>
             <p>
               Optional details such as your Albion character name and region, along with creation
@@ -769,41 +748,53 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               invitations, announcements, events, responses and shared build and loot data. Other
               visitors can read content released as public. Team-related content is shown according
               to the applicable access rights; do not publish unnecessary personal data about other
-              people there.
+              people there. The legal basis is Article 6(1)(b) GDPR.
             </p>
-            <h3>Purposes and intended legal bases</h3>
+            <h3>Contact form and email</h3>
             <p>
-              Article 6(1)(b) GDPR may apply to requested account, storage and contractual features,
-              point (c) to necessary statutory duties and point (f) to proportionate operation,
-              abuse prevention and error analysis. The controller must identify the specific
-              legitimate interests and carry out the corresponding balancing assessment.
-              Non-essential advertising or tracking requires the applicable consent. The controller
-              must confirm this allocation before approval; this page does not replace that
-              assessment with blanket consent.
+              When you write to us through the <Link href="/contact">contact form</Link>, we process
+              your name, email address, the topic you chose and your message to handle and answer
+              your request. Against abuse, Outpost counts submissions per IP address (at most three
+              in ten minutes and 20 a day), and Cloudflare Turnstile checks that a person is sending
+              (see recipients). Outpost itself does not store the message: Cloudflare’s email
+              sending delivers it to our mailbox at Zoho (EU data centre). The same mailbox receives
+              emails you send us directly. The legal basis is Article 6(1)(b) GDPR where your
+              request concerns a contract or steps before one, and otherwise Article 6(1)(f) GDPR;
+              our legitimate interest is answering requests. We delete the message once your request
+              has been dealt with, unless statutory retention duties require otherwise.
+            </p>
+            <h3>Legal bases and sources of data</h3>
+            <p>
+              Account, storage, Team and contract features rely on Article 6(1)(b) GDPR, statutory
+              duties such as retention duties on point (c), and secure operation, abuse prevention
+              and error analysis on point (f) (our legitimate interest in a secure, working
+              service). Advertising and the device access it needs rely on your consent under point
+              (a) and section 25(1) TDDDG. You are not required to provide data; without signing in
+              you can use the public tools but cannot save anything to an account.
             </p>
             <p>
-              We receive data from you, from Discord when you sign in and, when you view other
-              people’s content, from their published contributions or the public game and community
-              sources identified here. Where personal data is not collected directly from the
-              individuals concerned, the information duties under Article 14 GDPR must also be
-              assessed. No automated decision producing legal or similarly significant effects under
-              Article 22 GDPR is intended; technically sorting game prices is not a credit
-              assessment.
+              We receive data from you, from Discord when you sign in and from public sources:
+              market prices from the Albion Online Data Project and public player data (character
+              and guild names, kills and deaths) from Albion Online’s public game API, which Outpost
+              shows in the kill feed and on player pages. No automated individual decision under
+              Article 22 GDPR takes place; technically sorting game prices is not an assessment of
+              people.
             </p>
           </>
         ),
       },
       {
         id: "cookies",
-        title: "Cookies & device storage",
+        title: "Cookies, device storage & advertising",
         body: (
           <>
             <p>
-              Cookies and localStorage are different forms of storage.{" "}
-              <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">Section 25 TDDDG</a>{" "}
-              generally covers storing or accessing information on your device. Whether an exception
-              applies to an explicitly requested, strictly necessary feature must be assessed for
-              each purpose; “first party” alone does not make storage access exempt from consent.
+              Outpost stores on your device only what is strictly necessary for the features you
+              use; under{" "}
+              <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">
+                section 25(2) no. 2 TDDDG
+              </a>{" "}
+              this needs no consent. Device access for advertising happens only with your consent.
             </p>
             <div
               className={styles.tableScroll}
@@ -870,7 +861,7 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
             </p>
             {ads ? (
               <>
-                <h3>Advertising with Google AdSense</h3>
+                <h3 id="advertising">Advertising with Google AdSense</h3>
                 <p>
                   Outpost is funded by advertising from Google AdSense (Google Ireland Limited,
                   Gordon House, Barrow Street, Dublin 4, Ireland). Ads appear at most once per page,
@@ -880,65 +871,63 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
                   launch Supporter status does not hide ads.
                 </p>
                 <p>
-                  Visitors from the EEA, the United Kingdom and Switzerland see Google&apos;s
-                  certified consent message (IAB TCF) before any ad request. You can consent,
-                  decline, or choose individual purposes and partners; declining is as easy as
-                  consenting. Without consent, Google shows at most limited, non-personalised ads.
-                  Google stores your choice in the FCCDCF and FCNEC cookies; you can change or
-                  withdraw it at any time through the “Privacy and cookie settings” link at the
-                  bottom of the page. Visitors from US states with their own privacy laws get
-                  Google&apos;s “Do Not Sell or Share My Personal Information” link.
+                  Visitors from the EEA, the United Kingdom and Switzerland see Google’s certified
+                  consent message (IAB TCF) before any ad request. You can consent, decline, or
+                  choose individual purposes and partners; declining is as easy as consenting.
+                  Without consent, Google shows at most limited, non-personalised ads. Google stores
+                  your choice in the FCCDCF and FCNEC cookies; you can change or withdraw it at any
+                  time through the “Privacy and cookie settings” link at the bottom of the page.
+                  Visitors from US states with their own privacy laws get Google’s “Do Not Sell or
+                  Share My Personal Information” link.
                 </p>
                 <p>
                   With your consent, Google and the listed advertising partners process cookies,
                   device identifiers, IP address and visit data for delivery, measurement, fraud
-                  prevention and, where chosen, personalised advertising (Art. 6(1)(a) GDPR, Section
-                  25(1) TDDDG). Data may be transferred to the USA; Google is certified under the
-                  EU-US Data Privacy Framework. The consent message lists the partners involved and
-                  their retention periods under “Manage options”.
+                  prevention and, where chosen, personalised advertising (Article 6(1)(a) GDPR,
+                  section 25(1) TDDDG). Google is an independent controller for this. Data may be
+                  transferred to the USA; Google is certified under the EU-US Data Privacy
+                  Framework. The consent message lists the partners involved and their retention
+                  periods under “Manage options”.
                 </p>
               </>
             ) : (
               <>
-                <h3>No advertising</h3>
+                <h3 id="advertising">No advertising</h3>
                 <p>
                   Outpost shows no advertising at present and loads no advertising or consent
                   scripts. A Google account-verification meta tag, if output, only identifies the
-                  publisher association and does not itself load a Google script. Before advertising
-                  is switched on, this section describes the provider, purposes, cookies and your
-                  choices.
+                  publisher association and does not itself load a Google script.
                 </p>
               </>
             )}
             <p>
-              Google explains its{" "}
-              <a href="https://support.google.com/adsense/answer/13554116?hl=de">
-                requirements for consent platforms in the EEA, United Kingdom and Switzerland
+              Outpost uses no analytics or tracking services such as Google Analytics. Google
+              explains{" "}
+              <a href="https://support.google.com/adsense/answer/1348695">
+                how cookies are used for advertising
               </a>{" "}
               and{" "}
-              <a href="https://support.google.com/adsense/answer/1348695?hl=de">
-                advertising cookies
+              <a href="https://policies.google.com/technologies/partner-sites">
+                how Google uses information from sites that use its services
               </a>
-              . Consent must be freely given, informed and withdrawable; rejection cannot be
-              replaced by mere continued use. Additional analytics products such as Google Analytics
-              are not embedded in the reviewed application code; this does not verify possible
-              settings outside the repository.
+              .
             </p>
           </>
         ),
       },
       {
         id: "providers",
-        title: "Recipients & international transfers",
+        title: "Recipients & transfers to third countries",
         body: (
           <>
             <ul>
               <li>
-                <strong>Cloudflare:</strong> delivery and protection through Workers, public
-                catalog/content data in D1, and account/collaboration data in SQLite-based Durable
-                Objects. Depending on configuration, Turnstile is also used for community
-                contributions; Cloudflare then receives technical device/connection data and
-                verifies a token.{" "}
+                <strong>Cloudflare:</strong> delivery and protection of the website through Workers,
+                public catalog and content data in D1, account and collaboration data in
+                SQLite-based Durable Objects, and sending the messages from the contact form. When
+                community contributions or the contact form are submitted, Cloudflare Turnstile
+                verifies a token and receives technical device and connection data for it.
+                Cloudflare is our processor.{" "}
                 <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a>,{" "}
                 <a href="https://www.cloudflare.com/cloudflare-customer-dpa/">
                   data processing terms
@@ -955,46 +944,47 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
                 <strong>Sandbox Interactive / Albion renderer:</strong> some item images load
                 directly from render.albiononline.com. That server therefore receives connection
                 data required to retrieve the image, including your IP address. An Outpost image
-                proxy may be used if errors occur. An external image request is not a purely local
-                image.
+                proxy may be used if errors occur. The legal basis is Article 6(1)(f) GDPR (showing
+                the original game art).
               </li>
               <li>
                 <strong>Albion Online Data Project and public content sources:</strong> Outpost
-                retrieves game prices predominantly on the server. Server and browser requests must
-                be distinguished; external links and individual embedded media may create direct
-                connections.
+                retrieves game prices predominantly on the server. External links and individual
+                embedded media may connect your browser directly to third parties.
               </li>
               <li>
-                <strong>Stripe, if payments are established:</strong> Stripe’s payment form embedded
-                in the Supporter page (Stripe.js) and the customer portal, name/email and an
-                internal customer reference, payment and subscription transactions. Outpost
-                processes association IDs, status, expiry/renewal information and webhook events,
-                not input fields for complete card or bank details. Stripe processes payment data in
-                its own input fields (Stripe iframes) and interfaces; Stripe.js loads only once you
-                start an order and then collects device and interaction data and sets its own
-                cookies for fraud prevention. Stripe acts as a processor and/or an independent
-                controller depending on the transaction.{" "}
+                <strong>Zoho:</strong> our email mailbox (EU data centre) for messages from the
+                contact form and emails to us. Zoho is our processor.
+              </li>
+              <li>
+                <strong>Stripe{configuredBilling ? "" : " (not active at present)"}:</strong> for
+                payments, Stripe’s payment form embedded in the Supporter page (Stripe.js) and the
+                customer portal, name/email and an internal customer reference, payment and
+                subscription transactions. Outpost processes association IDs, status, expiry/renewal
+                information and webhook events, not input fields for complete card or bank details.
+                Stripe processes payment data in its own input fields (Stripe iframes) and
+                interfaces; Stripe.js loads only once you start an order and then collects device
+                and interaction data and sets its own cookies for fraud prevention. Stripe acts as a
+                processor and/or an independent controller depending on the transaction.{" "}
                 <a href="https://stripe.com/privacy">Stripe privacy policy</a>,{" "}
                 <a href="https://stripe.com/legal/dpa">DPA</a>.
               </li>
               <li>
-                <strong>Google / advertising partners, if AdSense is loaded:</strong> see the
-                advertising section. Recipients, specific partners and consent states must be
-                documented against the actual configuration before use.
+                <strong>Google (AdSense) and advertising partners:</strong> only while advertising
+                is active and never for Supporters; see <a href="#advertising">advertising</a>.
               </li>
             </ul>
-            <p className={styles.open}>
-              Still unresolved: the precise contracting provider entities, data processing
-              agreements, subprocessors, actual storage locations and third-country safeguards.
-              Storage exclusively in Germany or Europe is not promised.
+            <p>
+              Cloudflare, Discord, Stripe and Google may also process data in the USA and other
+              third countries. Transfers to the USA rely on the European Commission’s adequacy
+              decision for the EU-US Data Privacy Framework where the recipient is certified, and
+              otherwise on the EU standard contractual clauses in the providers’ privacy and data
+              processing terms (Article 46(2)(c) GDPR). You can find a copy of these safeguards in
+              the linked terms or obtain one from us on request.
             </p>
             <p>
-              Processing outside the EEA must meet the requirements of Article 44 onwards GDPR, such
-              as an applicable adequacy decision or appropriate safeguards including any necessary
-              supplementary measures. Without a specific review, we do not claim that all recipients
-              participate in the EU–US Data Privacy Framework or that particular standard
-              contractual clauses have been executed. The controller must add the relevant grounds
-              and information on obtaining a copy of the safeguards.
+              We do not promise storage exclusively in Germany or Europe: Cloudflare runs Workers,
+              D1 and Durable Objects in its global network.
             </p>
           </>
         ),
@@ -1009,23 +999,23 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               account bans. We record the related account or Discord identifiers, start and optional
               expiry, reason and administrator in an access audit trail. Gifts do not change Stripe
               subscriptions. Active bans revoke sessions and prevent new sign-ins. Ban identifiers
-              and minimal administrative audit records are retained separately from deletable
-              profiles for abuse prevention; the operator still needs to define the necessary
-              retention periods.
+              and minimal administrative audit records are kept separately from deletable profiles
+              for as long as they are needed to prevent abuse and to account for administrative
+              decisions; there is no automatic deletion period for them.
             </p>
             <p>
-              Server-side account content is generally stored for the features used until it is
-              deleted or its purpose ceases. A complete approved retention schedule for accounts,
-              revisions, moderation, operational logs, backups and billing records is not yet
-              available. Statutory retention duties may require certain data to be kept longer;
-              specific categories and periods must be added once operations are established.
-              Immediate complete removal from backups is not promised.
+              We keep account content until you delete it or your account. A sign-in ends on the
+              server after 14 days without renewal. After deletion, data can remain in the
+              database’s recovery feature at Cloudflare (point-in-time recovery) for up to 30 days
+              and is then overwritten. Where statutory retention duties apply, for example to
+              billing records under commercial and tax law, we keep the data concerned for those
+              periods.
             </p>
             <p>
               Signed-in users can request an export of the account data provided for this purpose
               under <Link href="/settings#account-data">Settings → Your data</Link>. It contains no
-              OAuth secrets and is not a blanket export of other people’s Team data. The technical
-              export feature does not replace the full statutory right of access to personal data.
+              OAuth secrets and is not a blanket export of other people’s Team data. You can also
+              exercise your right of access under Article 15 GDPR by email at any time.
             </p>
             <p>
               <Link href="/settings#account-delete">Account deletion</Link> requires confirmation.
@@ -1033,9 +1023,8 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               must be ended or outstanding payments resolved; an unpaid order is cancelled. The
               check may block deletion if the payment provider cannot be reached. Deleting an
               account does not automatically cancel a subscription or delete independent data held
-              by Discord, Stripe or recipients of published content. A statutory erasure request can
-              be made independently of these interfaces; the legal conditions and exceptions must be
-              assessed individually.
+              by Discord, Stripe or recipients of published content. You can also request erasure
+              under Article 17 GDPR by email.
             </p>
           </>
         ),
@@ -1053,28 +1042,26 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               without affecting the lawfulness of earlier processing.
             </p>
             <p>
-              Contact the <a href="#operator">controller identified above</a> to exercise these
-              rights. Until contact information has been supplied, this draft remains incomplete in
-              this essential respect. Response periods follow Article 12 GDPR; the response period
-              is generally one month, with extensions permitted by law. Proof of identity may be
-              requested only to the extent necessary.
+              Contact the <a href="#operator">provider named in the legal notice</a>, most easily by
+              email at <Email operator={operator} locale="en" />. We answer within one month
+              (Article 12 GDPR); in cases set out by law the period can be extended. We ask for
+              proof of identity only where it is necessary.
             </p>
             <p>
-              You may lodge a complaint with a data protection supervisory authority, particularly
-              in the place of your habitual residence, workplace or a suspected infringement. No
-              specific German state authority is stated to be competent because the operator’s place
-              of establishment has not yet been determined. The{" "}
+              You have the right to lodge a complaint with a data protection supervisory authority,
+              in particular in the member state of your habitual residence, place of work or the
+              alleged infringement (Article 77{" "}
               <a href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32016R0679">
                 GDPR
-              </a>{" "}
-              is the basis for these information and data-subject rights.
+              </a>
+              ).
             </p>
           </>
         ),
       },
       {
         id: "terms",
-        title: "Terms of use — draft",
+        title: "Terms of use",
         body: (
           <>
             <h3>Service and technical requirements</h3>
@@ -1099,29 +1086,28 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               Use only accounts and content you are authorised to use. Do not share other people’s
               credentials, personal data without a legal basis, unlawful content or content that
               infringes third-party rights. Manipulating permissions, abusive automated requests and
-              attacks on the service are not intended uses. Public contributions remain linked to
-              their author or source; Team roles determine the corresponding editing permissions.
+              attacks on the service are prohibited. Public contributions remain linked to their
+              author or source; Team roles determine the corresponding editing permissions.
             </p>
             <p>
-              Uploading third-party works must not assert broader rights than actually exist. This
-              page does not declare a general irrevocable waiver or blanket transfer of all rights.
-              Specific publication/usage rights for your contributions, moderation procedures,
-              complaint channels and any restrictions still need to be established before these
-              terms are finally incorporated.
+              You keep your rights in your own contributions. By publishing one, you allow Outpost
+              to show it on the website for as long as it is published. Do not upload other people’s
+              works you have no rights to. We may hide contributions that break these rules or the
+              law and suspend accounts. Report them through the report function on the contribution,
+              the <Link href="/contact">contact form</Link> or by email.
             </p>
             <h3>Responsibility and statutory rights</h3>
             <p>
               The respective rights holder is responsible for official game rules and game content.
-              Linked or embedded third-party content can change. These notices do not constitute a
-              complete exclusion of liability: in particular, claims involving intent, gross
-              negligence, injury to life, body or health and other mandatory rights are not
-              excluded. A final legally reviewed liability provision is still pending.
+              Linked or embedded third-party content can change; its provider is responsible for it.
+              If we become aware of an infringement, we remove the link or content concerned
+              promptly.
             </p>
-            <p className={styles.open}>
-              Matters still unresolved include provider identity, contract formation and
-              incorporation of terms, treatment of minors, binding service scope,
-              moderation/complaint procedures and any terms for paid services. Mere publication of
-              this draft is not treated as retrospective consent or an automatic contract change.
+            <p>
+              Liability follows the statutory rules; mandatory rights, in particular for intent,
+              gross negligence and injury to life, body or health, remain unaffected. German law
+              applies; mandatory consumer protection rules of the country where you normally live
+              remain unaffected.
             </p>
           </>
         ),
@@ -1132,50 +1118,37 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
         body: (
           <>
             <p>
-              <strong>Technical status in this environment:</strong>{" "}
+              <strong>Current status:</strong>{" "}
               {configuredBilling
-                ? "A Stripe integration is configured. This does not establish legal approval of the offer."
-                : "Stripe billing is not fully configured. In this state, the technical interface does not provide an established purchase offer."}
+                ? "Payments through Stripe are set up. The Supporter page shows whether the Supporter plan can be ordered and at what price."
+                : "Outpost sells nothing at present. Payments are not set up, and the Supporter plan cannot be ordered."}
             </p>
             <p>
-              The existing integration is intended for a recurring Supporter subscription. According
-              to the product description, this includes ad-free placements, a publicly visible
-              Supporter badge and the right to create Teams; members can join for free. Current
-              features and availability are described on the{" "}
+              The Supporter plan is a monthly subscription. It includes ad-free pages, a publicly
+              visible Supporter badge and the right to create Teams; members can join Teams for
+              free. Current features and availability are described on the{" "}
               {supporterLink(configuredBilling, "Supporter page")}. Supporters see no ads (see the
               section on cookies and advertising).
             </p>
             <p>
-              When billing is activated, you enter payment details in a Stripe form embedded in the
+              When the plan is offered, you enter payment details in a Stripe form embedded in the
               Supporter page; what you type goes straight to Stripe. Outpost sends the customer
               association and, where available, name/email. Stripe reports payments and subscription
               status back to the server. Returning with a success message alone does not activate
-              paid entitlement. Payment details never reach Outpost. The payment methods actually
-              offered depend on its configuration.
+              paid entitlement. Payment details never reach Outpost. The payment methods offered
+              depend on the configuration at Stripe.
             </p>
             <p>
-              Price, currency and billing interval are technically read from the configured Stripe
-              price. This draft does not invent a fixed price, minimum term, notice period, tax
-              treatment or refund policy. The total price including applicable taxes, costs per
-              billing period, term, renewal, due date and start of service must be clear before a
-              paid order. Merely linking this page does not replace the legally required information
-              and an unambiguous ordering process.
+              Price, currency and billing interval come from the price configured at Stripe. The
+              order page shows the total price including any VAT, the term, renewal and cancellation
+              before you order. The terms of service, cancellation policy and model withdrawal form
+              below apply.
             </p>
             <p>
-              A configured {supporterLink(configuredBilling, "customer portal")} may manage payment
-              methods, invoices and cancellations depending on Stripe settings. The provider to be
-              identified remains the contracting party for the Outpost service; Stripe does not
-              become its seller merely by processing payment. The supplied integration does not
-              establish a specific, already approved portal cancellation date or all statutory
-              consumer features.
-            </p>
-            <p className={styles.open}>
-              Before sales approval, the following remain unresolved: specific provider/tax details,
-              legal review of the terms and cancellation policy below, contractual confirmation on a
-              durable medium and a procedure for complaints. The order page (required information,
-              consent, “Subscribe and pay”), the cancellation button and the withdrawal button (with
-              a full refund) are technically prepared. Statutory rights for digital products and
-              services remain unaffected.
+              In Stripe’s {supporterLink(configuredBilling, "customer portal")} you can manage
+              payment methods and invoices and cancel. The contracting party for the Outpost service
+              is the provider named in the legal notice; Stripe only processes the payment.
+              Statutory rights for digital products and services remain unaffected.
             </p>
           </>
         ),
@@ -1219,9 +1192,8 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               be freely reused.
             </p>
             <p>
-              The transparency duties under Article 50 of the EU AI Act depend, among other things,
-              on the provider/deployer role, system type and content type. A general notice does not
-              prove that all labelling or rights obligations have been met. Refer to the{" "}
+              This notice is for transparency about AI-generated content. For the transparency
+              duties under Article 50 of the EU AI Act, see the{" "}
               <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50">
                 official presentation of Article 50
               </a>{" "}
@@ -1229,7 +1201,7 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               <a href="https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations">
                 European Commission guidelines
               </a>
-              ; the specific media and metadata concerned must be assessed separately.
+              .
             </p>
           </>
         ),
@@ -1251,9 +1223,9 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               Albion Online and its associated trademarks, item images and game graphics belong to
               their respective rights holders. Community contributions and illustrations may be
               subject to separate usage rights. Availability on this website is not a blanket
-              licence to republish. Please report possible rights infringements to the contact still
-              to be supplied in the provider notice, identifying the affected URL and disputed
-              content.
+              licence to republish. Please report possible rights infringements to the email address
+              in the legal notice or through the contact form, identifying the affected URL and
+              disputed content.
             </p>
           </>
         ),

@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 import { legalPublished } from "../src/lib/legal";
 
-// The page is unpublished until the operator details are final; these run again once it is on.
+// Published 11 Nov 2026; e2e/legal-hidden.spec.ts covers the switch being off.
 test.skip(!legalPublished, "Legal pages are unpublished (src/lib/legal.ts)");
 
 const copies = {
@@ -21,18 +21,30 @@ const copies = {
   },
 } as const;
 
-test("German legal draft keeps operator gaps, legacy anchors and usable rights routes visible", async ({
+test("German legal page is the final Impressum, indexable, with legacy anchors and rights routes", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/legal?lang=de&region=europe");
   const legal = page.locator('main div[lang="de"]');
   await expect(legal.getByRole("heading", { level: 1 })).toHaveText(copies.de.title);
-  await expect(legal.getByRole("note")).toContainText("Entwurf");
-  await legal.getByRole("note").locator("summary").click();
-  await expect(legal.getByRole("note")).toContainText("keine rechtliche Konformität");
-  await expect(legal.locator("#operator")).toContainText("Register");
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  // No draft banner and no open markers.
+  await expect(legal.getByRole("note")).toHaveCount(0);
+  await expect(legal).not.toContainText("Entwurf");
+  await expect(legal).not.toContainText("Prüfung offen");
+  await expect(legal.locator("#operator")).toContainText("Einzelunternehmen");
+  await expect(legal.locator("#operator")).toContainText("§ 18 Abs. 2 MStV");
+  await expect(legal.locator("#operator")).toContainText("Verbraucherschlichtungsstelle");
+  await expect(legal.locator('#operator a[href="/contact"]')).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://albionoutpost.com/legal?lang=de",
+  );
+  await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveAttribute(
+    "href",
+    /\/legal\?lang=en$/,
+  );
   for (const id of ["operator", "data-sources", "scene-artwork", "media", "privacy"])
     await expect(legal.locator(`#${id}`)).toHaveCount(1);
   const contents = legal.getByRole("navigation", { name: copies.de.topics });
@@ -72,7 +84,7 @@ test("legal language follows the browser and explicit choice without external tr
       await page.goto("http://localhost:3000/legal?region=asia");
       expect((await navigation).headers()["accept-language"]).toContain(preference);
       await expect(page.locator(`main div[lang="${locale}"] h1`)).toHaveText(copies[locale].title);
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+      await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     } finally {
       await context.close();
     }
@@ -96,7 +108,7 @@ test("legal language follows the browser and explicit choice without external tr
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/legal\?lang=de&region=asia#privacy$/);
     await expect(page.locator('main div[lang="de"] #privacy')).toBeInViewport();
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await page
       .getByRole("navigation", { name: "Sprache", exact: true })
       .getByRole("link", { name: "English", exact: true })
@@ -135,6 +147,8 @@ test("both legal languages retain responsive reading, keyboard contents and cook
   page,
   context,
 }) => {
+  // Two languages × two themes × six widths with axe: about 30 s locally, so allow headroom.
+  test.setTimeout(120000);
   await mkdir(".qa/legal-language/regression", { recursive: true });
   for (const locale of ["en", "de"] as const) {
     for (const theme of ["dark", "light"]) {

@@ -2,7 +2,7 @@
 
 import { useEffect, type MouseEvent } from "react";
 import type { LegalLocale } from "@/lib/legal-language";
-import styles from "./legal.module.css";
+import styles from "./language-switch.module.css";
 
 // Mount after the document: native fragment navigation can run while streamed sections
 // are still hidden. Align again after hydration and font layout have both completed.
@@ -42,18 +42,27 @@ export function LegalSectionRestore() {
   return null;
 }
 
-export function LegalLanguageSwitch({ locale, region }: { locale: LegalLocale; region?: string }) {
+export function LegalLanguageSwitch({
+  locale,
+  region,
+  path = "/legal",
+}: {
+  locale: LegalLocale;
+  region?: string;
+  /** The page whose German and English versions this switches between (/legal, /contact). */
+  path?: "/legal" | "/contact";
+}) {
   const href = (language: LegalLocale) => {
     const query = new URLSearchParams({ lang: language });
     if (region) query.set("region", region);
-    return `/legal?${query}`;
+    return `${path}?${query}`;
   };
   // Fragments are browser-only. Keep the current section when following either native link.
   const keepSection = (event: MouseEvent<HTMLAnchorElement>) => {
     event.currentTarget.href = `${href(event.currentTarget.lang as LegalLocale)}${window.location.hash}`;
   };
   return (
-    <nav className={styles.languageSwitch} aria-label={locale === "de" ? "Sprache" : "Language"}>
+    <nav className={styles.switch} aria-label={locale === "de" ? "Sprache" : "Language"}>
       {(
         [
           ["en", "English"],
