@@ -24,13 +24,25 @@ export function publicOrigin() {
   return "https://albionoutpost.com";
 }
 
+/**
+ * An item's page address. `@` stays literal (`/items/T4_MAIN_AXE@1`), as every internal link
+ * writes it: the canonical used to say `%401`, a second spelling of the same page that search
+ * engines treat as another URL.
+ */
+export const itemPath = (id: string) => `/items/${encodeURIComponent(id).replace(/%40/g, "@")}`;
+
+/** Plain, single-line text of at most `limit` characters. A longer text ends at the last whole
+ * word with an ellipsis (a description cut mid-word reads as broken in a search result). */
 export function seoText(value: string, limit = 190) {
-  return value
+  const text = value
     .replace(/<[^>]*>/g, " ")
     .replace(/[\u0000-\u001f\u007f]/g, " ")
     .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, limit);
+    .trim();
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit - 1);
+  const word = cut.lastIndexOf(" ");
+  return `${(word > limit * 0.6 ? cut.slice(0, word) : cut).replace(/[\s,;:–—-]+$/, "")}…`;
 }
 const scalar = (query: SeoQuery, name: string) =>
   typeof query[name] === "string" ? (query[name] as string) : "";
@@ -60,11 +72,13 @@ export function canonicalUrl(path: string, query: SeoQuery = {}) {
     if (activityBackgrounds.some((activity) => activity.id === category))
       url.searchParams.set("category", category);
   }
-  if (["/guides", "/items", "/builds", "/compositions"].includes(path)) {
+  // /guides is one page (no `page` parameter), so `?page=2` there is a copy of it.
+  if (["/items", "/builds", "/compositions"].includes(path)) {
     const page = scalar(query, "page");
     if (/^[1-9]\d{0,3}$/.test(page) && Number(page) > 1) url.searchParams.set("page", page);
   }
-  if (path === "/compositions" && scalar(query, "view") === "all")
+  // A later page of the comps list is the list: `?page=2` and `?view=all&page=2` are one page.
+  if (path === "/compositions" && (scalar(query, "view") === "all" || url.searchParams.has("page")))
     url.searchParams.set("view", "all");
   if (path === "/tools/kill-feed" && scalar(query, "view") === "deaths")
     url.searchParams.set("view", "deaths");
@@ -119,7 +133,7 @@ export function publicMetadata(
   article = false,
 ): Metadata {
   const name = seoText(title, 150),
-    summary = seoText(description),
+    summary = seoText(description, 160),
     url = canonicalUrl(path, query);
   // Personal lists and open-ended search results are useful UI, not search-index targets.
   const restricted =
@@ -129,7 +143,8 @@ export function publicMetadata(
   return {
     title: name,
     description: summary,
-    alternates: { canonical: url },
+    // A noindex page names no canonical (a noindex and a canonical to another page disagree).
+    alternates: { canonical: restricted ? null : url },
     robots: restricted
       ? privateRobots
       : {

@@ -95,7 +95,9 @@ export default async function Builds({
     category: activity,
     tag,
     sort: order === "popular" ? "" : order,
-    view,
+    // Grid is the default and stays out of every link: robots.txt blocks any `view=` on /builds,
+    // so a `view=grid` on filter, source and page links made all of them uncrawlable.
+    view: view === "grid" ? "" : view,
   };
   const saved = Object.fromEntries(Object.entries(query).filter(([, v]) => v));
   const href = (patch: Record<string, string>) => {
@@ -257,7 +259,8 @@ export default async function Builds({
             </label>
             <div className="segmented ecosystem-view-switch" aria-label="Build layout">
               <Link
-                href={href({ view: "grid" })}
+                href={href({ view: "" })}
+                rel="nofollow"
                 aria-label="Grid view"
                 aria-current={view === "grid" ? "true" : undefined}
               >
@@ -265,6 +268,7 @@ export default async function Builds({
               </Link>
               <Link
                 href={href({ view: "list" })}
+                rel="nofollow"
                 aria-label="List view"
                 aria-current={view === "list" ? "true" : undefined}
               >
@@ -286,7 +290,7 @@ export default async function Builds({
                 <BuildRegionInput />
                 {query.source && <input type="hidden" name="source" value={query.source} />}
                 {mine && <input type="hidden" name="mine" value="1" />}
-                <input type="hidden" name="view" value={view} />
+                {query.view && <input type="hidden" name="view" value={query.view} />}
                 <BuildWeaponRail
                   limit={8}
                   selected={family}

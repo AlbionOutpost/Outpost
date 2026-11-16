@@ -51,18 +51,21 @@ export function BuildDiscoveryHeader({
           },
           {
             href: "/builds?mine=1",
+            nofollow: true,
             label: "My Builds",
             icon: <UserRound size={16} />,
             current: current("mine"),
           },
           {
             href: "/favorites",
+            nofollow: true,
             label: "Favorites",
             icon: <Bookmark size={16} />,
             current: current("favorites"),
           },
           {
             href: "/builds?view=saved",
+            nofollow: true,
             label: "Saved Filters",
             icon: <SlidersHorizontal size={16} />,
             current: current("saved"),

@@ -8,6 +8,8 @@ export type MastheadTab = {
   icon?: ReactNode;
   /** The tab for the page itself. */
   current?: boolean;
+  /** A personal or blocked page: crawlers are not sent there from a public list. */
+  nofollow?: boolean;
   /** In-page anchor rather than a route. */
   anchor?: boolean;
 };
@@ -33,7 +35,12 @@ export function MastheadTabs({ label, tabs }: { label: string; tabs: MastheadTab
             {t.label}
           </a>
         ) : (
-          <Link key={t.href} href={t.href} aria-current={t.current ? "page" : undefined}>
+          <Link
+            key={t.href}
+            href={t.href}
+            rel={t.nofollow ? "nofollow" : undefined}
+            aria-current={t.current ? "page" : undefined}
+          >
             {t.icon}
             {t.label}
           </Link>

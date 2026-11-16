@@ -1,6 +1,6 @@
 import "@/app/build-styles";
 import { itemShareMetadata } from "@/lib/seo-public";
-import type { SeoQuery } from "@/lib/seo";
+import { itemPath, type SeoQuery } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import marketPage from "@/components/market-page.module.css";
 import { MastheadTabs } from "@/components/masthead-tabs";
@@ -137,7 +137,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
         data={breadcrumbList([
           { name: "Home", path: "/" },
           { name: "Items", path: "/items" },
-          { name: item.name, path: `/items/${encodeURIComponent(id)}` },
+          { name: item.name, path: itemPath(id) },
         ])}
       />
       <WorkspaceHeading

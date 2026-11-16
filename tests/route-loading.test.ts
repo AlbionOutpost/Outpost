@@ -17,10 +17,19 @@ const loadingFiles = (dir: URL, prefix = ""): string[] =>
 
 /* Content pages send their text in the first HTML (crawlers, ad review and the first paint read
  * it), so they have no streamed loading boundary: the landing, guides, tools and calculators, the
- * build and comp libraries, items and the market data help. Only their editors keep the shared
+ * build and comp libraries, items, the market data help and the legal and contact pages. Only their editors keep the shared
  * skeleton. Every other top-level route folder (personal or live pages) keeps
  * src/components/route-loading.tsx. */
-const content = ["builds", "compositions", "guides", "items", "market-data", "tools"];
+const content = [
+  "builds",
+  "compositions",
+  "contact",
+  "guides",
+  "items",
+  "legal",
+  "market-data",
+  "tools",
+];
 const editors = [
   "builds/[id]/edit/loading.tsx",
   "builds/new/loading.tsx",

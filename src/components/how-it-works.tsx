@@ -1,6 +1,9 @@
 import { ArrowRight } from "lucide-react";
 import Link from "@/components/link";
 import { toolExplainers } from "@/lib/tool-explainers";
+import { JsonLd } from "@/components/json-ld";
+import { publicPages } from "@/lib/seo";
+import { webApplicationLd } from "@/lib/structured-data";
 import styles from "./how-it-works.module.css";
 
 /**
@@ -12,8 +15,10 @@ import styles from "./how-it-works.module.css";
 export function HowItWorks({ path }: { path: keyof typeof toolExplainers }) {
   const explainer = toolExplainers[path];
   const id = `how-it-works-${path.split("/").pop()}`;
+  const page = publicPages[path];
   return (
     <section className={styles.how} aria-labelledby={id} data-how-it-works="">
+      {page && <JsonLd data={webApplicationLd({ name: page[0], description: page[1], path })} />}
       <div className={styles.head}>
         <div className={styles.lead}>
           <h2 id={id}>How it works</h2>

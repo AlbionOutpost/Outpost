@@ -90,6 +90,23 @@ export function linkedGuides(content: GuideNode[]) {
   return slugs;
 }
 
+/** Ids of the items the guide links to by address (`/items/<id>`), in reading order. */
+export function guideItemLinkIds(content: GuideNode[]) {
+  const ids: string[] = [];
+  walk(content, (node) => {
+    const raw = node.tag === "a" && node.href?.match(/^\/items\/([A-Za-z0-9_%@-]+)$/)?.[1];
+    if (!raw) return;
+    let id = raw;
+    try {
+      id = decodeURIComponent(raw);
+    } catch {
+      /* keep the raw id; it will not match a catalog row */
+    }
+    if (!ids.includes(id)) ids.push(id);
+  });
+  return ids;
+}
+
 /** The Outpost tools and the items the guide links to, once each, in reading order. */
 export function guideReferences(content: GuideNode[]) {
   const toolLinks: { href: string; title: string; emblem: string }[] = [];

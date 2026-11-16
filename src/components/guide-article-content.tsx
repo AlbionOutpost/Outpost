@@ -109,7 +109,15 @@ function listKind(list: Element) {
   return leads.every((lead) => /\d/.test(lead!) && lead!.length <= 24) ? "figures" : "terms";
 }
 
-export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
+/** `unlinkedItems`: ids with no item page (the catalog lists equipment, not every resource or
+ * event item). Their links render as plain text instead of an address that answers 404. */
+export function GuideArticleContent({
+  nodes,
+  unlinkedItems,
+}: {
+  nodes: GuideNode[];
+  unlinkedItems?: ReadonlySet<string>;
+}) {
   const none = new Set<number>();
   /** `columns` are the figure columns of the table being drawn; `inFigureColumn` marks a cell. */
   function render(node: GuideNode, key: number, columns = none, inFigureColumn = false): ReactNode {
@@ -143,6 +151,21 @@ export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
         : node.children.map((child, i) => render(child, i, figures));
     const props: Record<string, unknown> = { key };
     if (inFigureColumn) props.className = "is-figure";
+    if (node.tag === "a" && unlinkedItems?.size) {
+      const target = node.href?.match(/^\/items\/([A-Za-z0-9_%@-]+)$/)?.[1];
+      let id = target;
+      try {
+        id = target && decodeURIComponent(target);
+      } catch {
+        /* an undecodable id has no page either */
+      }
+      if (id && unlinkedItems.has(id))
+        return (
+          <span key={key} className="guide-item">
+            {children}
+          </span>
+        );
+    }
     if (node.tag === "a") {
       props.href = safeGuideHref(node.href);
       props.rel = "noopener noreferrer";

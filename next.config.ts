@@ -56,6 +56,9 @@ const config: NextConfig = {
     return [
       // Comps open on their activities now (Nov 2026); the query (region) carries over.
       { source: "/compositions/activities", destination: "/compositions", permanent: true },
+      // The tier is called Supporter now. A page-level redirect() answered 200 with a client-side
+      // jump (Search Console: "Page with redirect"); this is a real 308 and keeps the query.
+      { source: "/premium", destination: "/supporter", permanent: true },
       ...guideRedirects(),
     ];
   },

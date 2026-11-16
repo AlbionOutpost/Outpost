@@ -25,9 +25,11 @@ import {
   metadataForPage,
   noindexPages,
   privateMetadata,
+  publicMetadata,
   publicOrigin,
   publicPages,
   rootMetadata,
+  seoText,
 } from "../src/lib/seo";
 import {
   authoredShareMetadata,
@@ -361,12 +363,49 @@ describe("public archive and active catalog metadata", () => {
     mocks.item.mockResolvedValue({ id: "T8_MAIN_AXE", name: "Unrelated item", active: true });
     expect(await itemShareMetadata("T4_MAIN_AXE")).toEqual(privateMetadata("Item not found"));
   });
-  it("retains item enchantment and region identity", async () => {
-    mocks.item.mockResolvedValue({ id: "T4_MAIN_AXE@1", name: "Adept's Battleaxe", active: true });
-    expect(
-      (await itemShareMetadata("T4_MAIN_AXE%401", { region: "asia" })).alternates?.canonical,
-    ).toBe("https://albionoutpost.com/items/T4_MAIN_AXE%401");
+  it("retains item enchantment and region identity, with one spelling of the address", async () => {
+    mocks.item.mockResolvedValue({
+      id: "T4_MAIN_AXE@1",
+      name: "Adept's Battleaxe · .1",
+      active: true,
+      slot: "Main hand",
+      tier: 4,
+      enchantment: 1,
+    });
+    const metadata = await itemShareMetadata("T4_MAIN_AXE%401", { region: "asia" });
+    // Internal links write `@`; the canonical used to say `%40`, a second URL for the same page.
+    expect(metadata.alternates?.canonical).toBe("https://albionoutpost.com/items/T4_MAIN_AXE@1");
     expect(mocks.item.mock.calls[0][0].where).toEqual({ id: "T4_MAIN_AXE@1", active: true });
+    expect(metadata.title).toBe("Adept's Battleaxe (T4.1) — Albion Online item");
+    expect(String(metadata.description)).toContain("tier 4 enchantment .1, main hand item");
+    expect(String(metadata.description).length).toBeLessThanOrEqual(160);
+  });
+});
+
+describe("description text", () => {
+  it("ends a long text at a whole word with an ellipsis, never mid-word", () => {
+    const text = "Safe ways to make your first million silver on a fresh character: ".repeat(6);
+    const cut = seoText(text, 160);
+    expect(cut.length).toBeLessThanOrEqual(160);
+    expect(cut.endsWith("…")).toBe(true);
+    expect(text.startsWith(cut.slice(0, -1))).toBe(true);
+    expect(text[cut.length - 1]).toBe(" ");
+    expect(seoText("Short and complete.", 160)).toBe("Short and complete.");
+  });
+});
+
+describe("canonical rules for list pages", () => {
+  it("treats /guides as one page: ?page= is dropped", () => {
+    expect(canonicalUrl("/guides", { page: "2" })).toBe("https://albionoutpost.com/guides");
+  });
+  it("names a later page of the comps list the same with or without view=all", () => {
+    expect(canonicalUrl("/compositions", { page: "2" })).toBe(
+      canonicalUrl("/compositions", { page: "2", view: "all" }),
+    );
+  });
+  it("gives a noindex search or personal variant no canonical", () => {
+    for (const query of [{ q: "axe" }, { mine: "1" }, { view: "saved" }])
+      expect(publicMetadata("T", "D", "/builds", query).alternates?.canonical).toBeNull();
   });
 });
 
