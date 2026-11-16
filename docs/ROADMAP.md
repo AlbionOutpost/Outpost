@@ -4,6 +4,19 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Search Console audit: crawlable links, one address per page — 16 November 2026
+
+Search Console showed 6,421 URLs blocked by robots.txt, 4,764 noindex, 1,835 alternates, 817 duplicates without a canonical, 482 redirects and 10 server errors. A crawl of the live site (sitemap, internal links, odd parameters) found the causes; the full audit is in [SEO_AND_SOCIAL_SHARING.md](SEO_AND_SOCIAL_SHARING.md#search-console-audit-16-nov-2026).
+
+- **Blocked by robots.txt:** every filter, source, page and weapon link on `/builds` carried `view=grid`, which robots.txt blocks (`/builds?*view=`), so pagination and the weapon/activity filters were uncrawlable and Google queued thousands of them. The default layout is now left out of links; the layout switch and the personal tabs are `rel="nofollow"`.
+- **Missing item pages:** guides linked to items that have no page (resources, event items); 22 of them answered 404 from 26 guide pages. They render as text now; the rail lists only items with a page.
+- **One spelling per item page:** the canonical said `/items/T4_MAIN_AXE%401`, every link `@1`. Both are `@` now. Item titles carry tier and enchantment and the description says what the item is.
+- **Real redirect:** `/premium` answered 200 and jumped on the client; it is a 308 in `next.config.ts`.
+- **First HTML:** `/legal` and `/contact` lost their loading boundary.
+- **Canonicals:** `/guides?page=N` (one page) names `/guides`; `/compositions?page=2` and `?view=all&page=2` name the same address; noindex search and personal variants name no canonical. Meta descriptions end at a whole word (160 characters) instead of mid-word at 190.
+- **Structured data:** each calculator with a How it works block emits `WebApplication`.
+- Not changed (owner decision): indexing the 8,000 unliked library builds, an item sitemap, merging enchantment variants. See the audit.
+
 ## Content pages fully rendered, a tighter sitemap and calculator explanations — 11 November 2026
 
 AdSense turned the site down as low-value content ("Minderwertige Inhalte"). Fetched as Mediapartners-Google, every page but the landing had only "Loading page…" in `<main>`; the sitemap listed 682 comps, most of them a member list under a template sentence or a test title, and `/giveaways` with about 60 words.
