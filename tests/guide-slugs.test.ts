@@ -5,6 +5,7 @@ import config from "../next.config";
 import { guideRedirects } from "../src/lib/guide-redirects";
 import {
   guideDek,
+  guideItemLinkIds,
   guideReferences,
   guideSections,
   linkedGuides,
@@ -91,5 +92,53 @@ describe("guide reader", () => {
     expect(related).toHaveLength(3);
     expect(related[0]).toMatchObject({ reason: "Linked in this guide" });
     for (const { guide } of related) expect(guide.slug).not.toBe(silver.slug);
+  });
+});
+
+describe("item links in guides", () => {
+  it("lists the items a guide links to by address, decoded, once each", () => {
+    const content = [
+      {
+        tag: "p",
+        children: [
+          { tag: "a", href: "/items/T4_MAIN_AXE%401", children: ["Axe"] },
+          { tag: "a", href: "/items/T4_MAIN_AXE@1", children: ["Axe again"] },
+          { tag: "a", href: "/items/T4_RUNE", children: ["Rune"] },
+          { tag: "a", href: "/tools/crafting", children: ["Crafting"] },
+        ],
+      },
+    ] as never;
+    expect(guideItemLinkIds(content)).toEqual(["T4_MAIN_AXE@1", "T4_RUNE"]);
+  });
+  it("renders a link to an item without a page as text, not as an address that answers 404", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { createElement } = await import("react");
+    const { GuideArticleContent } = await import("../src/components/guide-article-content");
+    const nodes = [
+      {
+        tag: "p",
+        children: [
+          { tag: "a", href: "/items/T4_RUNE", children: ["Rune"] },
+          { tag: "a", href: "/items/T4_BAG", children: ["Bag"] },
+        ],
+      },
+    ] as never;
+    const html = renderToStaticMarkup(
+      createElement(GuideArticleContent, { nodes, unlinkedItems: new Set(["T4_RUNE"]) }),
+    );
+    expect(html).not.toContain('href="/items/T4_RUNE"');
+    expect(html).toContain("Rune");
+    expect(html).toContain('href="/items/T4_BAG"');
+  });
+});
+
+describe("real redirects", () => {
+  it("sends /premium to /supporter with a permanent redirect, not a page-level jump", async () => {
+    const redirects = await config.redirects!();
+    expect(redirects).toContainEqual({
+      source: "/premium",
+      destination: "/supporter",
+      permanent: true,
+    });
   });
 });

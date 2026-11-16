@@ -100,3 +100,23 @@ export function itemListLd(name: string, items: { name: string; path: string }[]
     })),
   };
 }
+
+/**
+ * A calculator or other free in-browser tool. Only fields that are plainly true: its name, its
+ * address and the page's own description; no rating, price or review.
+ */
+export function webApplicationLd(input: { name: string; description: string; path: string }): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: input.name,
+    description: input.description,
+    url: abs(input.path),
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any (web browser)",
+    isAccessibleForFree: true,
+    inLanguage: "en",
+    isPartOf: { "@id": `${publicOrigin()}/#website` },
+    publisher: { "@id": orgId() },
+  };
+}

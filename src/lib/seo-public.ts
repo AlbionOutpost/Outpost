@@ -6,7 +6,14 @@ import { activityName, type LibraryBuild } from "./grind-library-types";
 import { indexedBuild, indexedComposition } from "./library-scope";
 import { brandCopy } from "./brand-copy";
 import { equipmentName } from "./albion/equipment-catalog";
-import { noindexFollow, privateMetadata, publicMetadata, seoText, type SeoQuery } from "./seo";
+import {
+  itemPath,
+  noindexFollow,
+  privateMetadata,
+  publicMetadata,
+  seoText,
+  type SeoQuery,
+} from "./seo";
 
 /** Metadata never borrows the viewer's permissions. No cookies, sessions or shared private cache. */
 export async function authoredShareMetadata(
@@ -125,13 +132,17 @@ export async function itemShareMetadata(
   if (!id || id.length > 150) return privateMetadata("Item not found");
   const item = await db.itemMetadata.findFirst({
     where: { id, active: true },
-    select: { id: true, name: true, active: true },
+    select: { id: true, name: true, active: true, slot: true, tier: true, enchantment: true },
   });
   if (!item || !item.active || item.id !== id) return privateMetadata("Item not found");
+  // The catalog names an enchanted copy "Adept's Bow · .1"; the tier and enchantment go in
+  // brackets so every variant has its own title instead of repeating the base name.
+  const base = item.name.split(" · ")[0];
+  const level = `T${item.tier}${item.enchantment ? `.${item.enchantment}` : ""}`;
   return publicMetadata(
-    `${item.name} — Albion Online item`,
-    `Inspect ${item.name} in the available Albion Online item catalog, with sourced equipment details and regional market observations.`,
-    `/items/${encodeURIComponent(item.id)}`,
+    `${base} (${level}) — Albion Online item`,
+    `${base}, tier ${item.tier}${item.enchantment ? ` enchantment .${item.enchantment}` : ""}, ${item.slot.toLowerCase()} item in Albion Online. Its recipe, abilities and city market prices where Outpost has them.`,
+    itemPath(item.id),
     query,
   );
 }

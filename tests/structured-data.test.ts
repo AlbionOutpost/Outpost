@@ -6,6 +6,7 @@ import {
   crumbsForPath,
   itemListLd,
   siteGraph,
+  webApplicationLd,
 } from "@/lib/structured-data";
 
 describe("structured data", () => {
@@ -59,5 +60,18 @@ describe("structured data", () => {
     expect(social.readUInt32BE(16)).toBe(1200);
     expect(social.readUInt32BE(20)).toBe(630);
     expect(social.length).toBeLessThan(450_000);
+  });
+
+  it("describes a calculator as a free web application with only true fields", () => {
+    const ld = webApplicationLd({
+      name: "Albion Online crafting calculator",
+      description: "Calculate crafting materials.",
+      path: "/tools/crafting",
+    }) as Record<string, unknown>;
+    expect(ld["@type"]).toBe("WebApplication");
+    expect(ld.url).toBe("https://albionoutpost.com/tools/crafting");
+    expect(ld.isAccessibleForFree).toBe(true);
+    // No invented rating, price or review.
+    for (const key of ["aggregateRating", "review", "offers"]) expect(ld).not.toHaveProperty(key);
   });
 });

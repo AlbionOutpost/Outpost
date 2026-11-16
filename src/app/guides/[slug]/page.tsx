@@ -1,5 +1,5 @@
 import { archiveShareMetadata } from "@/lib/seo-public";
-import type { SeoQuery } from "@/lib/seo";
+import { itemPath, type SeoQuery } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import Link from "@/components/build-region-link";
 import { notFound } from "next/navigation";
@@ -24,6 +24,7 @@ import { brandCopy } from "@/lib/brand-copy";
 import { variantSrcSet } from "@/lib/image-variants";
 import {
   guideDek,
+  guideItemLinkIds,
   guideReferences,
   guideSections,
   relatedGuides,
@@ -33,6 +34,7 @@ import type { LibraryGuide } from "@/lib/grind-library-types";
 import { ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { JsonLd } from "@/components/json-ld";
 import { articleLd, breadcrumbList } from "@/lib/structured-data";
+import { activeCatalogIds } from "@/lib/catalog/item-search";
 import styles from "./article.module.css";
 const guideLd = (guide: LibraryGuide) => {
   const path = `/guides/${encodeURIComponent(guide.slug)}`;
@@ -53,6 +55,12 @@ export async function generateMetadata({
   searchParams: Promise<SeoQuery>;
 }) {
   return archiveShareMetadata("guide", (await params).slug, await searchParams);
+}
+/** Item ids the guide links to that have no catalog page; they render as text, not as a 404. */
+async function unlinkedItemIds(guide: LibraryGuide) {
+  const ids = guideItemLinkIds(guide.content);
+  const active = await activeCatalogIds(ids);
+  return new Set(ids.filter((id) => !active.has(id)));
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const guide = await findLibraryGuide((await params).slug);
@@ -122,6 +130,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       ) : (
         <Reader
           guide={guide}
+          unlinkedItems={await unlinkedItemIds(guide)}
           related={relatedGuides(guide, await libraryGuides())}
           tool={
             guide.slug === "fishing-leveling-guide" && (
@@ -186,13 +195,16 @@ function Reader({
   guide,
   related,
   tool,
+  unlinkedItems,
 }: {
   guide: LibraryGuide;
+  unlinkedItems: ReadonlySet<string>;
   related: RelatedGuide[];
   tool: React.ReactNode;
 }) {
   const { intro, sections } = guideSections(guide.content);
   const refs = guideReferences(guide.content);
+  refs.items = refs.items.filter((item) => !unlinkedItems.has(item.id));
   const rail = refs.tools.length > 0 || refs.items.length > 0;
   return (
     <>
@@ -222,7 +234,7 @@ function Reader({
             <article className={`guide-prose ${styles.prose}`} data-guide-article>
               {intro.length > 0 && (
                 <div className={styles.intro}>
-                  <GuideArticleContent nodes={intro} />
+                  <GuideArticleContent nodes={intro} unlinkedItems={unlinkedItems} />
                 </div>
               )}
               {sections.map((section, i) => (
@@ -248,7 +260,7 @@ function Reader({
                     )}
                     <span>{brandCopy(section.title)}</span>
                   </h2>
-                  <GuideArticleContent nodes={section.nodes} />
+                  <GuideArticleContent nodes={section.nodes} unlinkedItems={unlinkedItems} />
                 </section>
               ))}
               <p className={styles.patchNote}>
@@ -290,7 +302,7 @@ function Reader({
                   <ul className={styles.itemList}>
                     {refs.items.map((item) => (
                       <li key={item.id}>
-                        <Link href={`/items/${encodeURIComponent(item.id)}`} title={item.name}>
+                        <Link href={itemPath(item.id)} title={item.name}>
                           <ItemIcon id={item.id} size={44} />
                           <span>{item.name}</span>
                         </Link>
