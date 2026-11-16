@@ -73,6 +73,52 @@ test("public metadata has route-specific canonical/social heads and a real stati
     expect(summary).toContain(`(https://albionoutpost.com${link})`);
 });
 
+test("followable links on public lists never point at robots.txt-blocked URLs or missing items", async ({
+  request,
+}) => {
+  test.setTimeout(120000);
+  const rules = (await (await request.get("/robots.txt")).text())
+    .split("\n\n")[0]
+    .split("\n")
+    .filter((line) => line.startsWith("Disallow: "))
+    .map((line) => line.slice(10))
+    .map(
+      (rule) =>
+        new RegExp(
+          `^${rule
+            .replace(/[.+^${}()|[\]\\?]/g, "\\$&")
+            .replaceAll("*", ".*")
+            .replace(/\\\$$/, "$")}`,
+        ),
+    );
+  for (const path of [
+    "/builds",
+    "/builds?source=library",
+    "/builds?source=library&category=ZVZ&page=2",
+    "/compositions?view=all",
+    "/guides/zones-and-death",
+    "/guides/enchanting-guide",
+  ]) {
+    const html = await (
+      await request.get(path, { headers: { "user-agent": "Googlebot/2.1" } })
+    ).text();
+    const followable = [...html.matchAll(/<a\b[^>]*>/g)]
+      .map((match) => match[0])
+      .filter((tag) => !/rel="[^"]*nofollow/.test(tag))
+      .map((tag) => tag.match(/href="([^"]+)"/)?.[1]?.replaceAll("&amp;", "&"))
+      .filter((href): href is string => !!href?.startsWith("/"));
+    const blocked = followable.filter((href) => rules.some((rule) => rule.test(href)));
+    // Not even the personal and sign-in links of the site chrome: they are nofollow or rare.
+    expect(
+      blocked.filter((href) => /view=|[?&]q=/.test(href)),
+      path,
+    ).toEqual([]);
+    for (const href of new Set(followable.filter((link) => link.startsWith("/items/")))) {
+      expect((await request.get(href)).status(), `${path} links ${href}`).toBe(200);
+    }
+  }
+});
+
 test("social metadata never borrows owner permissions or discloses private, unlisted, hidden or Team records", async ({
   request,
   context,
