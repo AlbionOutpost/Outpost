@@ -36,6 +36,30 @@ test("the contact form sends in place, keeps nothing on the page and states the 
   expect((await new AxeBuilder({ page }).include("main").analyze()).violations).toEqual([]);
 });
 
+test("a malformed email is said on the field and cannot be sent", async ({ page }) => {
+  let posts = 0;
+  await page.route("**/api/contact", (route) => {
+    posts += 1;
+    return route.fulfill({ json: { ok: true } });
+  });
+  await page.goto("/contact?lang=en");
+  const main = page.locator('main div[lang="en"]');
+  const email = main.getByRole("textbox", { name: "Email address", exact: true });
+  await main.getByRole("textbox", { name: "Name", exact: true }).fill("Ada Lovelace");
+  await main
+    .getByRole("textbox", { name: "Message", exact: true })
+    .fill("The flipping table shows the wrong city.");
+  await email.fill("ada@example");
+  await email.blur();
+  await expect(main.getByRole("alert").filter({ hasText: "doesn't look right" })).toBeVisible();
+  await expect(email).toHaveAttribute("aria-invalid", "true");
+  await main.getByRole("button", { name: "Send message" }).click();
+  expect(posts).toBe(0);
+  await email.fill("ada+albion@mail.example.org");
+  await expect(email).not.toHaveAttribute("aria-invalid", "true");
+  await expect(main.getByText("doesn't look right")).toHaveCount(0);
+});
+
 // Pages stream behind their loading boundary, so a browser without JavaScript cannot render the
 // form itself; the endpoint still answers a plain form post the way a browser submits it.
 test("a plain form post is redirected to the result page in its language", async ({
