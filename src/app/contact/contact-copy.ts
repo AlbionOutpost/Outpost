@@ -10,6 +10,7 @@ export type ContactCopy = {
   name: string;
   email: string;
   emailHint: string;
+  emailInvalid: string;
   topic: string;
   topics: Record<ContactTopic, string>;
   message: string;
@@ -42,6 +43,7 @@ export function contactCopy(locale: LegalLocale): ContactCopy {
         name: "Name",
         email: "E-Mail-Adresse",
         emailHint: "Wir antworten an diese Adresse.",
+        emailInvalid: "Diese E-Mail-Adresse sieht nicht richtig aus. Bitte prüfen Sie sie.",
         topic: "Thema",
         topics: {
           general: "Allgemeine Frage",
@@ -89,6 +91,7 @@ export function contactCopy(locale: LegalLocale): ContactCopy {
         name: "Name",
         email: "Email address",
         emailHint: "We reply to this address.",
+        emailInvalid: "That email address doesn't look right. Please check it.",
         topic: "Topic",
         topics: {
           general: "General question",
