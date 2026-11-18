@@ -71,6 +71,49 @@ describe("contact input", () => {
   });
 });
 
+describe("contact email", () => {
+  it.each([
+    "ada@example.org",
+    "ada+albion@mail.example.co.uk",
+    "first.last@sub.example.org",
+    "ada@example.technology",
+    "ada@xn--bcher-kva.example",
+    "ada@bücher.example",
+    "  ada@example.org  ",
+  ])("accepts %s", (email) => {
+    expect(contactInput.safeParse({ ...valid, email }).success).toBe(true);
+  });
+  it.each([
+    "ada",
+    "ada@",
+    "@example.org",
+    "ada@example",
+    "ada@@example.org",
+    "ada@example..org",
+    "ada@.example.org",
+    "ada@example.org.",
+    "ada@-example.org",
+    "ada@example.123",
+    ".ada@example.org",
+    "ada.@example.org",
+    "a..da@example.org",
+    "ada lovelace@example.org",
+    "ada@exa mple.org",
+    '"ada"@example.org',
+    "<ada@example.org>",
+    `${"a".repeat(65)}@example.org`,
+    `ada@${"a".repeat(64)}.org`,
+    `${"a".repeat(60)}@${"b".repeat(60)}.${"c".repeat(60)}.${"d".repeat(60)}.${"e".repeat(60)}.org`,
+  ])("refuses %s", (email) => {
+    expect(contactInput.safeParse({ ...valid, email }).success).toBe(false);
+  });
+  it("normalises the domain and keeps the local part", () => {
+    expect(contactInput.parse({ ...valid, email: " Ada.Lee+x@Example.ORG " }).email).toBe(
+      "Ada.Lee+x@example.org",
+    );
+  });
+});
+
 describe("header injection", () => {
   it("strips CR, LF and other control characters from header values", () => {
     expect(headerSafe("Eve\r\nBcc: victim@example.org")).toBe("Eve Bcc: victim@example.org");

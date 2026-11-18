@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { contactLimits, contactTopics, type ContactTopic } from "./contact-fields";
+import { parseEmail } from "./email";
 
 /** The contact form (/contact → POST /api/contact): what it accepts and the mail it sends. */
 export { contactLimits, contactTopics, type ContactTopic } from "./contact-fields";
@@ -45,8 +46,8 @@ export const contactInput = z.object({
     .string()
     .trim()
     .max(contactLimits.email)
-    .refine((value) => !/[\s\u0000-\u001f\u007f<>"(),;:\\[\]]/.test(value), "Invalid email")
-    .pipe(z.email()),
+    .refine((value) => parseEmail(value) !== null, "Invalid email")
+    .transform((value) => parseEmail(value)!.address),
   topic: z.enum(contactTopics).default("general"),
   message: z
     .string()

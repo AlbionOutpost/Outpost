@@ -11,6 +11,7 @@ import Link from "@/components/link";
 import { Field } from "@/components/field";
 import { WellSelect } from "@/components/well-select";
 import { TurnstileChallenge } from "@/components/turnstile-challenge";
+import { parseEmail } from "@/lib/email";
 import {
   contactLimits,
   contactStatuses,
@@ -43,6 +44,7 @@ export function ContactForm({
   const [token, setToken] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [length, setLength] = useState(0);
+  const [emailError, setEmailError] = useState(false);
   const result = useRef<HTMLParagraphElement>(null);
   const onToken = useCallback((value: string) => setToken(value), []);
   // False in the server render (and without JavaScript), so the button never starts disabled.
@@ -54,6 +56,13 @@ export function ContactForm({
   useEffect(() => {
     if (status) result.current?.focus();
   }, [status]);
+
+  /** The shared address rule; the message is also the browser's own, so a bad address cannot be sent. */
+  function checkEmail(input: HTMLInputElement, say: boolean) {
+    const bad = input.value.trim() !== "" && !parseEmail(input.value);
+    input.setCustomValidity(bad ? copy.emailInvalid : "");
+    if (say || !bad) setEmailError(bad);
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,6 +84,7 @@ export function ContactForm({
       if (response.ok) {
         form.reset();
         setLength(0);
+        setEmailError(false);
         setStatus("sent");
       } else
         setStatus(
@@ -126,7 +136,11 @@ export function ContactForm({
         <Field label={copy.name}>
           <input name="name" required maxLength={contactLimits.name} autoComplete="name" />
         </Field>
-        <Field label={copy.email} hint={copy.emailHint}>
+        <Field
+          label={copy.email}
+          hint={emailError ? undefined : copy.emailHint}
+          error={emailError ? copy.emailInvalid : undefined}
+        >
           <input
             name="email"
             type="email"
@@ -134,6 +148,9 @@ export function ContactForm({
             maxLength={contactLimits.email}
             autoComplete="email"
             spellCheck={false}
+            aria-invalid={emailError || undefined}
+            onChange={(event) => checkEmail(event.target, false)}
+            onBlur={(event) => checkEmail(event.target, true)}
           />
         </Field>
         <Field label={copy.topic} wide>
