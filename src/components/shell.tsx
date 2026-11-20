@@ -718,6 +718,7 @@ export function Shell({
                   </nav>
                   <div className="site-footer-legal">
                     <span>© {new Date().getFullYear()} Outpost</span>
+                    <a href="https://hollowlantern.com/">Made by Hollow Lantern</a>
                     {legalPublished && (
                       <>
                         <Link href="/legal" lang="de">
